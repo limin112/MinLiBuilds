@@ -1157,6 +1157,190 @@ a.nav-cta:hover {
   line-height: 1.6;
 }
 
+/* Services — 企业 Agent 搭建 & 培训 */
+.service-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+.service-main {
+  padding: 28px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 80% 60% at 0% 0%, var(--copper-dim), transparent 55%),
+    var(--panel);
+}
+
+.service-pitch {
+  margin: 0 0 18px;
+  color: var(--ink-dim);
+  font-size: 1.02rem;
+}
+
+.service-pitch em {
+  font-style: normal;
+  color: var(--ink);
+  border-bottom: 1px dashed rgba(96, 165, 250, 0.55);
+}
+
+.service-checklist {
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.service-checklist li {
+  position: relative;
+  padding: 10px 0 10px 24px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.service-checklist li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--copper-hot);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.service-checklist strong {
+  display: block;
+  font-size: 0.96rem;
+}
+
+.service-checklist li span {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--mute);
+  line-height: 1.65;
+}
+
+.service-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.service-hint {
+  font-size: 0.84rem;
+  color: var(--mute);
+}
+
+.service-scenes {
+  display: grid;
+  gap: 12px;
+}
+
+/* Services — 真实交付案例 */
+.service-case {
+  margin-top: 16px;
+  padding: 24px 26px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 60% 100% at 100% 0%, var(--signal-dim), transparent 55%),
+    var(--void-2);
+}
+
+.case-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.case-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: var(--signal-dim);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--mute);
+}
+
+.case-body {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.case-copy h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.01em;
+}
+
+.case-copy p {
+  margin: 0 0 12px;
+  color: var(--ink-dim);
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+
+.case-copy strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.case-note {
+  padding-left: 14px;
+  border-left: 2px solid rgba(59, 130, 246, 0.45);
+  font-size: 0.88rem !important;
+  color: var(--mute) !important;
+  margin-bottom: 0 !important;
+}
+
+.case-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.case-stats > div {
+  padding: 16px 14px;
+  background: var(--panel);
+  text-align: center;
+}
+
+.case-stats dt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.01em;
+  color: var(--copper-hot);
+  font-variant-numeric: tabular-nums;
+}
+
+.case-stats dd {
+  margin: 4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--mute);
+}
+
 /* Contact */
 .contact-section {
   padding-bottom: clamp(48px, 8vw, 80px);
@@ -1395,12 +1579,15 @@ a.nav-cta:hover {
 
   .about-grid,
   .contact-panel,
-  .signal-grid {
+  .signal-grid,
+  .service-grid,
+  .case-body {
     grid-template-columns: 1fr;
   }
 
   .collab-grid,
-  .process-strip {
+  .process-strip,
+  .service-scenes {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -1416,7 +1603,8 @@ a.nav-cta:hover {
 
   .collab-grid,
   .process-strip,
-  .contact-channels {
+  .contact-channels,
+  .service-scenes {
     grid-template-columns: 1fr;
   }
 
