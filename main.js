@@ -8,6 +8,7 @@
   if (toggle && drawer) {
     const setOpen = (open) => {
       drawer.hidden = !open;
+      toggle.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
     };
@@ -16,6 +17,130 @@
     drawer.querySelectorAll("a").forEach((a) => {
       a.addEventListener("click", () => setOpen(false));
     });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !drawer.hidden) setOpen(false);
+    });
+    document.addEventListener("click", (e) => {
+      if (!drawer.hidden && !drawer.contains(e.target) && !toggle.contains(e.target)) {
+        setOpen(false);
+      }
+    });
+  }
+
+  // Stats count-up
+  const statNums = document.querySelectorAll(".stat-num[data-count]");
+  const reduceMotionStats = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (statNums.length && !reduceMotionStats && "IntersectionObserver" in window) {
+    const formatStat = (value, el) => {
+      const suffix = el.dataset.suffix || "";
+      if (el.dataset.format === "m" && value >= 100000) {
+        const m = value / 1000000;
+        return (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10) + "M" + suffix;
+      }
+      if (el.dataset.format === "k" && value >= 1000) {
+        const k = value / 1000;
+        return (k >= 100 ? Math.round(k) : Math.round(k * 10) / 10) + "K" + suffix;
+      }
+      return Math.round(value).toLocaleString() + suffix;
+    };
+
+    const animate = (el) => {
+      const target = Number(el.dataset.count);
+      if (!Number.isFinite(target)) return;
+      const duration = 1200;
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = formatStat(target * eased, el);
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const statIo = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animate(entry.target);
+            statIo.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    statNums.forEach((el) => statIo.observe(el));
+  }
+
+  // Partner terminal: boot animation when scrolled into view
+  const partnerTerminal = document.getElementById("partnerTerminal");
+  if (partnerTerminal && "IntersectionObserver" in window) {
+    const ptIo = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          partnerTerminal.classList.add("in-view");
+          ptIo.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    ptIo.observe(partnerTerminal);
+  } else if (partnerTerminal) {
+    partnerTerminal.classList.add("in-view");
+  }
+
+  // Partner marquee: auto-scroll + drag, seamless loop
+  const marquee = document.getElementById("partnerMarquee");
+  const track = document.getElementById("partnerTrack");
+  if (marquee && track) {
+    const firstSet = track.querySelector(".partner-set");
+    if (firstSet) {
+      const clone = firstSet.cloneNode(true);
+      clone.setAttribute("aria-hidden", "true");
+      track.appendChild(clone);
+    }
+
+    const autoSpeed = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.5;
+    let offset = 0;
+    let dragging = false;
+    let startX = 0;
+    let startOffset = 0;
+
+    const apply = () => {
+      const half = track.scrollWidth / 2;
+      if (half > 0) offset = ((offset % half) + half) % half;
+      track.style.transform = `translateX(${-offset}px)`;
+    };
+
+    const tick = () => {
+      if (!dragging && autoSpeed) {
+        offset += autoSpeed;
+        apply();
+      }
+      requestAnimationFrame(tick);
+    };
+
+    marquee.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      startX = e.clientX;
+      startOffset = offset;
+      marquee.setPointerCapture(e.pointerId);
+      marquee.classList.add("dragging");
+    });
+    marquee.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      offset = startOffset - (e.clientX - startX);
+      apply();
+    });
+    const endDrag = () => {
+      dragging = false;
+      marquee.classList.remove("dragging");
+    };
+    marquee.addEventListener("pointerup", endDrag);
+    marquee.addEventListener("pointercancel", endDrag);
+
+    apply();
+    requestAnimationFrame(tick);
   }
 
   // Terminal typewriter
@@ -59,80 +184,26 @@
           setTimeout(tick, 24);
         }
       };
-      setTimeout(tick, 500);
+      setTimeout(tick, 2300);
     }
   }
 
-  // Copy handle
-  const copyBtn = document.getElementById("copyHandle");
+  // Copy email
+  const copyBtn = document.getElementById("copyEmail");
   const copyHint = document.getElementById("copyHint");
   if (copyBtn) {
     copyBtn.addEventListener("click", async () => {
-      const text = copyBtn.dataset.copy || "@MinLiBuilds";
+      const text = copyBtn.dataset.copy || "uslimin@gmail.com";
       try {
         await navigator.clipboard.writeText(text);
         copyBtn.classList.add("copied");
         if (copyHint) copyHint.textContent = "已复制 ✓";
         setTimeout(() => {
           copyBtn.classList.remove("copied");
-          if (copyHint) copyHint.textContent = "点击复制 X 账号";
+          if (copyHint) copyHint.textContent = "点击复制邮箱";
         }, 1800);
       } catch {
         if (copyHint) copyHint.textContent = "复制失败，请手动选择";
-      }
-    });
-  }
-
-  // Brief helpers
-  const form = document.getElementById("briefForm");
-  const status = document.getElementById("formStatus");
-  const copyBriefBtn = document.getElementById("copyBrief");
-
-  const buildBrief = (data) => {
-    return [
-      "【商务合作 Brief · MinLiBuilds】",
-      `品牌/姓名：${data.brand || "-"}`,
-      `联系方式：${data.reach || "-"}`,
-      `产品链接：${data.product || "-"}`,
-      `合作形式：${data.type || "-"}`,
-      `预算区间：${data.budget || "未填"}`,
-      `需求说明：${data.note || "-"}`,
-      "",
-      "来自个人站 brief 表单",
-    ].join("\n");
-  };
-
-  const readForm = () => {
-    if (!form) return {};
-    const fd = new FormData(form);
-    return Object.fromEntries(fd.entries());
-  };
-
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const data = readForm();
-      if (!data.brand || !data.reach) {
-        if (status) status.textContent = "请至少填写品牌和联系方式";
-        return;
-      }
-      const body = encodeURIComponent(buildBrief(data));
-      const subject = encodeURIComponent(`商务合作 · ${data.brand} × MinLiBuilds`);
-      // Placeholder mailbox — user can replace with real address later
-      window.location.href = `mailto:hello@minlibuilds.com?subject=${subject}&body=${body}`;
-      if (status) status.textContent = "已打开邮件草稿，可改收件邮箱后发送";
-    });
-  }
-
-  if (copyBriefBtn) {
-    copyBriefBtn.addEventListener("click", async () => {
-      const data = readForm();
-      const text = buildBrief(data);
-      try {
-        await navigator.clipboard.writeText(text);
-        if (status) status.textContent = "Brief 已复制，可直接贴到 X DM";
-      } catch {
-        if (status) status.textContent = "复制失败，请手动选择文本";
       }
     });
   }
