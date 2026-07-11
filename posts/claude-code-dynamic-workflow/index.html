@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code 动态工作流详解：每个任务都有自己的 Harness【译】 · 实践哥 MinLi</title>
+  <meta name="description" content="Claude Code 能即时写出为任务量身定制的编排脚本，在单个会话里跑数十到数百个并行 subagent。译自 Anthropic 员工 Thariq 的长文：8 个示例提示词、6 种可复用编排模式、九类落地场景与构建技巧，附实践哥导读批注。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/claude-code-dynamic-workflow/" />
+  <meta property="og:title" content="Claude Code 动态工作流：每个任务都可以有自己的 Harness【译】" />
+  <meta property="og:description" content="dynamic workflow 的原理、6 种可复用编排模式、九类落地场景与构建技巧。译自 Anthropic 员工 Thariq 的长文，附实践哥导读。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/claude-code-dynamic-workflow/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/article-dw.jpg" />
+  <meta property="article:published_time" content="2026-06-03T15:07:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="Claude Code 动态工作流：每个任务都可以有自己的 Harness【译】" />
+  <meta name="twitter:description" content="dynamic workflow 的原理、6 种可复用模式、九类落地场景与构建技巧。220K 阅读新特性首发解读。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/article-dw.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Claude Code 动态工作流：每个任务都可以有自己的 Harness【译】",
+    "description": "dynamic workflow 的原理、6 种可复用编排模式、九类落地场景与构建技巧。译自 Anthropic 员工 Thariq 的长文。",
+    "image": "https://minlibuilds.com/assets/article-dw.jpg",
+    "datePublished": "2026-06-03T15:07:00+08:00",
+    "dateModified": "2026-06-03T15:07:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/claude-code-dynamic-workflow/" },
+    "author": { "@type": "Person", "name": "Thariq", "sameAs": ["https://x.com/trq212"] },
+    "translator": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/claude-code-dynamic-workflow</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 译文 + 导读</span>
+        <h1 class="post-title">Claude Code 动态工作流：每个任务都可以有自己的 Harness【译】</h1>
+        <div class="post-meta">
+          <time datetime="2026-06-03">2026-06-03</time>
+          <span>·</span>
+          <span>约 8 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 上 220K 阅读 · 724 书签 · 新特性首发</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Claude Code</span>
+          <span class="tag">Workflow</span>
+          <span class="tag">Multi-Agent</span>
+          <span class="tag">译文</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/article-dw.jpg" alt="文章头图：A harness for every task — Dynamic workflows in Claude Code" width="1200" height="480" />
+
+      <div class="post-body">
+        <p>Claude Code 现在能即时写出属于它自己的 harness，为手头的任务量身定制。这套能力就叫 dynamic workflow：它会动态地编写编排脚本，在单个会话里运行数十到数百个并行的 subagents，并在任何结果送到你面前之前先自行检查一遍。</p>
+        <p>默认的 Claude Code harness 用来写代码很好，但研究、安全分析、agent teams、代码审查这类更专门的任务，过去需要在 Claude Code 之上搭一套定制 harness 才能达到最佳表现。</p>
+        <p>workflow 让你可以动态地创建这些定制 harness，它们可复用、可分享，能让 Claude 以比默认方式更原生的姿态去解决问题。</p>
+        <p>这篇文章我会分享自己使用 workflow 的初步体验和一些心得。要提醒的是，workflow 会消耗更多 token，更适合复杂、高价值的任务。</p>
+
+        <blockquote>
+          <p><strong>0. 导读（导读章节为实践哥批注）</strong></p>
+          <p><strong>好文值得读，workflow 可能是自 skill 发明以来最好的发明。是 goal 的加强版，非常值得学习的一篇文章，深入浅出描写了 workflow 的各种适用场景。</strong></p>
+          <p>原文作者 Thariq（<a href="https://x.com/trq212" target="_blank" rel="noopener">@trq212</a>）是 Anthropic 核心员工，经常分享 Claude Code 技巧。</p>
+          <p>内容偏长，可以按兴趣跳读。想直观感受它能干什么，看第 1 节；<strong>想弄清为什么需要它，看第 3 到第 5 节</strong>；想直接照抄落地方案，跳到第 6 节。</p>
+          <p>1. 示例提示词：8 个例子，先直观感受 workflow 能做什么<br />
+             2. workflow 的原理，本质是一段脚本<br />
+             3. 为什么需要 workflow<br />
+             4. dynamic workflows 与 static workflows<br />
+             5. 使用 workflow 时的实用模式：6 种可复用套路<br />
+             6. 应用场景：迁移、研究、排序、排查、分类等九类落地场景<br />
+             7. 何时不该使用 workflow：很费 token，常规编码不必硬上<br />
+             8. 构建 workflow 的技巧：提示词、配合 /goal 和 /loop、token 预算、保存与分享</p>
+          <p>原文如下：</p>
+        </blockquote>
+
+        <h2>1. 示例提示词</h2>
+        <p>下面这些例子展示了 workflow 能做什么。你可以直接向 Claude 提出类似的请求：</p>
+        <ul>
+          <li>让多个相互竞争的理论各自尝试，复现时好时坏的 flaky tests。</li>
+          <li>从过往会话中挖掘反复出现的纠正。</li>
+          <li>在 Slack 的事故频道里定位问题根因。</li>
+          <li>为一份商业计划获取多个视角的批评意见。</li>
+          <li>对简历进行排名，并加以验证。</li>
+          <li>用锦标赛式的筛选，为一个 CLI 工具命名。</li>
+          <li>对整个代码库执行重构。</li>
+          <li>对照实际代码，核实博客草稿里的技术论断。</li>
+        </ul>
+
+        <h2>2. workflow 的运作方式</h2>
+        <p>workflow 会执行 JavaScript 文件，文件里包含用于生成和协调 subagents 的特殊函数。JSON、Math、Array 这些标准 JavaScript 工具可以用来处理数据。workflow 可以选择 subagents 使用哪个模型，并决定它们是否在隔离的 worktree 里运行。如果运行被中断，恢复后 workflow 可以从中断处继续。</p>
+        <img src="/assets/posts/dw-01.jpg" alt="workflow 脚本运行示意图" loading="lazy" width="1760" height="1216" />
+
+        <h2>3. 为什么需要 workflow</h2>
+        <p>默认的 harness 在单个 context window 内完成规划与执行。这对编码任务很有效，但碰到长时间运行、大规模并行、高度结构化或带对抗性质的任务就会出问题。具体会表现出三种失效模式：</p>
+        <ul>
+          <li><strong>智能体偷懒</strong>：面对复杂的多部分任务，Claude 会过早停止，只做完一部分就宣布任务完成，比如 50 项安全审查只处理了其中 35 项。</li>
+          <li><strong>自我偏好偏差</strong>：当被要求对照 rubric 验证或评判结果时，Claude 会偏袒自己得出的结论。</li>
+          <li><strong>目标漂移</strong>：在多轮交互中保真度逐渐流失，每一次总结都会丢掉细节，包括边缘情况的需求和各种约束。</li>
+        </ul>
+        <p>workflow 的对策，是编排一批彼此独立、各自拥有独立 context window、目标聚焦又互相隔离的 subagents。</p>
+
+        <h2>4. dynamic workflows 与 static workflows</h2>
+        <p>此前，用 Claude Agent SDK 或 claude -p 构建的 static workflows，是以通用方式协调多个 Claude Code 实例，这要求你把所有边缘情况都覆盖到。有了 Claude Opus 4.8 和 dynamic workflows，Claude 现在能写出针对具体场景量身定制的 harness。</p>
+        <img src="/assets/posts/dw-02.jpg" alt="dynamic workflow 与 static workflow 对比图" loading="lazy" width="1999" height="915" />
+
+        <h2>5. 使用 workflow 时的实用模式</h2>
+        <p>你可以直接请求一个 workflow，或在提示里用 ultracode 来确保 Claude Code 创建一个 workflow，从而触发它。常见的组合模式包括：</p>
+        <img src="/assets/posts/dw-03.jpg" alt="workflow 六种可复用编排模式图解" loading="lazy" width="1999" height="1112" />
+        <ul>
+          <li><strong>分类并执行</strong>：由一个 classifier agent 判断任务类型，据此路由到不同的 agent 或行为；也可以在任务完成时确定输出的分类。</li>
+          <li><strong>扇出并综合</strong>：把任务拆成许多更小的步骤，每个步骤跑一个 agent，再综合所有结果。当大量步骤都能从干净、互不干扰的 context window 中受益时，这一模式尤其有用。综合这一步充当一个 barrier，它会等所有扇出的 agent 完成后，再合并它们的结构化输出。</li>
+          <li><strong>对抗式验证</strong>：每生成一个 agent，就再跑一个单独的 agent，以对抗的姿态对照 rubric 或判定准则来验证它的输出。</li>
+          <li><strong>生成并筛选</strong>：先就某个主题生成多个想法，再按 rubric 或验证来筛选，去重后只留下质量最高、经过检验的那些。</li>
+          <li><strong>锦标赛</strong>：让 N 个 agent 用不同方法在同一个任务上互相竞争，而不是把工作分摊下去。由成对评判的 agent 决出胜者，直到只剩一个。</li>
+          <li><strong>循环至完成</strong>：对工作量未知的任务，持续生成 agent，直到满足停止条件为止，比如不再有新发现、日志里不再有错误，而不是采用固定的遍数。</li>
+        </ul>
+
+        <h2>6. 应用场景</h2>
+        <ul>
+          <li><strong>迁移与重构</strong>：Bun 把 Zig 重写成 Rust 时就用了 workflow。把任务拆成一串串行步骤，比如调用点、失败的测试、模块，为每一处修复在 worktree 里生成 subagents，让 agent 做对抗式审查，然后再合并。要避开资源密集的命令，好让并行度最大化。</li>
+          <li><strong>深度研究</strong>：Claude Code 的 /deep-research 技能就用了 workflow，它扇出网络搜索、抓取来源、对抗式地验证论断，再综合出一份带引用的报告。这个套路同样适用于非网络类的研究，比如汇编 Slack 上的状态报告，或者探索一个代码库的功能。</li>
+          <li><strong>深度验证</strong>：对那种每条事实都要标注出处的报告，可以生成这样的 workflow：一个 agent 负责识别出各项论断，subagents 逐一详细核查，再由 verifier agent 确保来源质量。</li>
+        </ul>
+        <img src="/assets/posts/dw-04.jpg" alt="深度研究 workflow 流程示意" loading="lazy" width="1999" height="800" />
+        <ul>
+          <li><strong>排序</strong>：碰到需要定性衡量的大型条目列表，比如按缺陷严重程度给工单排序，在单个提示里给 1000 多行排名会拉低质量，还会撑爆 context。可以用锦标赛、成对比较的流水线，或者先并行分桶排名再合并；每一次比较都是它自己的一个 agent，context 里只保留当前的排序顺序。</li>
+        </ul>
+        <img src="/assets/posts/dw-05.jpg" alt="大规模排序 workflow 示意" loading="lazy" width="1999" height="708" />
+        <ul>
+          <li><strong>记忆与规则遵循</strong>：当 Claude 即便把规则写进 CLAUDE.md 仍会漏掉某些规则时，可以创建带 rule verifier 的 workflow，一条规则配一个 verifier。再让一个 skeptic 人设来审查这些规则，防止误报。也可以反过来做：从近期会话和代码审查评论里挖掘反复出现的纠正，用并行 agent 聚类，对每个候选规则做对抗式验证——问一句「这条规则真能避免实际发生过的错误吗」，再把幸存下来的规则提炼回 CLAUDE.md。</li>
+        </ul>
+        <img src="/assets/posts/dw-06.jpg" alt="规则挖掘与验证 workflow 示意" loading="lazy" width="1999" height="786" />
+        <ul>
+          <li><strong>大规模分类处理</strong>：triage workflow 会对条目分类、跟现有跟踪记录去重，然后采取行动。一个有用的模式是 quarantine：读取不受信任公开内容的 agent，被禁止执行高权限操作，这些操作改由负责信息处理的 agent 来做。配合 /loop 就能持续运行。</li>
+        </ul>
+        <img src="/assets/posts/dw-07.jpg" alt="triage 分类处理 workflow 示意" loading="lazy" width="1999" height="730" />
+        <ul>
+          <li><strong>探索与品味</strong>：在探索不同解法时很有用，尤其是设计或命名这种依赖品味的决策，它们能从 rubric 中受益。可以让 Claude 去探索解法，同时让一个 review agent 依据一套关于好方案的 rubric 来评判，满足审查标准时即告完成。方案可以排序，也可以基于 rubric 用锦标赛选出。</li>
+          <li><strong>评估</strong>：可以这样跑轻量级 eval：在 worktree 里生成若干独立 agent，再生成 comparison agent，对照 rubric 给各项输出做比较和打分。比如对照特定标准来评估并改进已经做好的技能。</li>
+          <li><strong>模型与智能路由</strong>：创建一个针对任务调校过的 classifier agent，由它决定用哪个模型。当任务涉及大量工具调用时这很有用，已有研究能指出哪个模型最合适。举例来说，解释一个鉴权模块怎么工作，取决于文件数量和代码库的形态；一个 classifier 会先做这项调研，再根据预期复杂度路由到 Sonnet 或 Opus。</li>
+        </ul>
+
+        <h2>7. 何时不该使用 workflow</h2>
+        <p>workflow 是新东西，并不是每个任务都需要它，它可能消耗多得多的 token。要有创造性地用它，把 Claude Code 推到常规用法之外。而对常规编码任务，先掂量一下是否真的需要额外算力；大多数传统编码并不需要五个 reviewer。</p>
+
+        <h2>8. 构建 workflow 的技巧</h2>
+        <ul>
+          <li><strong>提示词</strong>：运用上面讲的那些具体技巧、把提示写详细，效果最好。workflow 不只用于大型任务，你也可以提示一个快速 workflow，比如对某个假设做一次快速的对抗式审查。</li>
+          <li><strong>结合 /goal 和 /loop</strong>：对可重复的 workflow，比如分类、研究、验证，用 /loop 按固定间隔运行，用 /goal 设一个硬性的完成要求。</li>
+          <li><strong>token 用量预算</strong>：设一个明确的 token 预算来限制任务用量。在提示里写明上限，例如让它只用 10k token。</li>
+          <li><strong>保存与分享 workflow</strong>：在 workflow 菜单里按 s 就能保存。把它们签入 ~/.claude/workflows，或者通过技能来分发。把 JavaScript workflow 文件放进技能文件夹，并在 SKILL.md 里引用。想更灵活的话，可以提示 Claude 把技能里的 workflow 当成模板，而不是逐字照搬的脚本。</li>
+        </ul>
+        <img src="/assets/posts/dw-08.jpg" alt="workflow 保存与分享操作截图" loading="lazy" width="1278" height="350" />
+        <img src="/assets/posts/dw-09.jpg" alt="workflow 技巧补充截图" loading="lazy" width="1999" height="1016" />
+
+        <h2>9. 探索的新起点</h2>
+        <p>workflow 为扩展 Claude Code 提供了一种好用的新方式。把它看作一个起点，去探索用 Claude 完成任务的新方法。关于怎么把它用到最好，还有许多有待发掘。也欢迎你把自己的发现分享出来。</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2062068646902689895" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · 220K 阅读 · 724 书签 · 新特性首发</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/auto-subtitle-skill/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">1 个 Skill 自动添加字幕，ByeBye 剪映会员</span>
+        </a>
+        <a href="/posts/fork-context-skill/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">一个 Skill 成为 TOP 1% Context 管理大师：比官方好用 100x 的 /fork</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anthropic 工程师的 Agent Memory Workshop 实操笔记 · 实践哥 MinLi</title>
+  <meta name="description" content="Anthropic的工程师Kevin的一个分享。 价值$1000 刀，关于agent memory的workshop。 这将是 AI memory的主流，提前一年了解它，成为记忆专家。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/agent-memory-workshop/" />
+  <meta property="og:title" content="Anthropic 工程师的 Agent Memory Workshop 实操笔记" />
+  <meta property="og:description" content="Anthropic的工程师Kevin的一个分享。 价值$1000 刀，关于agent memory的workshop。 这将是 AI memory的主流，提前一年了解它，成为记忆专家。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/agent-memory-workshop/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/agent-memory-workshop-cover.jpg" />
+  <meta property="article:published_time" content="2026-05-24T22:50:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="Anthropic 工程师的 Agent Memory Workshop 实操笔记" />
+  <meta name="twitter:description" content="Anthropic的工程师Kevin的一个分享。 价值$1000 刀，关于agent memory的workshop。 这将是 AI memory的主流，提前一年了解它，成为记忆专家。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/agent-memory-workshop-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Anthropic 工程师的 Agent Memory Workshop 实操笔记",
+    "description": "Anthropic的工程师Kevin的一个分享。 价值$1000 刀，关于agent memory的workshop。 这将是 AI memory的主流，提前一年了解它，成为记忆专家。",
+    "image": "https://minlibuilds.com/assets/posts/agent-memory-workshop-cover.jpg",
+    "datePublished": "2026-05-24T22:50:00+08:00",
+    "dateModified": "2026-05-24T22:50:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/agent-memory-workshop/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/agent-memory-workshop</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战帖</span>
+        <h1 class="post-title">Anthropic 工程师的 Agent Memory Workshop 实操笔记</h1>
+        <div class="post-meta">
+          <time datetime="2026-05-24">2026-05-24</time>
+          <span>·</span>
+          <span>约 3 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 105K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Agent Memory</span>
+          <span class="tag">Anthropic</span>
+          <span class="tag">笔记</span>
+          <span class="tag">实战帖</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/agent-memory-workshop-cover.jpg" alt="文章头图：Anthropic 工程师的 Agent Memory Workshop 实操笔记" width="1200" height="675" />
+
+      <div class="post-body">
+        <p>Anthropic的工程师Kevin的一个分享。 价值$1000 刀，关于agent memory的workshop。 这将是 AI memory的主流，提前一年了解它，成为记忆专家。</p>
+        <p>非常值得看的一个短视频，以下是视频中的实操：</p>
+        <p>03:31 证明 AI 多个对话间没记忆（对照实验）<br />
+           06:20 介绍 memory store，可以作为 AI 的记忆外挂<br />
+           08:44 将 Memory Store 挂载给会话，实现跨对话记忆<br />
+           15:36 执行 Dream，让 AI 在后台整理记忆并扩写简陋笔记<br />
+           19:45 展示 dream，记忆变成了结构化</p>
+        <p>看完这个视频，接着阅读下面的这篇文章。 你将充分了解与 AI agent 一问一答背后，记忆的原理，以及最强省 token 的心法。</p>
+        <img src="/assets/posts/agent-memory-workshop-01.jpg" alt="文章配图" loading="lazy" width="1200" height="675" />
+        <p><a href="https://x.com/i/article/2040820071183138816" target="_blank" rel="noopener">https://x.com/i/article/2040820071183138816</a></p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2058561294861791620" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 105K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/phone-remote-coding-uu/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流</span>
+        </a>
+        <a href="/posts/auto-subtitle-skill/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">1 个 Skill 自动添加字幕，ByeBye 剪映会员</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>
