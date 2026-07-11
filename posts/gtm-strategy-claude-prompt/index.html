@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略 · 实践哥 MinLi</title>
+  <meta name="description" content="人类能达到的满级 prompt 能力，值得学习。经常听说降维打击，这次来看看怎么用 Claude 做升维打击的，从浓缩数据里挖出隐藏的关键细节信息。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/gtm-strategy-claude-prompt/" />
+  <meta property="og:title" content="Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略" />
+  <meta property="og:description" content="人类能达到的满级 prompt 能力，值得学习。经常听说降维打击，这次来看看怎么用 Claude 做升维打击的，从浓缩数据里挖出隐藏的关键细节信息。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/gtm-strategy-claude-prompt/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/gtm-strategy-claude-prompt-cover.jpg" />
+  <meta property="article:published_time" content="2026-03-09T22:10:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略" />
+  <meta name="twitter:description" content="人类能达到的满级 prompt 能力，值得学习。经常听说降维打击，这次来看看怎么用 Claude 做升维打击的，从浓缩数据里挖出隐藏的关键细节信息。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/gtm-strategy-claude-prompt-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略",
+    "description": "人类能达到的满级 prompt 能力，值得学习。经常听说降维打击，这次来看看怎么用 Claude 做升维打击的，从浓缩数据里挖出隐藏的关键细节信息。",
+    "image": "https://minlibuilds.com/assets/posts/gtm-strategy-claude-prompt-cover.jpg",
+    "datePublished": "2026-03-09T22:10:00+08:00",
+    "dateModified": "2026-03-09T22:10:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/gtm-strategy-claude-prompt/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/gtm-strategy-claude-prompt</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战帖</span>
+        <h1 class="post-title">Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略</h1>
+        <div class="post-meta">
+          <time datetime="2026-03-09">2026-03-09</time>
+          <span>·</span>
+          <span>约 3 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 134K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Prompt</span>
+          <span class="tag">GTM 战略</span>
+          <span class="tag">Claude</span>
+          <span class="tag">实战帖</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/gtm-strategy-claude-prompt-cover.jpg" alt="文章头图：Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略" width="1200" height="675" />
+
+      <div class="post-body">
+        <p>人类能达到的满级 prompt 能力，值得学习。经常听说降维打击，这次来看看怎么用 Claude 做升维打击的，从浓缩数据里挖出隐藏的关键细节信息。</p>
+        <p>​我不小心发现了一个秘密：如何将一个月的研究工作，压缩到短短 3 小时内完成。</p>
+        <p>​在一家 YC 入选公司的创始人那里，我见识了他的 Claude 配置。起初，我以为他只是手快；直到我亲眼看着他为一个从未涉足过的领域，构建出了一套完整的进入市场GTM策略。</p>
+        <p>​以下是他的完整操作：</p>
+        <p>​第一步：他并不要求 Claude 去研究市场。​他喂给 AI 的是：8 个竞争对手的落地页、3 份财报电话会议记录、12 条客户评价，以及一整条吐槽产品的 Reddit 帖子。</p>
+        <p>​然后，他只问了一个问题：​“关于这个市场，那些成功的玩家都洞察到了哪些客户永远不会明说的潜规则？”</p>
+        <p>​不是“总结一下”，也不是“分析竞争对手”。而是“未被言说的洞察”——那种通常需要创始人打两年的客户电话才能摸清的门道。​但接下来这一步，才真正颠覆了我的认知。</p>
+        <p>​他接着追问：​“现在，告诉我支持这个市场运作的 3 个核心假设。如果要推翻这些假设，分别需要满足什么条件？”</p>
+        <p>​在 15 分钟内，他摸清了整个行业的攻击面：那些盲区、脆弱的共识，以及没人讨论的切入点。 大多数创始人要花 6 个月做客户调研，才可能勉强发现其中一个。</p>
+        <p>​接着，他做了一些我从未见过的操作。​他问：​“写出 5 个顶级投资者为了否定这个商业计划会提出的‘致命问题’，然后仅根据这些文档里的证据来回答它们。”</p>
+        <p>​在接下来的 2 小时里，他对自己每一个假设进行了高压测试。每一个薄弱的回答都会触发一轮追问： ​“这个论点最硬核的版本是什么？它在什么情况下仍会失效？”</p>
+        <p>​到第 3 个小时，他拿出了一份战略方案，那感觉就像出自一个在行业里深耕了十年的老兵之手。​工具并没有变，变的是问题。​大多数人把 Claude 当作更快的谷歌。而这些创始人们，把它当成一个读过万卷书且没有虚荣心的思考伙伴。</p>
+        <p>​3 小时与 3 个月的区别，不在于信息的多少。而在于，你是否知道哪些问题才真正致命。</p>
+        <p>原帖有洗稿嫌疑，我评测下来，这个思路借鉴价值还是比较高的，以下是我对openclaw做的分析</p>
+        <p><a href="https://gemini.google.com/share/928367c97108" target="_blank" rel="noopener">https://gemini.google.com/share/928367c97108</a></p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2031009714063200646" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 134K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/nano-banana-2-article-images/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">哪怕你一行代码都不会！Nano Banana 2 一键给整篇文章配满图 Step by Step</span>
+        </a>
+        <a href="/posts/karpathy-autoresearch-skills/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

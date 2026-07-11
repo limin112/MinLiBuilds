@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>用 /schedule 云端定时触发 Claude Code 额度重置（免开机版） · 实践哥 MinLi</title>
+  <meta name="description" content="花一分钟设置，利用Claude Code 5小时重置一次的机制，让你每天9～12点，午休后14～17点，17～下班前从容不迫使用容量100%的token window。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/schedule-quota-reset/" />
+  <meta property="og:title" content="用 /schedule 云端定时触发 Claude Code 额度重置（免开机版）" />
+  <meta property="og:description" content="花一分钟设置，利用Claude Code 5小时重置一次的机制，让你每天9～12点，午休后14～17点，17～下班前从容不迫使用容量100%的token window。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/schedule-quota-reset/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/schedule-quota-reset-cover.jpg" />
+  <meta property="article:published_time" content="2026-04-09T05:30:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="用 /schedule 云端定时触发 Claude Code 额度重置（免开机版）" />
+  <meta name="twitter:description" content="花一分钟设置，利用Claude Code 5小时重置一次的机制，让你每天9～12点，午休后14～17点，17～下班前从容不迫使用容量100%的token window。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/schedule-quota-reset-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "用 /schedule 云端定时触发 Claude Code 额度重置（免开机版）",
+    "description": "花一分钟设置，利用Claude Code 5小时重置一次的机制，让你每天9～12点，午休后14～17点，17～下班前从容不迫使用容量100%的token window。",
+    "image": "https://minlibuilds.com/assets/posts/schedule-quota-reset-cover.jpg",
+    "datePublished": "2026-04-09T05:30:00+08:00",
+    "dateModified": "2026-04-09T05:30:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/schedule-quota-reset/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/schedule-quota-reset</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战帖</span>
+        <h1 class="post-title">用 /schedule 云端定时触发 Claude Code 额度重置（免开机版）</h1>
+        <div class="post-meta">
+          <time datetime="2026-04-09">2026-04-09</time>
+          <span>·</span>
+          <span>约 3 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 110K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Claude Code</span>
+          <span class="tag">额度工程</span>
+          <span class="tag">/schedule</span>
+          <span class="tag">实战帖</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/schedule-quota-reset-cover.jpg" alt="文章头图：用 /schedule 云端定时触发 Claude Code 额度重置（免开机版）" width="1716" height="820" />
+
+      <div class="post-body">
+        <p>小天才来了。</p>
+        <p>花一分钟设置，利用Claude Code 5小时重置一次的机制，让你每天9～12点，午休后14～17点，17～下班前从容不迫使用容量100%的token window。</p>
+        <p>比crontab更好的方法。我会让Claude云端执行定时任务，本地不用打开电脑。</p>
+        <p>方法1: 在Claude Code里： /schedule 每天7点5分、12点5分、17点5分用Haiku说一句 only say hello to me</p>
+        <p>方法2: 你也可以去https://claude.ai/code/scheduled/直接手动创建schedule</p>
+        <img src="/assets/posts/schedule-quota-reset-01.jpg" alt="文章配图" loading="lazy" width="1716" height="820" />
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2041991980935164315" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 110K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/llm-context-caching/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">搞懂缓存机制：从 Gemma 4 到 Claude Code 省 80% Token</span>
+        </a>
+        <a href="/posts/claude-code-tun-mode/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">Claude Code 在 TUN 模式下为何还活不过 1 个月？</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

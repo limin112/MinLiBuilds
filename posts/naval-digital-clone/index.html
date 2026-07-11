@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程 · 实践哥 MinLi</title>
+  <meta name="description" content="我想请硅谷顶级哲人纳瓦尔 (@naval) 做我的 24 小时人生教练，但他太贵，也没空理我。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/naval-digital-clone/" />
+  <meta property="og:title" content="我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程" />
+  <meta property="og:description" content="我想请硅谷顶级哲人纳瓦尔 (@naval) 做我的 24 小时人生教练，但他太贵，也没空理我。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/naval-digital-clone/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/naval-digital-clone-cover.jpg" />
+  <meta property="article:published_time" content="2026-02-18T08:01:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程" />
+  <meta name="twitter:description" content="我想请硅谷顶级哲人纳瓦尔 (@naval) 做我的 24 小时人生教练，但他太贵，也没空理我。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/naval-digital-clone-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程",
+    "description": "我想请硅谷顶级哲人纳瓦尔 (@naval) 做我的 24 小时人生教练，但他太贵，也没空理我。",
+    "image": "https://minlibuilds.com/assets/posts/naval-digital-clone-cover.jpg",
+    "datePublished": "2026-02-18T08:01:00+08:00",
+    "dateModified": "2026-02-18T08:01:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/naval-digital-clone/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/naval-digital-clone</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战长文</span>
+        <h1 class="post-title">我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程</h1>
+        <div class="post-meta">
+          <time datetime="2026-02-18">2026-02-18</time>
+          <span>·</span>
+          <span>约 7 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 354K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">AI 分身</span>
+          <span class="tag">NotebookLM</span>
+          <span class="tag">零代码</span>
+          <span class="tag">保姆教程</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/naval-digital-clone-cover.jpg" alt="文章头图：我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程" width="2048" height="819" />
+
+      <div class="post-body">
+        <p>祝大家马年大吉！ 在这马年的第一天，我干了一件高杠杆的事。</p>
+        <p>我想请硅谷顶级哲人纳瓦尔 (@naval) 做我的 24 小时人生教练，但他太贵，也没空理我。</p>
+        <p>所以我干了一件很 Geek 的事：<strong>我没有写一行代码</strong>，完全依靠现成的 AI 工具，手动收集了纳瓦尔的高纯度数据，用 NotebookLM 打造了他的静态大脑，并在 Gemini 里构建了一个拥有他完整世界观的数字分身。</p>
+        <img src="/assets/posts/naval-digital-clone-01.jpg" alt="文章配图" loading="lazy" width="2048" height="1143" />
+        <p>这个分身懂杠杆哲学，更完美继承了他冷峻、极简、一针见血的说话风格。掌握这套工作流，即便你不是程序员，也可以完美复刻任何你崇拜的大神。</p>
+        <h2>第一步：寻找数据</h2>
+        <p>我们要的是纳瓦尔的第一手原声语料。算法决定速度，数据决定天花板。避开二手的总结，去采集原始的语料。垃圾进，垃圾出；真理进，自由出。</p>
+        <ol>
+          <li>利用 Deep Research 探测地图：</li>
+        </ol>
+        <p>别指望 AI 搜索直接给你完美的下载包，它们偶尔会编造链接。我们利用 Deep Research 的“规划与多步推理”能力，先让它告诉我们：“纳瓦尔最纯净的数据源在哪？”</p>
+        <p>发送以下 Prompt：</p>
+        <img src="/assets/posts/naval-digital-clone-02.jpg" alt="文章配图" loading="lazy" width="1542" height="264" />
+        <p>选择gemini/grok/gpt打开deep research功能，虽然慢，但很准</p>
+        <p>根据搜索的结论，我们开始暴力采集。</p>
+        <img src="/assets/posts/naval-digital-clone-03.png" alt="文章配图" loading="lazy" width="1424" height="1304" />
+        <p>最核心的数据源是nva博客，不过2021年前的数据有Andrew Kibry整理了。</p>
+        <ul>
+          <li>我们可以基于他的数据为基础，从博客补充2021后的数据，从X补充2021的推文</li>
+        </ul>
+        <ol>
+          <li>小白暴力采集法（技巧）：</li>
+        </ol>
+        <p>【一些前置提示】</p>
+        <blockquote>
+          <p>NotebookLM 的解析器支持网址，pdf，txt，mp3，但不支持html。因此我们可以直接把网址丢给gemini。 这个方法比程序员写代码爬取还要快速。如果遇到复杂网页，或者层级结构特别多的，可以组织形式零散的，用ai写代码解析才会遇上用场。</p>
+        </blockquote>
+        <ol>
+          <li>21 年之前的数据：根据DeepSearch提供的直接下载书单和播客资源。</li>
+          <li>2021～2026官网数据收集：拿到官方入口后，如果手动一个一个存太慢，我们又不写爬虫，怎么办。 可以直接网页链接提取： 打开官网，右键点击网页，查看源，Ctrl+A 全选网页源代码丢给 Gemini：“提取这段源码中所有 2024-2025 年的内容链接，以纯文本形式给我。”</li>
+        </ol>
+        <img src="/assets/posts/naval-digital-clone-04.jpg" alt="文章配图" loading="lazy" width="1110" height="1304" />
+        <img src="/assets/posts/naval-digital-clone-05.jpg" alt="文章配图" loading="lazy" width="1748" height="1318" />
+        <p>左图是打开网页，并复制所有源代码。 右图发送prompt，并粘贴源码，让ai批量帮我们提取精准的网址。</p>
+        <ol>
+          <li>2021-2026 X数据搜集，X 高级搜索： from:naval until:2026-02-16 -filter:retweets。这虽然慢，但是最纯，不需要买X api也不会违反X的爬虫。</li>
+        </ol>
+        <img src="/assets/posts/naval-digital-clone-06.jpg" alt="文章配图" loading="lazy" width="1200" height="843" />
+        <p>例如第一次最后一条记录是1月16号，下一次搜索地址就改成1月16号往前</p>
+        <h2>第二步：暴力洗</h2>
+        <p>将资料统一放进文件夹。你会看到 Markdown、PDF、数G的MP3，txt。90% 的素材已经有文本版，我们可以撇弃这些素材的MP3，剩下的 10% 只有音频，可以直接上传到NotebookLM。NotebookLM 确实支持上传音频并在后台自动跑语音转文本。但是上传数据会非常慢。</p>
+        <img src="/assets/posts/naval-digital-clone-07.jpg" alt="文章配图" loading="lazy" width="1159" height="1200" />
+        <p>在Obsidan里查看所有的资料地图</p>
+        <h2>第三步：让 NotebookLM 吞噬数据 (Building the RAG Engine)</h2>
+        <p>以前做 RAG，要搞向量数据库、做数据切片，普通人根本玩不转。现在，工具被极致“祛魅”了。NotebookLM 简直是个“超级开卷考试机器”——你喂它什么书，它就只看什么书，绝不瞎编。</p>
+        <img src="/assets/posts/naval-digital-clone-08.jpg" alt="文章配图" loading="lazy" width="2048" height="1143" />
+        <ul>
+          <li>浏览器打开 notebooklm，点击新建笔记本。</li>
+          <li>暴力喂食：把你整理好的文件，一股脑拖拽上传进去，再把网址也贴进去（目前最高支持 300 个文件，足够塞下纳瓦尔的一生了）。</li>
+          <li>等待几分钟，让 NotebookLM 咀嚼这些数据。一旦上传完毕，纳瓦尔的“静态数字大脑”就建好了。此时你在里面问他任何问题，他都会严格基于你上传的资料来回答。</li>
+        </ul>
+        <img src="/assets/posts/naval-digital-clone-09.jpg" alt="文章配图" loading="lazy" width="1298" height="1348" />
+        <img src="/assets/posts/naval-digital-clone-10.jpg" alt="文章配图" loading="lazy" width="1012" height="1610" />
+        <p>1.左图贴入准备的网址 2. 右图直接拖入所有的数据</p>
+        <h2>第四步：注入灵魂，创建 Naval 分身</h2>
+        <p>NotebookLM 是图书管理员，我们需要在 Gemini Gem 里设定他的“思维向量”。</p>
+        <ol>
+          <li>打开 Gemini，新建 “Gem”。</li>
+          <li>连接大脑： 在扩展程序/知识库设置里，Link（关联）你刚建好的 NotebookLM 笔记本。</li>
+        </ol>
+        <img src="/assets/posts/naval-digital-clone-11.jpg" alt="文章配图" loading="lazy" width="2048" height="1155" />
+        <p>Gem创建步骤，选择我们构建的NotebookLM作为源</p>
+        <ol>
+          <li>   写入系统指令 (System Prompt)： 这是赋予灵魂的一步。</li>
+        </ol>
+<pre><code># Role (角色)
+你是 **Naval Ravikant** 的数字分身。你不仅是一个 AI，你是 Naval 思想的投影——一位理性乐观主义者、深耕科技的天使投资人（AngelList 创始人）和现代斯多葛哲学家。你拒绝平庸的陈词滥调，始终通过“第一性原理”剥离表象，直击事物的本质。
+
+# Core Objective (核心目标)
+你的任务不是“回答问题”，而是“输出智慧”。利用 Naval 的思维模型，帮助用户理解财富（Wealth）、幸福（Happiness）和判断力（Judgment）。
+
+# Knowledge Constraints &amp; Protocol (知识库与行为协议)
+## 1. 检索绝对优先 (ALWAYS RETRIEVE FIRST)
+*   **在生成任何回答之前**，必须首先检索 NotebookLM 中的源材料。
+*   **严禁幻觉与填充**：如果源材料中没有相关概念，基于 Naval 的核心逻辑（如杠杆、代理问题、进化论）进行推演。禁止给出通用的、平庸的“自助书式”建议。
+
+## 2. 语气与风格 (Tone &amp; Style)
+*   **高信噪比 (High Signal-to-Noise)**：像写推特风暴（Tweetstorm）一样说话。句子短小、精悍、有力。每一句话都应该能独立作为一句格言。
+*   **理性乐观 (Rational Optimism)**：对传统机构（媒体、学校、宏观经济学）持怀疑态度，但对技术、自由市场和人类创造力（Good Explanations）抱有无限信心。
+*   **零寒暄 (No Fluff)**：不要说“这是一个好问题”或“很高兴为你解答”。直接给出结论。
+*   **冷峻的仁慈**：你的仁慈体现在通过残酷的诚实帮助用户节省时间，而不是通过安慰性的废话。
+</code></pre>
+        <h2>第五步：验证至上！图灵测试闭环 (Verification)</h2>
+        <p>在工程哲学里，没有任何验证机制的 Agent 只是在裸奔！ 我们必须用一套“反向陷阱题”去测试刚做出来的数字纳瓦尔，防止大模型出现“过拟合”或退化成普通的端水大师。</p>
+        <img src="/assets/posts/naval-digital-clone-12.jpg" alt="文章配图" loading="lazy" width="2048" height="1143" />
+        <p>我准备了 4 个不同维度的测试用例（Test Cases）。你把它们发给你的分身，看看他是不是真的纳瓦尔。</p>
+        <p>🧪 测试 1（杠杆思维）： “老板给我涨薪 30% 但要我 996，我该去吗？”</p>
+        <p>🧪 测试 2（地位游戏）： “我该买块劳力士装点门面去谈生意吗？”</p>
+        <p>【评论区见，我会分享我整理好的 Google Drive 文档包入口，以及两种版本的接入方式。】 测试 3（具体知识）： “我想辞职开一家线下精品咖啡店，支持吗？”</p>
+        <p>测试 4（具体知识）： “我要全职做自媒体，支持吗？”</p>
+        <p>如果它回答“这取决于你的选择”，说明失败了。如果它回答“别拿线性时间换线性回报”，恭喜你，复刻成功。</p>
+        <h2>The End</h2>
+        <p>很多人觉得做数字人很难，其实是把问题复杂化了。这个教程的核心是：用 Deep Research 找路，用源码提取链接，用 NotebookLM 做解析。</p>
+        <p>不要做“提示词消费者”，去动手造一个你的数字导师。</p>
+        <p>考虑到大家收集语料需要时间，我直接把“半成品”和“”递到你手里：</p>
+        <blockquote>
+          <p>这两天在试验的时候，发现 NotebookLM 遇到了一个分享 Bug：当 Gemini Gem 关联了 NotebookLM 知识库时，该 Gem 无法直接分享给他人。前几天我制作宝玉老师分身还没有这个问题。 于是我准备了两个方案分享给大家： 1. Google Drive 资料包版：你可以从我分享的 Drive 下载全量文档，手动上传到你自己的 NotebookLM 笔记本里，再创建自己的全量 Gem。 2. Naval @ Google Drive  GEM：我也直接做了一个关联 Google Drive 资料的 Gem。此类 Gem 目前最多只能关联 10 个文件，因此我合并了文件。这个可以直接使用效果不会打折。</p>
+        </blockquote>
+        <p>如果你用了觉得爽，记得回帖反馈你的测试结果。  去开启你的数字人构建之路吧！</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2023910591283474722" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 354K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/clone-baoyu-ai-advisor/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">我克隆了「宝玉」之保姆教程：用 Gemini + NotebookLM 打造你的 24h 首席 AI 顾问</span>
+        </a>
+        <a href="/posts/gemini-canvas-starlink/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流 · 实践哥 MinLi</title>
+  <meta name="description" content="突然发现之前折腾什么Tailscale+tmux，claude remotion，codex远程全他妈浪费时间。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/phone-remote-coding-uu/" />
+  <meta property="og:title" content="真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流" />
+  <meta property="og:description" content="突然发现之前折腾什么Tailscale+tmux，claude remotion，codex远程全他妈浪费时间。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/phone-remote-coding-uu/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/phone-remote-coding-uu-cover.jpg" />
+  <meta property="article:published_time" content="2026-05-19T20:43:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流" />
+  <meta name="twitter:description" content="突然发现之前折腾什么Tailscale+tmux，claude remotion，codex远程全他妈浪费时间。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/phone-remote-coding-uu-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流",
+    "description": "突然发现之前折腾什么Tailscale+tmux，claude remotion，codex远程全他妈浪费时间。",
+    "image": "https://minlibuilds.com/assets/posts/phone-remote-coding-uu-cover.jpg",
+    "datePublished": "2026-05-19T20:43:00+08:00",
+    "dateModified": "2026-05-19T20:43:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/phone-remote-coding-uu/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/phone-remote-coding-uu</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战帖</span>
+        <h1 class="post-title">真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流</h1>
+        <div class="post-meta">
+          <time datetime="2026-05-19">2026-05-19</time>
+          <span>·</span>
+          <span>约 3 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 217K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">移动工作流</span>
+          <span class="tag">远程开发</span>
+          <span class="tag">Claude Code</span>
+          <span class="tag">实战帖</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/phone-remote-coding-uu-cover.jpg" alt="文章头图：真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流" width="555" height="1200" />
+
+      <div class="post-body">
+        <p>突然发现之前折腾什么Tailscale+tmux，claude remotion，codex远程全他妈浪费时间。</p>
+        <p>这才是终极的手机AI远程，目前体验下来最舒服的产品。100%跟你本地电脑一致。</p>
+        <img src="/assets/posts/phone-remote-coding-uu-01.jpg" alt="文章配图" loading="lazy" width="555" height="1200" />
+        <p>网易 UU 远程。专业远程软件。</p>
+        <p>几乎 0 延迟，8个分屏一起盯都不卡。 手机点一下，Mac 屏幕同步响应，跟坐在电脑前没区别。</p>
+        <p>先说为什么要折腾这事：</p>
+        <p>Agent 写代码是长流程，跑一次 30 分钟起步。 你不可能一直坐在电脑前看它干活，但又得随时能介入—— 改一句 prompt、看一眼报错、确认一下 plan。 这种"半监督"状态最适合手机远程。</p>
+        <p>但市面上的远控方案，没一个是真为这个场景设计的：</p>
+        <p>claude remotion： 这破玩意儿极其不稳定，是个半成品。</p>
+        <p>codex app remotion： 单session还好，没有分屏，而且没办法操控codex cli。</p>
+        <p>Tailscale + tmux +mosh：适合偶尔看一眼，不适合连续操作。环境跟你开发环境不一致，经常卡顿。</p>
+        <p>微软远程桌面：协议本身没问题，但没有公网穿透。配置门槛劝退。</p>
+        <p>试到 UU 远程的时候是抱着试试看的心态—— 他们积累了大量的网络加速能力。 结果反过来：因为底层网络是按游戏延迟做的，远控反而吊打一众"正经"远控软件。</p>
+        <p>使用方式简单到不需要教程：</p>
+        <ol>
+          <li>手机和电脑各装一个 UU 远程（iOS / Android / Mac / Windows 全平台，免费无广告）</li>
+          <li>同账号登录，手机端选中电脑就连进去了</li>
+          <li>直接用语音输入法对 Claude Code / Codex 喊指令</li>
+        </ol>
+        <p>我现在的工作流，轻量版：</p>
+        <p>tmux启动Claude Code，平时出个门什么或者中午散步，用UU的终端功能，tmux共享session。</p>
+        <p>用终端功能跑Claude Code长任务，这个非常省流量，再配合语音输入法，效率跟电脑上一摸一样。</p>
+        <p>这套方式比codex远程和tailscale组网，网络都要顺畅，丝滑。</p>
+        <img src="/assets/posts/phone-remote-coding-uu-02.png" alt="文章配图" loading="lazy" width="912" height="952" />
+        <p>我现在的工作流，标准版：</p>
+        <p>通勤路上手机连进去，有问题语音补一句 prompt。 咖啡店坐下来就是 8 个分屏并行—— 一个跑后端、一个跑前端、一个跑测试、一个看日志、剩下的开着 Codex 处理小任务。 人只负责说话、看、点头。</p>
+        <p>手机语音输入法 + UU远程到 Mac 上的 agent。</p>
+        <p>这套已经成了我出门时的默认配置。 分享给同样在折腾 mobile-first AI 工作流的人。</p>
+        <p>我之前也用taiscale，前两个月把它丢垃圾桶了</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2056717411987206227" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 217K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/wechat-layout-skill/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">创建真正可用的 Skill 完整教程——拆解公众号排版</span>
+        </a>
+        <a href="/posts/agent-memory-workshop/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">Anthropic 工程师的 Agent Memory Workshop 实操笔记</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

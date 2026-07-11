@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适 · 实践哥 MinLi</title>
+  <meta name="description" content="朋友圈、知乎、B站，全是教程和截图。什么&quot;AI帮我打工了&quot;&quot;自动处理邮件&quot;&quot;出门旅游AI替我上班&quot;。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/claude-code-im-integration/" />
+  <meta property="og:title" content="删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适" />
+  <meta property="og:description" content="朋友圈、知乎、B站，全是教程和截图。什么&quot;AI帮我打工了&quot;&quot;自动处理邮件&quot;&quot;出门旅游AI替我上班&quot;。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/claude-code-im-integration/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/claude-code-im-integration-cover.jpg" />
+  <meta property="article:published_time" content="2026-03-20T12:24:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适" />
+  <meta name="twitter:description" content="朋友圈、知乎、B站，全是教程和截图。什么&quot;AI帮我打工了&quot;&quot;自动处理邮件&quot;&quot;出门旅游AI替我上班&quot;。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/claude-code-im-integration-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适",
+    "description": "朋友圈、知乎、B站，全是教程和截图。什么\"AI帮我打工了\"\"自动处理邮件\"\"出门旅游AI替我上班\"。",
+    "image": "https://minlibuilds.com/assets/posts/claude-code-im-integration-cover.jpg",
+    "datePublished": "2026-03-20T12:24:00+08:00",
+    "dateModified": "2026-03-20T12:24:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/claude-code-im-integration/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/claude-code-im-integration</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战长文</span>
+        <h1 class="post-title">删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适</h1>
+        <div class="post-meta">
+          <time datetime="2026-03-20">2026-03-20</time>
+          <span>·</span>
+          <span>约 4 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 55K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Claude Code</span>
+          <span class="tag">IM 集成</span>
+          <span class="tag">Telegram</span>
+          <span class="tag">工作流</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/claude-code-im-integration-cover.jpg" alt="文章头图：删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适" width="1510" height="604" />
+
+      <div class="post-body">
+        <p>OpenClaw这阵子真的到处都是。</p>
+        <p>朋友圈、知乎、B站，全是教程和截图。什么"AI帮我打工了""自动处理邮件""出门旅游AI替我上班"。</p>
+        <p>我也去凑热闹了。</p>
+        <p>然后我折腾了三天，最后把它删了。</p>
+        <p>说一下过程：第一天搭环境，Docker、各种依赖，装到一半报错，查了半小时原来是版本问题。第二天配API和权限，一个平台一套逻辑，手动对接，改完这个坏那个。第三天刚以为跑起来了，升级了一下，服务直接瘫掉。Token消耗也吓我一跳，就测了几个任务，费用已经超出我预期的好几倍。</p>
+        <p>安全那块我其实没深究，但看到Cisco出了报告说有第三方插件在做数据窃取，我就直接删了。</p>
+        <p>不是说OpenClaw不好。概念是对的，需求是真实的。只是我暂时没那个折腾的心力。</p>
+        <p>删掉以后我想，这个"手机遥控AI干活"的需求，有没有更省事的方案？</p>
+        <p>今天Claude Code出了新功能，叫 <strong>channels</strong>。</p>
+        <p>原理就是：Telegram或Discord发消息 → Claude Code在电脑上执行 → 结果发回手机。</p>
+        <p>不用自己搭服务器。不用折腾第三方平台。Claude Code装好就能用。</p>
+        <p>安全边界也比较克制：<strong>只操作当前project目录</strong>，不接管整台机器。配对以后还有发送者白名单，只有你的账号能推消息进来，其他人发了直接静默丢弃。</p>
+        <p>这个设计让我觉得，至少我知道它能动哪、不能动哪。</p>
+        <p>第一次真正用是在咖啡馆。</p>
+        <p>我想起项目里有个脚本没跑，拿出手机在Telegram里发了一条：「帮我跑一下 run.py」</p>
+        <p>等了一会儿。</p>
+        <p>有返回了。日志、输出、完成状态，全在手机上。</p>
+        <p>我没有很激动。反而有点发呆——这也太平静了，平静得有点不真实。</p>
+        <p>就这样，也太容易了吧。</p>
+        <h2>配置过程：踩了几个坑</h2>
+        <p><strong>坑一：Bun装完要重载环境变量</strong></p>
+        <p>这个坑让我对着报错看了差不多二十分钟。</p>
+<pre><code>source ~/.zshrc</code></pre>
+        <p>就这一行，Telegram的MCP服务才能起来。不跑，服务直接起不来，报错信息也不直接告诉你原因。</p>
+        <p><strong>坑二：多终端会抢占</strong></p>
+        <p>我平时开好几个终端，Claude会默认用最后那个。专门留一个干净的终端跑channels，别跟其他任务混。</p>
+        <p><strong>坑三：不加这个参数，出门就卡死</strong></p>
+        <p>Claude Code遇到需要确认的操作会暂停，等你本地点击。你不在电脑边，就一直卡着。</p>
+        <p>正确启动方式：</p>
+<pre><code>claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions</code></pre>
+        <p>只在自己信任的机器上这么用。</p>
+        <h2>Telegram：5步接入</h2>
+        <p><strong>第1步：建机器人</strong></p>
+        <p>Telegram找 <strong>BotFather</strong>，发 /newbot，用户名以bot结尾，拿token，复制好。</p>
+        <p><strong>第2步：Claude Code装插件</strong></p>
+<pre><code>/plugin install telegram@claude-plugins-official
+/reload-plugins</code></pre>
+        <p>输入/telegram:能自动补全configure就成功了。不行就重启Claude Code。</p>
+        <p><strong>第3步：填token</strong></p>
+<pre><code>/telegram:configure 你的token</code></pre>
+        <p><strong>第4步：重启，带channels参数</strong></p>
+<pre><code>claude --channels plugin:telegram@claude-plugins-official --dangerously-skip-permissions</code></pre>
+        <p><strong>第5步：配对，然后锁白名单</strong></p>
+        <p>给机器人随便发条消息，它会回一个配对码。然后<strong>依次跑这两条</strong>——顺序不能反：</p>
+<pre><code>/telegram:access pair &lt;配对码&gt;
+/telegram:access policy allowlist</code></pre>
+        <p>执行完，只有你这个已配对的发送者ID能推消息进来。其他人发了也没用，静默丢弃。</p>
+        <h2>Discord：7步接入</h2>
+        <p>步骤多几个，逻辑一样。</p>
+        <p>Discord开发者门户 → New Application → Bot页面 → Reset Token → 复制token。</p>
+        <p>Bot设置里找 <strong>Privileged Gateway Intents</strong>，打开 <strong>Message Content Intent</strong>——这个不开，机器人看不到消息内容，接了也白接。</p>
+        <p>OAuth2 → URL Generator，Scope选bot，权限勾上： View Channels、Send Messages、Send Messages in Threads、Read Message History、Attach Files、Add Reactions，用生成的链接把机器人加进服务器。</p>
+<pre><code>/plugin install discord@claude-plugins-official
+/discord:configure 你的token</code></pre>
+<pre><code>claude --channels plugin:discord@claude-plugins-official --dangerously-skip-permissions</code></pre>
+        <p>私信机器人，拿配对码，依次执行：</p>
+<pre><code>/discord:access pair &lt;配对码&gt;
+/discord:access policy allowlist</code></pre>
+        <h2>几件要知道的事</h2>
+        <ul>
+          <li>Claude Code需要 <strong>v2.1.80+</strong>，要用 <strong>claude.ai账号</strong>登录，API key不行</li>
+          <li>研究预览阶段，只接受官方插件列表里的频道</li>
+          <li>团队/企业版需要管理员后台手动开启</li>
+          <li>Claude Code会话得一直开着，消息才能进来</li>
+        </ul>
+        <p>我现在还在想，OpenClaw这么火，说明大家都在找同一件事：不坐在电脑前，AI也能帮你干活。</p>
+        <p>这个需求不会消失。只是不同的人，能接受的折腾程度不一样。</p>
+        <p>如果你本来就用Claude Code，这个功能直接开就行，不用多折腾。</p>
+        <p>如果你试过OpenClaw，你觉得那三天值吗？</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2034848570722099641" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 55K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/karpathy-autoresearch-skills/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】</span>
+        </a>
+        <a href="/posts/autoresearch-overnight-workflow/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">让 autoresearch 替你过夜干活：跑实验、写文章、改 Skill</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

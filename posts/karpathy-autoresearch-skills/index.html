@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】 · 实践哥 MinLi</title>
+  <meta name="description" content="Karpathy 的 autoresearch 方法拆解：让 Claude 先自我研究、生成评测基准，再迭代你的 Skill，把已经能用的 Skills 效果再提升 10 倍。505K 阅读爆款译文，附实践哥导读。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/karpathy-autoresearch-skills/" />
+  <meta property="og:title" content="你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】" />
+  <meta property="og:description" content="Karpathy 的 autoresearch 方法拆解：让 Claude 先自我研究、生成评测基准，再迭代你的 Skill，把已经能用的 Skills 效果再提升 10 倍。505K 阅读爆款译文，附实践哥导读。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/karpathy-autoresearch-skills/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/karpathy-autoresearch-skills-cover.jpg" />
+  <meta property="article:published_time" content="2026-03-19T15:31:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】" />
+  <meta name="twitter:description" content="Karpathy 的 autoresearch 方法拆解：让 Claude 先自我研究、生成评测基准，再迭代你的 Skill，把已经能用的 Skills 效果再提升 10 倍。505K 阅读爆款译文，附实践哥导读。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/karpathy-autoresearch-skills-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】",
+    "description": "Karpathy 的 autoresearch 方法拆解：让 Claude 先自我研究、生成评测基准，再迭代你的 Skill，把已经能用的 Skills 效果再提升 10 倍。",
+    "image": "https://minlibuilds.com/assets/posts/karpathy-autoresearch-skills-cover.jpg",
+    "datePublished": "2026-03-19T15:31:00+08:00",
+    "dateModified": "2026-03-19T15:31:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/karpathy-autoresearch-skills/" },
+    "author": { "@type": "Person", "name": "Ole Lehmann", "sameAs": ["https://x.com/itsolelehmann"] },
+    "translator": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/karpathy-autoresearch-skills</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 译文 + 导读</span>
+        <h1 class="post-title">你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】</h1>
+        <div class="post-meta">
+          <time datetime="2026-03-19">2026-03-19</time>
+          <span>·</span>
+          <span>约 8 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 505K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Claude Skills</span>
+          <span class="tag">Karpathy</span>
+          <span class="tag">autoresearch</span>
+          <span class="tag">译文</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/karpathy-autoresearch-skills-cover.jpg" alt="文章头图：你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】" width="1408" height="563" />
+
+      <div class="post-body">
+        <p>作者：Ole Lehmann</p>
+        <p>原文链接：<a href="https://x.com/itsolelehmann/status/2033919415771713715?s=20" target="_blank" rel="noopener">How to 10x your Claude Skills (using Karpathy's autoresearch method) </a></p>
+        <blockquote>
+          <p>本文作者Ole Lehmann （@itsolelehmann）是一位在 AI 领域极具影响力的内容创作者和教育者，特别是在将 AI 应用于商业自动化和个人生产力方面。如果你对工作流自动化、AI Agent 的商业落地或者提升个人杠杆率感兴趣，他是目前 X 上最值得跟踪的头部博主之一。他的风格非常务实，很少谈论虚无缥缈的理论，更多是“手把手”教你如何配置一个能够帮你赚钱或省时间的 AI 工具。</p>
+        </blockquote>
+        <blockquote>
+          <p>这篇文章的价值在于：你能将任何skill，任何工作流，任何研究事项，只要他是可度量可量化的，都可以通过autoresearch的方法升级，持续优化，效果变成原来的十倍。原理非常简单，评估，优化，评估，优化.....无限执行。作者还提供了开源的链接，可以直接使用。你也可以用ai找Karpathy的autoresearch进行改造。</p>
+        </blockquote>
+        <p>你的 Claude skill，有30%的时间都在悄悄骗人——你的客户可能比你先发现。</p>
+        <p>三个月前，我把自己搭的落地页文案 skill 交给一个客户用，拍着胸脯说"绝对靠谱"。他们要给新产品写上线文案，我说放心，这个 skill 我自己一直在用。</p>
+        <p>结果当天晚上，客户发来截图：CTA 是"了解更多"，标题是"转变你的业务"。</p>
+        <p>我在手机上看了三秒，关掉，重新打开，还是那个截图。</p>
+        <p>那一刻我才意识到，我根本不知道这个 skill 什么时候好用、什么时候在糊弄人。</p>
+        <p>我搭了一套方法，能在 autopilot 模式下自动迭代任何 skill。这篇文章教你怎么自己跑起来。</p>
+        <p>你启动它，agent 就开始不停地测试、打磨这个 skill，不需要你做任何事。</p>
+        <p>我的落地页文案 skill，质量检查通过率从56%涨到了92%。全程零手动。</p>
+        <p>agent 自己在那反复测试、收紧 prompt。</p>
+        <p>下面是整套方法，以及我搭好的具体 skill，你可以直接拿来用：</p>
+        <p>P.S. 每周想收到更多这类 AI workflow？关注我。</p>
+        <h2>这个方法从哪里来</h2>
+        <p>Andrej Karpathy（OpenAI 联合创始人、特斯拉前 AI 负责人、"vibe coding"这个词的发明者）发布了一套叫 autoresearch 的方法。</p>
+        <img src="/assets/posts/karpathy-autoresearch-skills-01.jpg" alt="文章配图" loading="lazy" width="1114" height="506" />
+        <p>核心思路很简单：不让你手动改进，而是让 AI agent 在循环里替你干。</p>
+        <p>它试一个小改动。看结果变好了没有。变好就留下，没变好就扔掉。</p>
+        <p>然后再来一次。再来一次。</p>
+        <p>他最初是用在机器学习代码上的。但这套方法适用于任何能衡量、能改进的东西。</p>
+        <p>这让我想到一个让人有点不舒服的事实：</p>
+        <p>你每天用的那些 AI workflow，你真的知道它们"表现好"还是"只是在输出文字"吗？</p>
+        <p>大多数人分不清。因为没人教你怎么分。</p>
+        <p>你上了多少 AI 课、学了多少 prompt 技巧——但有人告诉过你，怎么验证你搭好的东西真的在工作吗？</p>
+        <p>没有。大家都在教你怎么搭，没人教你怎么测。</p>
+        <p>我也曾经分不清。</p>
+        <p>我后来想了很久，这种失效到底是怎么发生的。</p>
+        <p>最让我难受的不是那次客户截图。是在那之后——我开始数，到底有多少次我以为"还行"，但其实已经在悄悄跑偏了。</p>
+        <p>有一种失效，你完全感知不到。prompt 没明确禁止的东西，模型会慢慢漂向"安全感"——输出越来越模糊，越来越像模板，每次都过得去，但每次都差一点。等你发现，根本不知道是从第几轮开始出问题的。</p>
+        <p>还有一种，更难受：你只看得到那些"还不错"的输出——打开、用掉、关掉。那些悄悄失效的，格式跑了、关键要素漏了，你永远不知道它们有多频繁。因为你根本不会去翻。</p>
+        <p>第三种是自欺欺人。偶尔发现问题，手动改一改那次输出，告诉自己"修了"。但你改的是那一次，不是 skill 本身。下次还是会在同一个地方出错。</p>
+        <p>我以前三种都干过。</p>
+        <p>包括你在 Claude 里搭的 skill。</p>
+        <p>我把他的方法做成了一个可以在 Claude Code 和 Cowork 里跑的 skill。想用的时候，直接在其他 skill 上运行它就行。</p>
+        <p>说一句"对我的落地页 skill 跑 autoresearch"，剩下的它全搞定。</p>
+        <h2>一次循环怎么自动提升你的 skill</h2>
+        <p>这么想象。</p>
+        <p>你有一个菜谱，十次里有七次做得不错。另外三次，总有些地方不对劲。也许是酱汁淡了，也许是调味出了问题。</p>
+        <p>你不是从头重写整个菜谱，而是换一种配料。用这个改动做十次。</p>
+        <p>变好了？留下这个改动。</p>
+        <p>变差了？换回原来的。</p>
+        <p>然后改下一个。再做十次。变好还是变差？留下还是撤销。</p>
+        <p>经过50轮这样的过程，你的菜谱十次里有9.5次都能成功。</p>
+        <p>这正是 autoresearch 对你 skill 做的事。</p>
+        <p>"菜谱"是你的 skill prompt。 "做菜"是跑这个 skill。 "试味"是给输出结果打分。</p>
+        <h2>你唯一要做的，是给出评分标准</h2>
+        <p>告诉 agent"什么叫好"的 checklist，这是你在整个过程里唯一要干的事。</p>
+        <p>用一个简单的是/否问题 checklist 来定义它。</p>
+        <p>每个问题检查输出的一个具体方面。通过或失败，就这么简单。</p>
+        <p>agent 用这个 checklist 给每次输出打分，分数告诉它：这次改动是在帮忙还是在帮倒忙。</p>
+        <p>想象老师用 checklist 批卷子。</p>
+        <p>不是"给写作质量打个1-10分"（模糊，每次结果都不一样），而是每一项都清清楚楚是或否：</p>
+        <ul>
+          <li>学生有没有写论点？是或否。</li>
+          <li>每处引用都注明出处了吗？是或否。</li>
+          <li>篇幅在5页以内吗？是或否。</li>
+        </ul>
+        <p>用这份 checklist 批100份卷子，每次结果都一致。</p>
+        <p>落地页文案 skill 的 checklist 可能长这样：</p>
+        <ul>
+          <li>"标题有没有包含具体数字或可量化结果？"（不是"更好的文案"，而是"3天回收广告费"）</li>
+          <li>"开头第一句有没有点出一个具体的、有名字的痛苦场景？"（不是"很多人都有这个问题"，而是"你发了邮件但对方根本没回"）</li>
+          <li>"CTA 是否清楚告诉用户做完这一步之后会发生什么？"（不是"立即注册"，而是"注册后3分钟内收到你的分析报告"）</li>
+          <li>"全文有没有出现'颠覆性''行业领先''最优解'这类零信息量词汇？"</li>
+          <li>"第一段内，有没有提到用户拿到结果之后的具体生活变化？"</li>
+        </ul>
+        <p>这些不需要你自己想。启动 autoresearch 时，agent 会全程引导你。</p>
+        <p>它会问你什么叫好，帮你把模糊的感觉变成能打勾的问题。你有风格指南的话，直接丢给它。</p>
+        <p>3-6个问题是最佳数量。千万别贪多。我试过加到10个，skill 开始专门应付 checklist，输出反而更烂——就像学生背答案、根本没理解题目。</p>
+        <p>我现在有个自己的规则：任何 skill，没跑过 autoresearch 的，我不拿出去用。不是完美主义，是因为我踩过那个坑。我知道那种自信其实只是无知。</p>
+        <h2>怎么跑起来</h2>
+        <p><strong>第一步：下载 skill。</strong> 从这里获取，放进你在 Claude Code 或 Cowork 里的 skills 文件夹。</p>
+        <p><strong>第二步：选一个要改进的 skill。</strong> 说"对我的[skill 名称] skill 跑 autoresearch"。选最让你头疼的那个——时好时坏、输出不稳定的那个。</p>
+        <p><strong>第三步：agent 问你3件事。</strong> 要优化哪个 skill、用什么测试输入（比如"为一款 AI 生产力工具写落地页文案"），以及你的 checklist 问题是什么。</p>
+        <p><strong>第四步：它跑一遍你的 skill，给出起始分数。</strong></p>
+        <p>这是基准线。我的落地页 skill 起步56%——标题模糊、流行词泛滥、CTA 软弱。超过一半的检查项都没过。</p>
+        <p><strong>第五步：浏览器弹出实时 dashboard。</strong></p>
+        <p>分数曲线、每项 checklist 的通过/失败、每次改动日志。每10秒刷新一次。</p>
+        <p><strong>第六步：走开。</strong></p>
+        <p>agent 开始循环。找最薄弱的地方，改一点，测试，分数升就留，分数降就撤。</p>
+        <p>然后再来一次。再来一次。</p>
+        <p>一直跑，直到你叫停，或者连续三次超过95%。</p>
+        <p>你可以盯着看，也可以去喝杯咖啡。它不需要你。</p>
+        <h2>我的落地页 skill 发生了什么</h2>
+        <p>我在自己的落地页文案 skill 上跑了一遍。结果：</p>
+        <p><strong>56% → 92%。4轮改动，3个留下，1个撤销。</strong></p>
+        <p>agent 实际对我的 skill prompt 做了这些改动：</p>
+        <ul>
+          <li><strong>针对最高频失败项，加了一条明确规则：</strong>"标题必须包含具体数字或结果。禁止使用'转变你的业务'这类模糊承诺。"</li>
+          <li><strong>加了禁用流行词列表：</strong>"绝不使用：revolutionary、cutting-edge、synergy、next-level、game-changing、leverage、unlock、transform。"</li>
+          <li>加了一段高质量落地页的实际示例，并标出了痛点开场白和 CTA 所在位置，让 skill 能直接看到好的样子，而不是靠猜。</li>
+          <li>尝试了更严格的字数限制，然后撤销了，因为文案变得太单薄，CTA 也跟着变差。（系统能识别出那些单独看像改进、但实际损害整体输出的改动。）</li>
+        </ul>
+        <p>最终我拿到了：</p>
+        <ul>
+          <li>改进后的 skill，单独保存（原版完好，随时可以恢复）</li>
+          <li>每一轮分数的结果日志</li>
+          <li>完整的 changelog：每次改动是什么、agent 为什么这么改、结果如何</li>
+          <li>原始 skill 的备份</li>
+        </ul>
+        <p>那个 changelog 可能是最值钱的东西。它是这个 skill 完整的"经验总结"——什么有用，什么没用，一清二楚。</p>
+        <p>等更强的模型出来，把这份 changelog 交给它，它就能从上一个 agent 停下的地方接着干。</p>
+        <p>说实话，跑完那次 autoresearch，改变最大的不是分数。是感觉。</p>
+        <p>以前每次交付 skill，心里多少有点虚：希望这次没问题。现在不一样了——我知道它在什么情况下能工作，在什么情况下会出错，出错了怎么找到问题。</p>
+        <p>从靠运气，变成靠系统。这才是最值钱的东西。</p>
+        <h2>这套方法能用的地方远不止 skill</h2>
+        <p>任何能打分的东西，都能用这套方法。</p>
+        <p><strong>网站速度：</strong> 有人用它优化页面加载时间。改一处，测量速度，留下或撤销。67轮之后，从1100ms降到了67ms。</p>
+        <p><strong>陌生客户开发邮件：</strong> 定义你的 checklist："有没有提到对方的公司？是否在75字以内？是否以具体问题收尾？"让 agent 跑50个变体。</p>
+        <p><strong>Newsletter 开篇：</strong> "开场白有没有个人细节？""有没有陈词滥调？"让 agent 在 autopilot 上帮你打磨文字。</p>
+        <p>任何你反复使用的 prompt。</p>
+        <p><strong>能打分，就能 autoresearch。</strong></p>
+        <h2>去跑一遍吧</h2>
+        <p>挑你表现最差的 skill，启动 autoresearch，回来就是一个真正稳定好用的东西。</p>
+        <p>在这里下载 <a href="https://www.dropbox.com/scl/fi/57v11vtj9gzqz10ybv7or/autoresearch.zip?rlkey=f0zbieol7beeykn04erun79ot&amp;dl=1" target="_blank" rel="noopener">skill</a>（上传到 Dropbox）</p>
+        <p>或者去我的 <a href="https://github.com/olelehmann100kMRR/autoresearch-skill" target="_blank" rel="noopener">GitHub</a> 看看</p>
+        <p><strong>你有没有遇到过：满心以为 skill 在好好工作，结果被客户或者同事抓到一个你完全没注意到的问题？</strong></p>
+        <p>评论里说说你的故事——哪个环节出了问题？我看每一条。</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2034533228162187444" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 505K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/gtm-strategy-claude-prompt/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略</span>
+        </a>
+        <a href="/posts/claude-code-im-integration/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

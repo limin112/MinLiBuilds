@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程 · 实践哥 MinLi</title>
+  <meta name="description" content="最近一周，一个3D 细胞教学Demo病毒式传播。好几个博主说&quot;我也复刻了一个&quot;，但他们只给代码或只贴视频。怪事，没有一个人公布复刻方法。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/3d-cell-from-prompts/" />
+  <meta property="og:title" content="几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程" />
+  <meta property="og:description" content="最近一周，一个3D 细胞教学Demo病毒式传播。好几个博主说&quot;我也复刻了一个&quot;，但他们只给代码或只贴视频。怪事，没有一个人公布复刻方法。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/3d-cell-from-prompts/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/3d-cell-from-prompts-cover.jpg" />
+  <meta property="article:published_time" content="2026-05-14T08:04:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程" />
+  <meta name="twitter:description" content="最近一周，一个3D 细胞教学Demo病毒式传播。好几个博主说&quot;我也复刻了一个&quot;，但他们只给代码或只贴视频。怪事，没有一个人公布复刻方法。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/3d-cell-from-prompts-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程",
+    "description": "最近一周，一个3D 细胞教学Demo病毒式传播。好几个博主说\"我也复刻了一个\"，但他们只给代码或只贴视频。怪事，没有一个人公布复刻方法。",
+    "image": "https://minlibuilds.com/assets/posts/3d-cell-from-prompts-cover.jpg",
+    "datePublished": "2026-05-14T08:04:00+08:00",
+    "dateModified": "2026-05-14T08:04:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/3d-cell-from-prompts/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/3d-cell-from-prompts</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战长文</span>
+        <h1 class="post-title">几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程</h1>
+        <div class="post-meta">
+          <time datetime="2026-05-14">2026-05-14</time>
+          <span>·</span>
+          <span>约 11 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 60K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Prompt</span>
+          <span class="tag">3D 可视化</span>
+          <span class="tag">零代码</span>
+          <span class="tag">教程</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/3d-cell-from-prompts-cover.jpg" alt="文章头图：几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程" width="1278" height="511" />
+
+      <div class="post-body">
+        <p>最近一周，一个3D 细胞教学Demo病毒式传播。<strong>好几个博主说"我也复刻了一个"</strong>，但他们只给代码或只贴视频。怪事，<strong>没有一个人公布复刻方法</strong>。</p>
+        <p>要么甩一句"用 AI 写的"就完了，给了个链接，要么干脆藏着掖着。你想抄都不知道从哪儿下手。</p>
+        <p>这篇就把方法<strong>完整公布</strong>：</p>
+        <ul>
+          <li>主要通过一个 prompt复刻，看完你就知道我是否在吹牛逼</li>
+          <li><strong>不抄代码</strong>——AI和你都不要需看任何源码</li>
+          <li><strong>完整可复现</strong>——每一步该说什么话、该按哪个按钮，全在下面，因为没几步</li>
+        </ul>
+        <img src="/assets/posts/3d-cell-from-prompts-01.jpg" alt="文章配图" loading="lazy" width="1200" height="652" />
+        <p>整篇就教你4件事，按顺序做就行：</p>
+        <blockquote>
+          <p><strong>写一条 prompt 给 HR</strong>——含参考链接 + 截图，把人招齐 <strong>全权授权项目经理</strong>——不审批，只看 task 列表 <strong>亲自做2件事</strong>——gpt image2生图 + 图生 3D <strong>等 PM 通报完成</strong>，<strong>下载收工</strong></p>
+        </blockquote>
+        <p>核心口诀:<strong>小白复刻 = 花钱招最牛逼的人/AI，当甩手掌柜</strong></p>
+        <p>如果你看完还做不出来,回来骂我。</p>
+        <p>你将做出什么：</p>
+        <p>完整能跑在浏览器里的<strong>交互式 3D 细胞教学站</strong>,给中小学生用:</p>
+        <ul>
+          <li>中间一颗可旋转、可剖切的风格化 3D 细胞</li>
+          <li>旁边一张真实的显微镜照片</li>
+          <li>侧边白话中文讲解</li>
+          <li>覆盖 5 种细胞(植物 / 动物 / 神经元 / 白细胞 / 肌肉细胞),29 个细胞器</li>
+        </ul>
+        <p><strong>你不需要写代码。</strong> 从头到尾你只动嘴 + 几次点鼠标。完成时间:一个下午(约 3～4 小时)。</p>
+        <h2>准备好这几样工具</h2>
+        <ol>
+          <li>AI Native Workforce： 这个很关键，我受邀测试 Helio，公测期有免费额度的Opus 4.7可以用。 如果你有Claude Code和Codex/Deepseek订阅或者api，你自带token，也可以直接用这个工具，免费。</li>
+          <li>GPT image 2：生成细胞图</li>
+          <li>Tripo3D：图生 3D 模型，免费版即可</li>
+        </ol>
+        <h2>第一步:让 HR 招人</h2>
+        <p>整个项目的启动,<strong>就是这一条 prompt 丢给 HR</strong>。直接复制:</p>
+<pre><code>我要做一个科普教育网站demo，需要三个人：
+1. 全栈搭建网站
+2. 内容专家兼提示词工程师，拆解细胞结构产出图片提示词
+3. 一个阿里P8项目经理擅长拉通和对齐
+
+这个网站内容受众是小学生和初中生。技术上做纯前端应用，为何避免需求蔓延，这两个事情我自己干：gpt image2生成图片，triple3d的image to 3d。
+
+[附上截图]</code></pre>
+        <p>在这里致敬一下原作者的idea <a href="https://x.com/DilumSanjaya" target="_blank" rel="noopener">@DilumSanjaya</a>, 是他给了我产品灵感,我也使用了他的视频截图。</p>
+        <img src="/assets/posts/3d-cell-from-prompts-02.jpg" alt="文章配图" loading="lazy" width="2048" height="1161" />
+        <img src="/assets/posts/3d-cell-from-prompts-03.jpg" alt="文章配图" loading="lazy" width="1280" height="582" />
+        <p><strong>这一条 prompt 干了三件事</strong>: 喂上下文和截图、定团队画像、给团队布置第一个任务。</p>
+        <p>插曲：我跟HR说，招一个阿里巴巴P8项目经理，班味足，擅长拉通对齐。 <strong>HR 说"小项目不需要阿里巴巴 P8 PM"</strong> ，我的回应:<strong>"不行,我一定要。"</strong></p>
+        <p>为什么坚持?因为我接下来不打算管事。我希望一键，配一个不能自己拍板的 PM,整个项目会卡在我身上。我要的不是传话筒,是<strong>能替我决策的人</strong>。</p>
+        <h2>第二步:给 PM 一道授权令</h2>
+        <p>人到齐了, 我把他们拉到一个channel，名字叫做“不干完今晚不睡觉”，对他们说:</p>
+<pre><code>确定任务是否清楚？
+
+所有任务全部写进 task 列表,我和项目经理一起看进度。
+
+内容prompt工程师注意我给你的截图，细胞风格参考截图：
+[图片] [图片] [图片] [图片] [图片] （可以打开我的demo截图）</code></pre>
+        <img src="/assets/posts/3d-cell-from-prompts-04.jpg" alt="文章配图" loading="lazy" width="1280" height="739" />
+        <img src="/assets/posts/3d-cell-from-prompts-05.jpg" alt="文章配图" loading="lazy" width="1280" height="597" />
+        <p>重要的是，给内容工程师一些参考。</p>
+        <p>我最喜欢里面的Tasks功能，所有的AI工作一目了然。</p>
+        <img src="/assets/posts/3d-cell-from-prompts-06.jpg" alt="文章配图" loading="lazy" width="1280" height="781" />
+        <h2>第三步:我亲自做的2 件事</h2>
+        <p>PM 跑起来之后,你不要插手代码、不要审 PR、不要看 commit。<strong>有2 件事 AI 团队搞不定,必须我亲自做</strong>——其他全是它们的事。</p>
+        <p>1、生 5 张细胞关键帧图和5 张细胞器合成大图</p>
+        <p>让内容pompt工程师理解细胞结构，并负责写 prompt,统一风格。</p>
+        <ul>
+          <li>你拿着 prompt 一次性生成7张图，去 <strong>GPT image 2</strong> 生图：植物细胞、动物细胞、神经元、白细胞、肌肉细胞。 下面的是内容agent给我的</li>
+          <li>生 5 张细胞器合成图，1 张图里放 6 个 panel(同一细胞的 6 个细胞器并排)</li>
+        </ul>
+        <img src="/assets/posts/3d-cell-from-prompts-07.jpg" alt="文章配图" loading="lazy" width="1182" height="586" />
+<pre><code>生成七张图片： # 全局风格锚 (Style Anchor v2) — 
+所有 prompt 复用 &gt; **Style Anchor v2** — Vibrant semi-realistic scientific illustration, painterly textures, **BOLD VOLUMETRIC 3D-sculpted forms** (every element reads as a solid sculpted mass with strong chiaroscuro shading, NOT flat drawing, NOT thin wisp, NOT delicate line art). Rich polychromatic palette — **at least 4 distinct saturated hues per subject** (no monochromatic single-family fills). Interior parts should be **full, generous, plump**, each a distinct 3D volume easy to read as separate sculpted shapes. Textbook-illustrative but colorful — think a contemporary children's science picture book painted by a skilled illustrator. Soft even directionless studio lighting with visible volumetric shading that emphasizes roundness and depth. Plain warm off-white paper-textured background. Single isolated subject, no text, no labels, no arrows, no scale bar. --- ## 资产映射 
+**7 整细胞**：
+`plant-cell` / `animal-cell` / `neuron` / `white-blood-cell` / `epithelial-cell` / `bacterial-cell` / `muscle-cell` **29 唯一细胞器 prompt**：`shared:true` 的 6 个（`nucleus` / `mitochondrion` / `cell-membrane` / `endoplasmic-reticulum` / `golgi-apparatus` / `lysosome`）一份资产多细胞复用；`shared:false` 共 24 个，`multi-nuclei` 砍掉由 `nucleus` 实例化 → 实际出 23 个，合计 29。 **命名**：GPT image 2 出图按 `{asset-id}.png`；Tripo3D 出 GLB 按 `{asset-id}.glb`。 --- ## 整细胞 prompt ×7 ### 1. `plant-cell`
+— 植物细胞 &gt; [Style Anchor v2] &gt; &gt; A single isolated plant cell, three-quarter cross-section cutaway showing its interior, overall rounded-rectangular shape with softly angled corners. &gt; &gt; BOLD VOLUMETRIC structure with chunky internal organelles clearly sculpted in 3D: &gt; - Outer cell wall: thick olive-green fibrous shell with visible cellulose layer depth (not thin line), gold highlights along top &gt; - Plasma membrane: thin translucent lavender-pink ribbon just inside the wall &gt; - Central vacuole: large plump translucent pale-aqua bubble filling ~55% of the interior, with subtle lilac/teal iridescent sheen &gt; - 4–6 chloroplasts: plump oval emerald-green forms with visible dark-green stacked grana inside, highlight edges in lime-gold &gt; - 1 nucleus: prominent rounded deep violet-magenta sphere with darker nucleolus, slight pearlescent surface &gt; - 4–6 mitochondria: bean-shaped chunky coral-orange with teal cristae accents &gt; - Cytoplasm: warm cream translucent base with subtle pink tint &gt; &gt; Polychromatic palette: olive-green + emerald + violet + coral + teal + cream — at least 6 hues visible, each organelle a sculpted 3D volume. &gt; &gt; Aspect ratio 16:9. Subject fills ~85% of frame, horizontal orientation. ### 2. `animal-cell` 
+— 动物细胞 &gt; [Style Anchor v2] &gt; &gt; A single isolated generic animal cell, three-quarter cross-section cutaway, rounded blob-like irregular shape (not perfectly spherical, no rigid wall). &gt; &gt; BOLD VOLUMETRIC internal organelles clearly sculpted in 3D: &gt; - Outer plasma membrane: flexible slightly undulating boundary in soft violet-pink with gold-pearlescent sheen &gt; - Central nucleus: large plump deep magenta-purple sphere with darker nucleolus, pearlescent surface &gt; - 5–7 mitochondria: chunky coral-orange bean shapes with teal cristae accents &gt; - Rough ER: stacked plump lavender ribbons studded with bright coral ribosome dots &gt; - Golgi: stack of 5 rich golden-amber pancake sacs with magenta vesicles budding off &gt; - 3–4 lysosomes: round terracotta spheres with electric-blue internal specks &gt; - Cytoplasm: pale rose-cream translucent fill &gt; &gt; Polychromatic palette: violet + magenta + coral + teal + gold + terracotta + cream — 7+ hues visible, each organelle sculpted and distinct. &gt; &gt; Aspect ratio 1:1. Subject fills ~80% of frame. ### 3. `neuron` 
+— 神经元 &gt; [Style Anchor v2] &gt; &gt; A single isolated neuron shown in three-quarter perspective. Soma (rounded cell body) on the left with visible nucleus inside. Multiple branching dendrites fanning outward from the soma like a bold tree canopy. Long tapered axon extending right, wrapped in segmented chunky myelin sheath (pearlescent cream-white tubular coating with clear gaps — nodes of Ranvier). Axon terminates right in a branched cluster of plump rounded synaptic terminals. &gt; &gt; BOLD VOLUMETRIC: soma is a full sphere, dendrites are thick rounded branches (NOT thin lines), myelin segments are plump chunky barrels, synaptic terminals are pronounced round buds. &gt; &gt; Polychromatic palette: &gt; - Soma membrane: violet-pink with gold-lavender iridescence &gt; - Nucleus inside soma: deep magenta with darker core &gt; - Dendrites: cool lavender-grey with coral highlights on tips and magenta spine buds &gt; - Axon core: pale lavender-grey with electric-blue nodes of Ranvier &gt; - Myelin sheath: pearlescent cream with iridescent gold-pink shimmer &gt; - Synaptic terminals: warm coral spheres with teal and magenta accent rings &gt; &gt; Polychromatic palette: violet-pink + magenta + lavender-grey + coral + electric-blue + cream + gold + teal — 8 hues across the neuron, each region a sculpted 3D volume. &gt; &gt; Aspect ratio 16:9. Subject fills ~85% of frame. ### 4. `white-blood-cell` 
+— 白细胞 &gt; [Style Anchor v2] &gt; &gt; A single isolated white blood cell (neutrophil type), three-quarter cross-section cutaway. Outer boundary is an irregular undulating membrane with one or two pseudopod-like protrusions reaching outward, clearly deformable and motile. &gt; &gt; BOLD VOLUMETRIC interior: &gt; - Outer membrane: pearlescent cream-white with gold and lilac iridescence, chunky 3D undulations &gt; - Multi-lobed nucleus: 3–4 plump rounded deep-magenta lobes connected in a curved chain, each lobe a clearly sculpted sphere &gt; - Scattered granules: 15–20 BRIGHT MEDIUM-SIZED SPHERES (marble size, not tiny dots) in mixed electric-blue, hot-magenta, coral-red, gold, and lime-green — packed densely throughout the cytoplasm &gt; - 4–5 chunky coral mitochondria with teal accents &gt; - 3–4 round terracotta lysosomes with violet specks &gt; - Cytoplasm: translucent peach-cream base &gt; &gt; Polychromatic palette: cream + magenta + coral + gold + teal + electric-blue + lime — 7+ hues. Interior reads as a bag of colorful marbles. &gt; &gt; Aspect ratio 1:1. Subject fills ~80% of frame. ### 5. `epithelial-cell` 
+— 上皮细胞（柱状） &gt; [Style Anchor v2] &gt; &gt; A single isolated columnar epithelial cell, three-quarter cross-section cutaway. Shape is tall column (clearly taller than wide, ~2.5:1 height ratio), flat bottom, brush-covered top. &gt; &gt; BOLD VOLUMETRIC: &gt; - Apical microvilli: dense forest of plump rounded finger-like protrusions rising from the top (NOT thin bristles — each microvillus is a pronounced sculpted tube) in lavender-pink with gold tips and teal valley shadows &gt; - Plasma membrane: violet-pink outline &gt; - Nucleus: large oval deep-magenta sphere in lower third &gt; - 6–8 chunky coral mitochondria between nucleus and apical surface, with teal cristae accents &gt; - Rough ER: stacked lavender ribbons with coral ribosome dots &gt; - Side walls: hints of tight-junction ridges (amber) and desmosomes (gold discs) &gt; - Cytoplasm: pale cream-rose translucent &gt; &gt; Polychromatic palette: lavender + magenta + coral + gold + teal + amber + cream — 7+ hues. &gt; &gt; Aspect ratio 3:4 (vertical). Subject fills ~75% of frame. ### 6. `bacterial-cell` 
+— 细菌细胞（杆状） &gt; [Style Anchor v2] &gt; &gt; A single isolated rod-shaped bacterial cell, three-quarter cross-section cutaway. Cylindrical rod with clearly rounded ends (bacillus morphology). &gt; &gt; BOLD VOLUMETRIC layered exterior + chunky interior features: &gt; - Capsule: translucent gelatinous outer layer, warm cream with gold-pink iridescence, visible as a distinct plump wrap &gt; - Cell wall: thick olive-green mesh layer beneath capsule with visible peptidoglycan texture &gt; - Plasma membrane: thin lavender-pink strip beneath the wall &gt; - Nucleoid region: loose plump coiled DNA cloud in dusty lilac with magenta accent streaks, clearly visible through the cross-section &gt; - Scattered ribosomes: 20–25 SMALL-MEDIUM BRIGHT SPHERES in mixed terracotta, electric-blue, gold, and hot-magenta — dense throughout cytoplasm &gt; - 1 prominent flagellum: long plump helically curled filament in pearlescent lavender-gold, extending from one rounded end &gt; - Cytoplasm: warm cream-rose translucent &gt; &gt; Polychromatic palette: cream + olive + lilac + magenta + gold + electric-blue + terracotta — 7+ hues. &gt; &gt; Aspect ratio 16:9. Subject fills ~85% of frame, horizontal. ### 7. `muscle-cell` 
+— 肌纤维（骨骼肌） &gt; [Style Anchor v2] &gt; &gt; A single isolated skeletal muscle fiber shown in three-quarter perspective, partial cutaway along one flank to expose interior. Long cylindrical tube, elongated 4–5× longer than wide. &gt; &gt; BOLD VOLUMETRIC striped interior: &gt; - Sarcolemma (outer membrane): smooth plump violet-pink tube with gold-iridescent sheen &gt; - Myofibrils visible through cutaway: multiple parallel cylindrical bundles running the length, each with prominent banded striping (sarcomere pattern) alternating warm-terracotta + pale-cream + deep plum-purple bands with visible dark Z-lines &gt; - 4–6 elongated oval nuclei in deep magenta, lined along the interior near the sarcolemma on one side &gt; - Packed chunky coral mitochondria between myofibrils (lots of them — muscle is energy-hungry), with teal cristae accents &gt; - Sarcoplasmic reticulum: lacy lavender-gold meshwork wrapping around myofibrils, visible in cross-section &gt; &gt; Polychromatic palette: violet-pink + terracotta + plum + magenta + coral + teal + gold + lavender — 8 hues. The striped pattern is the visual identity. &gt; &gt; 
+Aspect ratio 16:9. Subject fills ~85% of frame, horizontal.</code></pre>
+        <img src="/assets/posts/3d-cell-from-prompts-08.jpg" alt="文章配图" loading="lazy" width="1182" height="680" />
+        <p>2、去 Tripo3D 跑 3D</p>
+        <p>上传图 → 选 image-to-3D(2.5)→ 等几分钟 → 复制分享链接。拿到上面的图和链接后，全部丢给聊天窗口（这里我有个彩蛋，只生成5张细节图）。</p>
+        <h2>第四步:等 PM 通报"全部完成"</h2>
+        <p>到这一步你什么都不用做。</p>
+        <p>去吃饭、睡觉、刷手机。task 列表会自己滚。PM 会在所有任务都打 completed 之后通报你。</p>
+        <p>如果中途有人卡住,PM 会主动来找你(这就是你为什么坚持要 P8——他会自己判断什么时候必须升级、什么时候不必)。</p>
+        <p>PM 通报完成 → 让团队打包 → <strong>你把整个项目下载下来</strong>。</p>
+        <p>完事。</p>
+        <h2>收尾:你的实际工作量</h2>
+        <ul>
+          <li>打开Helio写一条 prompt 丢给 HR(截图)(3分钟)</li>
+          <li>在 GPT image 2 出 5 张关键帧 + 5 张合成大图(3分钟)</li>
+          <li>在 Tripo3D 点 5 次(10 分钟,主要在等)</li>
+        </ul>
+        <p><strong>约 20 分钟</strong>你的纯参与时间。剩下 3 小时 AI 团队在干活。</p>
+        <p>一个 prompt 启动,剩下交给团队。</p>
+        <p>整体测下来，多Agent team的模式未来势必会变成主流，human in loop改成ai in loop。</p>
+        <p>我发现挺神奇的，<strong>受邀评测Helio</strong>后的感觉非常上头。 这个和Karpathy说的autoresearch有异曲同工之妙，2026，谁掌握了Autoresearch和Agent team，谁就掌握了AI真正使用方法。</p>
+        <p>helio.im是一个The AI-Native Workforce，把多个AI拉进一个Channel里协作讨论。用AI来PUA AI，平时在用AI的时候，当我们不会使用提示词，就可以用AI来监工，AI in Loop。把任务交给 AI，我会给它所有权限。Helio 会区分哪些事 AI 可以自主完成，做到真正的监工。</p>
+        <p>Helio里面的Tasks也是我认为的一个新奇模式，可以看到AI的所有任务，执行顺序，跟软件开发里的敏捷迭代一样，只是传统的敏捷迭代周期是2周，而这个是1天。</p>
+        <p>我评测这个产品，感受到了第一天玩龙虾的快乐，而且是多倍的，毕竟，你可以玩多只agent。邀请大家去用helio.im, 有问题加入官方discord：<a href="https://bit.ly/4eOpuO5" target="_blank" rel="noopener">https://bit.ly/4eOpuO5</a></p>
+        <p>开源仓库：<a href="https://github.com/limin112/cell" target="_blank" rel="noopener">https://github.com/limin112/cell</a>，里面有直接可以跑的版本，我留了一个作业给你，我生成了7个细胞，但是上线了5个，动动手，给这个帖子点赞、转发、收藏、评论，实践一下切磋一下。上文已是该 X Article 的完整正文导出（含封面 URL、标题、正文、代码块与配图）。</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2054714352129958345" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 60K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/viral-video-finder-skill/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">一个 Skill 每天节省 25 个小时找爆款视频</span>
+        </a>
+        <a href="/posts/wechat-layout-skill/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">创建真正可用的 Skill 完整教程——拆解公众号排版</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

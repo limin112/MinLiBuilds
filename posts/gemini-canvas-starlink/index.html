@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学 · 实践哥 MinLi</title>
+  <meta name="description" content="Gemini Pro 3.1 刚刚更新，我对它史诗级加强的 Canvas 功能爱不释手。刚好周末准备带五年级的儿子去天文馆，我决定不翻科普书，也不给他用豆包，我准备用Gemini Pro 3.1可视化概念验证。" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/gemini-canvas-starlink/" />
+  <meta property="og:title" content="零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学" />
+  <meta property="og:description" content="Gemini Pro 3.1 刚刚更新，我对它史诗级加强的 Canvas 功能爱不释手。刚好周末准备带五年级的儿子去天文馆，我决定不翻科普书，也不给他用豆包，我准备用Gemini Pro 3.1可视化概念验证。" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/gemini-canvas-starlink/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/gemini-canvas-starlink-cover.jpg" />
+  <meta property="article:published_time" content="2026-02-20T15:05:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学" />
+  <meta name="twitter:description" content="Gemini Pro 3.1 刚刚更新，我对它史诗级加强的 Canvas 功能爱不释手。刚好周末准备带五年级的儿子去天文馆，我决定不翻科普书，也不给他用豆包，我准备用Gemini Pro 3.1可视化概念验证。" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/gemini-canvas-starlink-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学",
+    "description": "Gemini Pro 3.1 刚刚更新，我对它史诗级加强的 Canvas 功能爱不释手。刚好周末准备带五年级的儿子去天文馆，我决定不翻科普书，也不给他用豆包，我准备用Gemini Pro 3.1可视化概念验证。",
+    "image": "https://minlibuilds.com/assets/posts/gemini-canvas-starlink-cover.jpg",
+    "datePublished": "2026-02-20T15:05:00+08:00",
+    "dateModified": "2026-02-20T15:05:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/gemini-canvas-starlink/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/gemini-canvas-starlink</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战长文</span>
+        <h1 class="post-title">零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学</h1>
+        <div class="post-meta">
+          <time datetime="2026-02-20">2026-02-20</time>
+          <span>·</span>
+          <span>约 3 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 93K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Gemini Canvas</span>
+          <span class="tag">零代码</span>
+          <span class="tag">可视化</span>
+          <span class="tag">保姆教程</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/gemini-canvas-starlink-cover.jpg" alt="文章头图：零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学" width="2048" height="819" />
+
+      <div class="post-body">
+        <p>Gemini Pro 3.1 刚刚更新，我对它史诗级加强的 Canvas 功能爱不释手。刚好周末准备带五年级的儿子去天文馆，我决定不翻科普书，也不给他用豆包，我准备用Gemini Pro 3.1可视化概念验证。</p>
+        <p>我用几段 Prompt 跑了一个月全食的 3D 交互模拟器。拖动时间轴，地球本影（Umbra）和半影（Penumbra）的光影关系一目了然。</p>
+        <h2>月全食演示</h2>
+        <p>首先我们看看生成好的视频，我会把完整体验链接放到文章后面：</p>
+        <img src="/assets/posts/gemini-canvas-starlink-01.jpg" alt="文章配图" loading="lazy" width="1200" height="660" />
+        <p>第一步，先问Gemini3.1Pro生成一个合适的开发文档：</p>
+        <img src="/assets/posts/gemini-canvas-starlink-02.jpg" alt="文章配图" loading="lazy" width="1940" height="886" />
+        <p>第二步 ，整理拷贝Prompt，并选择Canvas和Pro 3.1，等待几分钟就可以生成完整dem:</p>
+<pre><code>构建一个高保真、交互式的 3D 月全食（Total Lunar Eclipse）天文模拟器。使用高分辨率的月面高程贴图（如 LRO 观测数据）渲染一个精细的 3D 月球模型。
+
+轨道精度（Orbital Accuracy）： 拒绝简化的圆周运动，实现基于 JPL 历表的多体历元（Multi-Body Ephemeris）逻辑。根据实时 UTC 时间计算**日-地-月共线（Syzygy）的精确几何关系，必须准确展示月球穿过地球本影（Umbra）与半影（Penumbra）**的动态过程。大气折射渲染： 实现一个大气散射着色器（Atmospheric Scattering Shader）。模拟太阳光穿过地球边缘大气层时的瑞利散射（Rayleigh Scattering），将滤出的长波红光投射至月球表面，从而在全食阶段呈现出基于物理效果的**“血月”深红色泽**。建立一个高频异步计算循环，每 10 秒更新一次月球在黄道坐标系下的精确位置。包含一个实时显示食分（Magnitude）、地月距离以及月面光度变暗百分比的面板。集成接触时刻追踪器，精确标注初亏（P1）、食既（U2）、食甚、生光（U3）及复圆（P4）的实时进度。最终呈现为一个高端、交互式的深空监测仪表盘，确保月面阴影的边缘模糊度与地球大气层厚度产生的物理现象完全一致。</code></pre>
+        <img src="/assets/posts/gemini-canvas-starlink-03.jpg" alt="文章配图" loading="lazy" width="1598" height="788" />
+        <h2>儿子的星链demo</h2>
+        <p>更有意思的是儿子的实操。看懂了天体运行后，他对 Starlink产生了兴趣。他突然问我：“老爸，如果地球上某个地方发生大地震，地面基站全断了，星链卫星能自动调度飞过去补网吗？”</p>
+        <p>我没有直接回答，而是借机植入工程思维：“这是个极佳的例子。我们可以一起用AI把你需求说清楚，定义，让 AI 把它们跑出来。”</p>
+        <p>小家伙似懂非懂，按住语音输入对 Canvas 说：“在画布的地球上加一个随机地震事件。调度最近的卫星，让它们聚集到灾区上空。”</p>
+        <img src="/assets/posts/gemini-canvas-starlink-04.jpg" alt="文章配图" loading="lazy" width="1200" height="660" />
+        <p>Gemini 3.1 Pro 重构了 WebGL 代码。几秒钟后，在右侧的渲染面板里，几颗高亮卫星真的在 3D 地球上完成了灾区集结！看着儿子兴奋地在面板里调试参数，我极其确信一件事：当“写代码”不再是壁垒时，“定义业务逻辑”和“设计验证闭环”才是最关键的。Canvas能降低视觉认知负荷，加速验证闭环。</p>
+        <p>这轮更新，Gemini 3.1 Pro它终于偷师了 Nano Banana Pro 的审美。你可能会觉得 3.1 “更美观了”， 3.0 时代的 Canvas已经很强了，但偶尔充满了“草台班子”的粗糙感，排版生硬、高亮迟钝。而 3.1 终于拥有了类似 Nano Banana Pro 那种克制、高级的极客审美。 字体排印（Typography）、代码块的高亮、富文本的渲染边界，变得极度清晰。</p>
+        <p>带着孩子一起手搓几个好玩的东西吧，这绝对比任何编程辅导班都有意思。</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2024742199204991150" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 93K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/naval-digital-clone/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程</span>
+        </a>
+        <a href="/posts/mobile-coding-workflow/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">榨干 AI 订阅费：拉屎时用手机编程的硬核工作流</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>

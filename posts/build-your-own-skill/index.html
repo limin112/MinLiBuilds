@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>实现一个自己的 Skill，一篇文章就够了 · 实践哥 MinLi</title>
+  <meta name="description" content="你有没有那种每月固定要花两小时做、但又毫无意义、做完毫无成就感的事？比如整理发票？" />
+  <meta name="theme-color" content="#0B0D12" />
+  <link rel="canonical" href="https://minlibuilds.com/posts/build-your-own-skill/" />
+  <meta property="og:title" content="实现一个自己的 Skill，一篇文章就够了" />
+  <meta property="og:description" content="你有没有那种每月固定要花两小时做、但又毫无意义、做完毫无成就感的事？比如整理发票？" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://minlibuilds.com/posts/build-your-own-skill/" />
+  <meta property="og:site_name" content="实践哥 MinLi" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:image" content="https://minlibuilds.com/assets/posts/build-your-own-skill-cover.jpg" />
+  <meta property="article:published_time" content="2026-04-25T23:00:00+08:00" />
+  <meta property="article:author" content="https://x.com/MinLiBuilds" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MinLiBuilds" />
+  <meta name="twitter:creator" content="@MinLiBuilds" />
+  <meta name="twitter:title" content="实现一个自己的 Skill，一篇文章就够了" />
+  <meta name="twitter:description" content="你有没有那种每月固定要花两小时做、但又毫无意义、做完毫无成就感的事？比如整理发票？" />
+  <meta name="twitter:image" content="https://minlibuilds.com/assets/posts/build-your-own-skill-cover.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "实现一个自己的 Skill，一篇文章就够了",
+    "description": "你有没有那种每月固定要花两小时做、但又毫无意义、做完毫无成就感的事？比如整理发票？",
+    "image": "https://minlibuilds.com/assets/posts/build-your-own-skill-cover.jpg",
+    "datePublished": "2026-04-25T23:00:00+08:00",
+    "dateModified": "2026-04-25T23:00:00+08:00",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://minlibuilds.com/posts/build-your-own-skill/" },
+    "author": {
+      "@type": "Person",
+      "name": "实践哥 MinLi",
+      "alternateName": "MinLiBuilds",
+      "url": "https://minlibuilds.com/",
+      "sameAs": ["https://x.com/MinLiBuilds"]
+    },
+    "publisher": { "@type": "Person", "name": "实践哥 MinLi", "url": "https://minlibuilds.com/" }
+  }
+  </script>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="nav-brand" href="/">
+      <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+      <span class="brand-text">实践哥<span class="brand-dot">MinLi</span></span>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a href="/#about">关于</a>
+      <a href="/posts/">文章</a>
+      <a href="/#partners">品牌</a>
+      <a href="/#collab">合作</a>
+      <a href="/#services">Agent 服务</a>
+      <a href="/#contact" class="nav-cta">谈合作</a>
+    </nav>
+    <button class="nav-burger" id="navToggle" aria-label="打开菜单" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer" hidden>
+    <a href="/#about">关于</a>
+    <a href="/posts/">文章</a>
+    <a href="/#partners">品牌</a>
+    <a href="/#collab">合作</a>
+    <a href="/#services">Agent 服务</a>
+    <a href="/#contact" class="nav-cta">谈合作</a>
+  </div>
+
+  <main>
+    <article class="post-wrap">
+      <div class="post-crumb">
+        <a class="text-link" href="/posts/">← 全部文章</a>
+        <span class="post-crumb-path">~/posts/build-your-own-skill</span>
+      </div>
+
+      <header class="post-hero">
+        <span class="eyebrow">BLOG · 实战长文</span>
+        <h1 class="post-title">实现一个自己的 Skill，一篇文章就够了</h1>
+        <div class="post-meta">
+          <time datetime="2026-04-25">2026-04-25</time>
+          <span>·</span>
+          <span>约 12 分钟读完</span>
+          <span>·</span>
+          <span class="post-views">X 99K 阅读</span>
+        </div>
+        <div class="post-tags">
+          <span class="tag">Claude Skills</span>
+          <span class="tag">教程</span>
+          <span class="tag">工作流</span>
+        </div>
+      </header>
+
+      <img class="post-cover" src="/assets/posts/build-your-own-skill-cover.jpg" alt="文章头图：实现一个自己的 Skill，一篇文章就够了" width="2048" height="819" />
+
+      <div class="post-body">
+        <p>你有没有那种每月固定要花两小时做、但又毫无意义、做完毫无成就感的事？比如整理发票？</p>
+        <p>周五下班前，我盯着邮箱里第 23 封"您的电子发票"——PDF、OFD、12306 的链接、滴滴的链接、京东那个永远点不开的 xml，每张还得肉眼对发票号、把个人抬头的剔掉、在 Excel 里手敲分类。这事儿我已经干了三年，每月两小时，月月不变。那天晚上我突然想通：<strong>这不就是 AI 该干的活吗？</strong></p>
+        <p>我打开 Claude Code 说了一句"帮我把这事儿自动化掉"，<strong>前后大概花了半小时</strong>。跑了三个月数据：363 封邮件 → 44 张发票 → ¥8,861.69 总额，每月两小时变成两条命令。</p>
+        <p>下面是完整教程。<strong>你完全不需要懂代码</strong>，全程就是和 AI 聊天——它帮你建文件、写脚本、跑测试，你只负责说人话告诉它要什么。文末附一段可复制 prompt，直接丢进 Claude / DeepSeek 就能用。</p>
+        <h2>30 秒速览：你适不适合看这篇？</h2>
+        <img src="/assets/posts/build-your-own-skill-01.png" alt="文章配图" loading="lazy" width="1424" height="336" />
+        <p>门槛很低，如果你每个月也会有重复的事情，建议读完本文。唯一的门槛是Claude/Codex/反重力/cursor的安装，教程很多，新手可以从Codex/反重力/cursor开始。</p>
+        <h2>导读：按需挑着读</h2>
+        <p>这篇是教程，按你目前的状态挑着看：</p>
+        <ul>
+          <li><strong>不知道 AI 工具装在哪</strong>：先看上一节<strong>30 秒速览：你适不适合看这篇</strong>？</li>
+          <li><strong>完全没听过 skill </strong>：从<strong>名词解释</strong>开始，按顺序读</li>
+          <li><strong>想搞清楚 skill 到底是个啥</strong>：直接跳到<strong>Skill 是个啥：一个文件夹</strong></li>
+          <li><strong>担心自己不会写代码</strong>：跳到<strong>你不用写代码，你是产品经理</strong></li>
+          <li><strong>只想抄作业</strong>：跳到<strong>你的作业：可复制 prompt</strong></li>
+          <li><strong>担心邮箱安全</strong>：先看「<strong>安全红线</strong>」</li>
+          <li><strong>想省 API 钱</strong>：跳到最后「<strong>用免费模型也能跑</strong>」</li>
+        </ul>
+        <h2>先把几个名词讲清楚（已经懂的可以跳过）</h2>
+        <ul>
+          <li><strong>AI Agent / 大模型助手</strong>：你可以理解成一个会聊天、会写代码、会调用工具的"实习生"。比如 Claude Code、Codex 这些都是。</li>
+          <li><strong>Skill</strong>：给这个"实习生"装的一个小插件。装上之后，他就多会一项本事——比如"会从 QQ 邮箱拉发票"。</li>
+          <li><strong>IMAP</strong>：邮箱的一种远程访问协议。你把它当成"邮箱给程序看的入口"就行。开通之后程序能像人一样登录看邮件。</li>
+          <li><strong>授权码</strong>：邮箱密码的"替身"。你给程序的不是登录密码，而是一串专门生成的、可以随时撤销的码。<strong>安全很多</strong>。</li>
+          <li><strong>Token</strong>：大模型的计费单位。一段中文每个字大约 = 1.5~2 个 token。读文档、生成回复都按 token 收钱。</li>
+        </ul>
+        <p>不需要全记住，遇到了回来翻一下就行。</p>
+        <h2>Skill 是个啥：一个文件夹</h2>
+        <p><strong>Skill 听上去玄乎，本质就是一个文件夹</strong>。</p>
+        <p>里面通常就两类东西：</p>
+        <ul>
+          <li><strong>一份说明书</strong>（一个文本文件）：用大白话告诉 AI"这个技能是干嘛的、什么时候该用它、怎么调"</li>
+          <li><strong>几个干活的小工具</strong>：真正去拉邮件、读 PDF、写 Excel 的那些文件</li>
+        </ul>
+        <p>举个例子，本文这个"拉发票"的 skill 文件夹里大概有这么几样：</p>
+        <ul>
+          <li>一份 <strong>说明书</strong>：告诉 AI"这是个从 QQ 邮箱拉发票的技能，用户说'拉一下 4 月发票'就该用我"</li>
+          <li>一个 <strong>抓邮件的小工具</strong>：真正登录邮箱、按日期搜、下附件</li>
+          <li>一个 <strong>处理链接的小工具</strong>：12306、滴滴这种发链接的邮件单独处理</li>
+          <li>一份 <strong>给自己看的备忘</strong>：怎么部署、踩过哪些坑</li>
+        </ul>
+        <p>就这么简单。AI 启动时会扫这些文件夹，把说明书读进自己的脑子里——之后你说"拉一下 4 月发票"，它就知道该跑哪个工具。</p>
+        <p><strong>所以"建一个 skill" 拆开就三步</strong>：</p>
+        <ol>
+          <li>建一个文件夹（名字就是 skill 名）</li>
+          <li>写一份说明书，大白话讲清"干嘛 / 何时用 / 怎么调"</li>
+          <li>把真正干活的小工具扔进去</li>
+        </ol>
+        <p>不同 AI 工具放置 skill 的目录不同——但<strong>结构都是一样的</strong>：一个文件夹 + 一份说明书 + 若干小工具。</p>
+        <p>懂了这个，后面所有内容你都能 1:1 复刻到自己的需求上。</p>
+        <h2>你不用写代码，你是产品经理</h2>
+        <p>文件夹里的东西<strong>全部可以让 AI 帮你建</strong>——你只做两件事：</p>
+        <ul>
+          <li><strong>提需求</strong>："我想要 / 不想要 / 出错了想怎么办"，用人话讲清楚</li>
+          <li><strong>报错</strong>：跑出问题把现象贴回去（"它把日期搞错了"），让 AI 改</li>
+        </ul>
+        <p>代码刷屏不用读，看不懂直接问"这段干嘛的"，AI 用人话讲给你听。</p>
+        <p><strong>这个 skill 不是给你直接用的——是给你改的</strong></p>
+        <p>每家公司报销规则都不一样。我自己就经历过两种：</p>
+        <ul>
+          <li><strong>上一家公司</strong>有报销系统，金额都是系统算的——我只需要"自动下发票 + 归档"</li>
+          <li><strong>现在这家公司</strong>没系统，要填 Excel 交财务——多一步"抽字段 + 算合计"</li>
+        </ul>
+        <p>你的情况可能更不一样：上系统的只要"下发票"；自由职业的要按"客户"分类；公司有奇葩规则（"超 500 元餐饮单独标"）的就把规则加进 prompt。</p>
+        <p><strong>读这篇的正确姿势</strong>：把它当参考案例，看我踩了哪些坑、做了哪些决策——然后带着<strong>你公司的实际情况</strong>去跟 AI 聊一套你自己的 skill。文末 prompt 留了"你自己改这里"的位置。</p>
+        <h2>第一步：先聊需求，别让 AI 直接动手</h2>
+        <p>上来就说"帮我做一个报销自动化"——AI 会一头扎进去乱写，等你回过味来已经推倒重来了。</p>
+        <p><strong>先把这四件事用人话讲给 AI</strong>：</p>
+        <ul>
+          <li><strong>想要什么</strong>：每月底一份 Excel，按类别汇总金额，直接交财务</li>
+          <li><strong>数据从哪来</strong>：QQ 邮箱里搜"发票"</li>
+          <li><strong>以后会变什么</strong>：哪天换 163 / Gmail；哪天换报销模板</li>
+          <li><strong>要小心什么</strong>：个人抬头不能报；一张发票 PDF + OFD 两份；12306 / 滴滴 / 京东发链接不发 PDF</li>
+        </ul>
+        <p>第三条最关键——<strong>"未来会变什么"决定了 AI 怎么拆</strong>。听完 AI 自己会建议"拆两个 skill：一个拉发票，一个整理 Excel"——这样换邮箱不影响整理逻辑。</p>
+        <p>这一步多花十分钟，<strong>省 80% 返工</strong>。</p>
+        <h2>第二步：AI 写、AI 跑，你负责报错</h2>
+        <p>剩下交给 AI——下面是我踩过的几个坑，<strong>你也会踩</strong>，提前看一眼省时间。</p>
+        <p>坑 1：QQ 邮箱搜索的玄学 bug</p>
+        <p>第一次跑出来很离谱：4 月明明就 100 多封邮件，搜索却返回了 9740 封——把整个收件箱都翻出来了。</p>
+        <p>我把现象告诉 AI，它写了几条不同写法的搜索条件让我挨个跑——最后定位到一个<strong>没文档记录的小毛病</strong>：QQ 邮箱搜索语句外层带括号，会让"截止日期"那个条件被吞掉。改一下写法瞬间正常。</p>
+        <p>教训：<strong>这种坑没文档，只能让 AI 一条条试</strong>。你不用懂细节，把现象贴回去 AI 自己会找。</p>
+        <p>坑 2：PDF / OFD 互相把对方干掉</p>
+        <p>中国电子发票一张同时有两份：</p>
+        <ul>
+          <li><strong>PDF 版</strong>：给人看的</li>
+          <li><strong>OFD 版</strong>：国标电子档（很多软件读不了）</li>
+        </ul>
+        <p>两份发票号一模一样。第一版用「发票号」当唯一标识去重——结果 PDF 全被 OFD 顶掉了，剩下一堆我看不开的文件。</p>
+        <p>整个流程我没写一行——把"我想要什么"讲清楚，AI 自己实现。</p>
+        <h2>第三步：第一次配置：跟着 AI 的提示，把"邮箱钥匙"取出来</h2>
+        <p>SKill做好后。<strong>第一次跑必然要做一件事：把邮箱授权码取出来填进去</strong>。</p>
+        <p>这一步你要亲手做（AI 没法替你登 QQ 邮箱）。但流程很简单，AI 会一步步给你提示，照着做就行：</p>
+        <ol>
+          <li><strong>在电脑上打开浏览器</strong>（不是手机！手机找不到这个开关），访问 邮箱 → 设置 → 账户-&gt;安全</li>
+          <li>往下滚找到并开启 <strong>IMAP/SMTP 服务</strong>（会让你发短信验证）</li>
+          <li>验证完成后，邮箱会给你一串 <strong>16 位的授权码</strong>——<strong>这就是你的"邮箱钥匙"</strong></li>
+          <li>复制这串授权码，<strong>回到 Claude Code 命令行界面</strong>，直接粘进去。或者自己贴到文件里，更安全。</li>
+        </ol>
+        <blockquote>
+          <p>163 邮箱、Gmail、Outlook 流程类似——都是在邮箱设置里找"IMAP / 应用专用密码 / 第三方登录"，生成一串专门给程序用的授权码。<strong>主密码绝不要交给程序</strong>。</p>
+        </blockquote>
+        <p><strong>粘进去之后会发生什么</strong>？AI 会自动把这串码写进项目里一个叫 .env 的小文件（你不用自己找它在哪——AI 会告诉你已经存好了），然后让代码仓库忽略掉这个文件（防止你不小心传到云上）。整个过程的对话大概长这样：</p>
+        <blockquote>
+          <p><strong>你</strong>：（粘贴授权码）xxxxxxxxxxxxxxxx</p>
+        </blockquote>
+        <blockquote>
+          <p><strong>AI</strong>：收到，我把它存到 .env 文件里了，并且加进了忽略清单——这个文件不会被同步到任何云端或代码仓库。我先用这个授权码测一下能不能登上你的邮箱……（一通 tool_use）登录成功 ✅，你的 4 月邮箱有 116 封邮件。要不要我先按"发票"关键词搜一遍试试？</p>
+        </blockquote>
+        <p><strong>你完全不用动手改文件、不用记路径</strong>。看到 AI 报"登录成功"就行，看不懂的步骤直接问"这一步是干嘛的"，它用人话给你讲。出问题就把屏幕上的报错发回去，它接着改。</p>
+        <h2>三个月端到端实测</h2>
+        <img src="/assets/posts/build-your-own-skill-02.png" alt="文章配图" loading="lazy" width="1188" height="356" />
+        <p>363 封邮件 → 62 封候选 → 44 张唯一发票 → ¥8,861.69 总额。</p>
+        <p>每月只需要：<strong>跟 AI 说一句"拉一下 4 月发票"</strong>，发票就到位了；<strong>再说一句"整理 4 月发票清单"</strong>，Excel 就到桌面上等你 review。</p>
+        <img src="/assets/posts/build-your-own-skill-03.jpg" alt="文章配图" loading="lazy" width="1454" height="802" />
+        <h2>⚠️守住安全红线很简单</h2>
+        <p>自动化邮箱 = 把邮箱钥匙交给程序。下面是安全红线必须做到：</p>
+        <ul>
+          <li><strong>用授权码，不用主密码</strong>。QQ / 163 / Gmail 都支持生成专用授权码——是一串可以随时单独撤销的码。主密码绝不交给程序。</li>
+          <li><strong>授权码放在专门的敏感配置文件里，不要拷贝给别人，不要在分享skill的时候分享给别人</strong>。AI 给你建项目时会自动安排好这一步，你只要确认它建了"忽略文件"清单（专业说法叫 .gitignore）就行。<strong>90% 的密钥泄露都是忘了这一步</strong>。</li>
+        </ul>
+        <p>授权码不等于密码，这事儿别省。</p>
+        <h2>你的作业：把下面 prompt 复制到你的大模型里</h2>
+        <p>下面一段prompt 你可以直接复制，丢进 Claude / DeepSeek / 任何会写代码的大模型里。<strong>注意：你不用看懂任何代码，AI 会全部帮你写、帮你跑、帮你修</strong>。你只负责：把横线上的内容换成你自己的、跑出来不对就把现象告诉 AI。</p>
+        <p>先讨论需求（不让它写代码，先把要什么聊清楚）</p>
+<pre><code>先讨论需求（不让它写代码，先把要什么聊清楚）
+
+ 我每个月底要从邮箱里拉发票、整理成 Excel 提交报销，烦了很久了。 我想用半小时做一个自动化方案。先别动手，我们先把需求聊清楚：
+ 
+ 我的邮箱是：**__**（QQ / 163 / Gmail / Outlook） 我每月发票主要来自：**__**（举例：滴滴、12306、京东、餐饮） 我希望最后输出：**__**（举例：一份 Excel + 一份 Markdown 清单） 未来可能会变的事：**__**（举例：换邮箱、换报销模板、加新分类）
+ 
+ 请帮我：
+ 
+ 1. 顺着我的需求，建议怎么拆成几个独立的小技能（让"今天可能变 / 明天可能换"的部分彼此独立）
+     
+ 2. 替我考虑几个关键决策（授权码怎么存、跑完是否自动衔接下一步、链接邮件怎么处理等）
+     
+ 3. 列出可能踩的坑
+     
+ 
+ 邮箱要求：
+ 
+ - 用 IMAP 协议登录我的邮箱，授权码放在敏感配置文件里
+     
+ - 让我能用类似"拉一下 4 月发票"的话指挥它
+     
+ - 邮件附件 PDF / OFD 都保留
+     
+ - 链接型邮件（如 12306、京东）尝试自动跟链接抓 PDF
+     
+ - 跟不到的链接，列在最后让我手动点
+     
+ - 文件按月份归档
+     
+ 
+ 输入要求： 最后输出结构化数据。
+ 
+ 我要抽的字段是：
+ 
+ - 发票号
+     
+ - 开票日期 / 消费日期
+     
+ - 销售方
+     
+ - 项目分类（交通 / 餐饮 / 住宿 / 办公用品 / 其他）
+     
+ - 价税合计</code></pre>
+        <p><strong>关键提示</strong>：上面的字段、规则、输出格式都可以自行修改。每家公司报销规则不一样——你的"项目分类"可能要分得更细，你的财务可能要 PDF 不要 Excel——这些都改 prompt 里那几行就行。</p>
+        <p>举几个真实场景照着改：</p>
+        <ul>
+          <li><strong>你公司只要 PDF 不要 OFD</strong>：把第三段里"同一张发票的 PDF 和 OFD 都保留"改成"<strong>只保留 PDF，OFD 直接扔</strong>"——改这一行就够了</li>
+          <li><strong>你公司分类更细</strong>：把"交通 / 餐饮 / 住宿 / 办公用品 / 其他"改成你公司财务用的那套标签，比如"<strong>国内差旅交通 / 招待用餐 / 办公耗材 / 客户礼品</strong>"</li>
+          <li><strong>你是自由职业、按客户做账</strong>：在字段那一节加一行"<strong>客户名称（从邮件主题或备注里抽）</strong>"，让 AI 把客户也作为一个分类维度</li>
+          <li><strong>你公司有奇葩规则</strong>：比如"超过 500 元的餐饮要单独标记"——把这条直接加到"业务规则"那一节，AI 会处理</li>
+        </ul>
+        <p><strong>核心思路</strong>：你对自家财务规则比 AI 清楚，你只要把"我要什么 / 不要什么"用人话写进 prompt，AI 就照着来。</p>
+        <p>让 AI 做完一版，你跑一次，看哪里不对，告诉它"这里改成 X"，再跑一次。<strong>一般 3-5 轮就能跑通</strong>。</p>
+        <h2>总结</h2>
+        <p>整个事情可以收成三句话：</p>
+        <ol>
+          <li><strong>先把需求讲清楚（特别是"未来会变什么"），别让 AI 直接动手</strong></li>
+          <li><strong>AI 写、AI 跑，你负责说人话报错</strong></li>
+          <li><strong>安全自己上心</strong>（授权码、敏感配置文件、不传公网）</li>
+        </ol>
+        <p>半小时下来，每月两小时变成两条对话。省下来的时间——做点你真想做的事。</p>
+        <h2>用免费模型也能跑：我后来切到了 Ling-2.6-flash</h2>
+        <p>整套流程跑通后我看了下账单——每张发票要喂一张图 + 一段文字给模型，44 张下来旗舰模型 token 烧得不少。</p>
+        <p>Skill做完后，这种活<strong>其实没必要用旗舰模型</strong>。我的判断逻辑是：抽固定字段 + 走固定流程 + 不需要复杂推理 = 拿轻量模型就够了。</p>
+        <p>我换的是 <strong>Ling-2.6-flash</strong>——蚂蚁出的一个<strong>100B 参数级别的免费模型</strong>，在同级别模型里属于 SOTA，目前最好的水平。它的设计初衷就是给"读文档 + 调脚本 + 跑循环"这种 agent 工作流用的，定位特别贴合本文场景。</p>
+        <p>切完之后实测：</p>
+        <ul>
+          <li><strong>44 张发票跑下来，全部字段抽对</strong>，跟旗舰模型表现持平</li>
+          <li><strong>速度反而更快</strong>——旗舰模型 3 分 20 秒，Ling 1 分 50 秒</li>
+          <li><strong>账单 ¥0</strong></li>
+        </ul>
+        <p>为什么对得上？因为发票字段抽取属于"结构化任务"——票面就那几个固定字段、就那几种发票格式，不需要模型有多么发散的推理能力，需要的是稳定、快速、按 prompt 老实办事。100B 级别的模型完全 hold 得住。</p>
+        <blockquote>
+          <p><strong>学到的：模型选型 = 任务复杂度匹配</strong>。复杂推理上旗舰，结构化流水线上轻量，并不是越贵越好。</p>
+        </blockquote>
+        <p>如果你按这篇文章自己搭了一套，<strong>直接用 Ling-2.6-flash 跑就行</strong>——免费、快、够用。把每月 API 账单从几十块变成 0 块，是这套方案最后一个收尾动作。</p>
+        <p><strong>注意</strong>：第一次切完先用一两张发票小跑一下，确认字段抽对了，再批量处理整月数据——别上来直接梭。</p>
+        <h2>投个票：你最烦的月底琐事是哪件？</h2>
+        <ul>
+          <li>A. 报销发票（跟我同病相怜，照着这篇抄就行）</li>
+          <li>B. 周报 / 月报（每月最后一天的折磨，也可以照着这篇，可以从git整理）</li>
+          <li>C. 工时填报 / OA 流程（点点点点点）</li>
+          <li>D. 信用卡还款账单（也可以用skill获取邮件，不过我觉得有些app集成了）</li>
+          <li>E. 打新日历 （每天自动抓ipo日历分析，或者发现好的股就发邮件通知你）</li>
+          <li>F. 其他（评论区告诉我）</li>
+        </ul>
+        <p>挑一件最烦的丢评论区——<strong>告诉我你最想干掉哪件，可以把他们全部做成 skill</strong>。</p>
+        <p>每个月光报销一项就让我吐了三年血——你那件如果跟我同款，我们一起把它干掉。如果你觉得本文有用，请给老哥点个赞。</p>
+      </div>
+
+      <a class="post-source" href="https://x.com/MinLiBuilds/status/2048054481733169337" target="_blank" rel="noopener">
+        <span class="post-source-label">First published on X</span>
+        <strong>本文首发于 X @MinLiBuilds · X 99K 阅读</strong>
+        <em>去 X 看原帖、参与讨论 →</em>
+      </a>
+
+      <nav class="post-pager" aria-label="上下篇">
+        <a href="/posts/notebooklm-claude-workflow/">
+          <span class="pager-dir">上一篇</span>
+          <span class="pager-title">用好 NotebookLM，立省 80% Token</span>
+        </a>
+        <a href="/posts/x-writing-growth/" class="pager-next">
+          <span class="pager-dir">下一篇</span>
+          <span class="pager-title">一文看懂怎么在 X 持续写作涨粉</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img class="brand-mark brand-avatar" src="/assets/avatar.jpg" alt="实践哥 MinLi" width="34" height="34" />
+        <div>
+          <strong>实践哥 MinLi</strong>
+          <span>不做概念党，只聊 AI 实战</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="/posts/">文章</a>
+        <a href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">Telegram</a>
+        <span class="footer-email">uslimin@gmail.com</span>
+        <a href="/#contact">商务合作</a>
+      </div>
+      <p class="footer-copy">© <span id="year"></span> MinLiBuilds · Built for practice, not slides.</p>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>
