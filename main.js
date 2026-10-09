@@ -35,7 +35,11 @@
       const suffix = el.dataset.suffix || "";
       if (el.dataset.format === "m" && value >= 100000) {
         const m = value / 1000000;
-        return (m >= 10 ? Math.round(m) : Math.round(m * 10) / 10) + "M" + suffix;
+        const digits = Number(el.dataset.digits);
+        const places = Number.isFinite(digits) ? digits : 1;
+        if (m >= 10) return Math.round(m) + "M" + suffix;
+        const factor = 10 ** places;
+        return Math.round(m * factor) / factor + "M" + suffix;
       }
       if (el.dataset.format === "k" && value >= 1000) {
         const k = value / 1000;
@@ -146,8 +150,8 @@
   // Terminal typewriter
   const phrases = [
     "把模型能力压成每天能用的工作流",
-    "能复现、能省 token、能出结果",
-    "Claude · Codex · Gemini 一手折腾",
+    "能复现、能跑在自己的卡上、能出结果",
+    "Claude · Codex · Grok · Gemini · 开源模型",
     "不做概念党，只聊 AI 实战",
   ];
   const typed = document.getElementById("typedText");
