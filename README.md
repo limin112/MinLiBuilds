@@ -1,6 +1,6 @@
 # MinLiBuilds 个人站
 
-实践哥 MinLi（[@MinLiBuilds](https://x.com/MinLiBuilds)）个人主页：自我宣传 + 商单联系。
+实践哥 Li（[@MinLiBuilds](https://x.com/MinLiBuilds)）个人主页：AI Builder，超级个体。自我宣传 + 商单联系。
 
 ## 本地预览
 
