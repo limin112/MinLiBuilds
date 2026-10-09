@@ -17,7 +17,7 @@ python3 -m http.server 5173
 | 文件 | 说明 |
 |------|------|
 | `index.html` | 单页内容：关于 / 代表帖 / 合作 / 联系 |
-| `styles.css` | Workbench Signal 视觉系统 |
+| `styles.css` | Bench Log 视觉系统（首页与文章页共用） |
 | `main.js` | 终端打字、复制账号、brief 生成邮件草稿 |
 
 ## 上线前建议改
@@ -28,6 +28,6 @@ python3 -m http.server 5173
 
 ## 设计说明
 
-- 调性：深色工作台 + 铜橙行动色 + 青绿信号色
-- 签名元素：Hero 区「field notes」终端日志
+- 调性：近黑工作台 + 荧光绿行动色 + 青色信号色，等宽数字，实测日志风
+- 签名元素：Hero 区 `~/bench/2026.log` 实测日志；长文区按阅读 / 时间排序
 - 转化路径：顶栏「谈合作」→ 联系区块 → brief 表单 / X DM / Telegram

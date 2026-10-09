@@ -76,83 +76,45 @@
     statNums.forEach((el) => statIo.observe(el));
   }
 
-  // Partner terminal: boot animation when scrolled into view
-  const partnerTerminal = document.getElementById("partnerTerminal");
-  if (partnerTerminal && "IntersectionObserver" in window) {
-    const ptIo = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          partnerTerminal.classList.add("in-view");
-          ptIo.disconnect();
-        }
-      },
-      { threshold: 0.25 }
-    );
-    ptIo.observe(partnerTerminal);
-  } else if (partnerTerminal) {
-    partnerTerminal.classList.add("in-view");
-  }
-
-  // Partner marquee: auto-scroll + drag, seamless loop
-  const marquee = document.getElementById("partnerMarquee");
-  const track = document.getElementById("partnerTrack");
-  if (marquee && track) {
-    const firstSet = track.querySelector(".partner-set");
-    if (firstSet) {
-      const clone = firstSet.cloneNode(true);
-      clone.setAttribute("aria-hidden", "true");
-      track.appendChild(clone);
+  // Posts grid: sort by views / date, show 12 first
+  const logGrid = document.getElementById("logGrid");
+  const logMore = document.getElementById("logMore");
+  if (logGrid) {
+    const LIMIT = 12;
+    const cards = Array.from(logGrid.querySelectorAll(".log-card"));
+    if (logMore && cards.length > LIMIT) {
+      logGrid.classList.add("is-collapsed");
+      logMore.hidden = false;
+      logMore.addEventListener("click", () => {
+        logGrid.classList.remove("is-collapsed");
+        logMore.hidden = true;
+      });
     }
 
-    const autoSpeed = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 0.5;
-    let offset = 0;
-    let dragging = false;
-    let startX = 0;
-    let startOffset = 0;
-
-    const apply = () => {
-      const half = track.scrollWidth / 2;
-      if (half > 0) offset = ((offset % half) + half) % half;
-      track.style.transform = `translateX(${-offset}px)`;
+    const sorters = {
+      views: (a, b) => Number(b.dataset.views) - Number(a.dataset.views),
+      date: (a, b) => b.dataset.date.localeCompare(a.dataset.date),
     };
-
-    const tick = () => {
-      if (!dragging && autoSpeed) {
-        offset += autoSpeed;
-        apply();
-      }
-      requestAnimationFrame(tick);
-    };
-
-    marquee.addEventListener("pointerdown", (e) => {
-      dragging = true;
-      startX = e.clientX;
-      startOffset = offset;
-      marquee.setPointerCapture(e.pointerId);
-      marquee.classList.add("dragging");
+    document.querySelectorAll(".log-sort").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const sorter = sorters[btn.dataset.sort];
+        if (!sorter) return;
+        cards.sort(sorter).forEach((card) => logGrid.appendChild(card));
+        document.querySelectorAll(".log-sort").forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-pressed", String(on));
+        });
+      });
     });
-    marquee.addEventListener("pointermove", (e) => {
-      if (!dragging) return;
-      offset = startOffset - (e.clientX - startX);
-      apply();
-    });
-    const endDrag = () => {
-      dragging = false;
-      marquee.classList.remove("dragging");
-    };
-    marquee.addEventListener("pointerup", endDrag);
-    marquee.addEventListener("pointercancel", endDrag);
-
-    apply();
-    requestAnimationFrame(tick);
   }
 
   // Terminal typewriter
   const phrases = [
-    "把模型能力压成每天能用的工作流",
-    "能复现、能跑在自己的卡上、能出结果",
-    "Claude · Codex · Grok · Gemini · 开源模型",
-    "不做概念党，只聊 AI 实战",
+    "# 新模型发布，当天上手测",
+    "# 数字都来自自己的卡",
+    "# Claude · Codex · Grok · Gemini · 开源模型",
+    "# 能复现，才发出来",
   ];
   const typed = document.getElementById("typedText");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
