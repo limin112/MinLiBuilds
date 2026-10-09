@@ -72,7 +72,7 @@
     </a>
     <nav class="nav-links" aria-label="主导航">
       <a href="#about">关于</a>
-      <a href="#blog">博客</a>
+      <a href="#blog">长文</a>
       <a href="#partners">品牌</a>
       <a href="#collab">合作</a>
       <a href="#services">Agent 服务</a>
@@ -85,7 +85,7 @@
 
   <div class="mobile-drawer" id="mobileDrawer" hidden>
     <a href="#about">关于</a>
-    <a href="#blog">博客</a>
+    <a href="#blog">长文</a>
     <a href="#partners">品牌</a>
     <a href="#collab">合作</a>
     <a href="#services">Agent 服务</a>
@@ -95,57 +95,64 @@
   <main id="top">
     <!-- Hero -->
     <section class="hero">
-      <div class="hero-meta">
-        <span class="live-pill"><span class="live-dot"></span> LIVE · @MinLiBuilds</span>
-        <span class="meta-sep">/</span>
-        <span class="meta-muted">AI Builder · 超级个体</span>
+      <div class="hero-copy">
+        <div class="hero-meta">
+          <span class="live-pill"><span class="live-dot"></span> LIVE · @MinLiBuilds</span>
+          <span class="meta-sep">/</span>
+          <span class="meta-muted">AI Builder · 超级个体</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="title-line">不做概念党，</span>
+          <span class="title-line accent">只聊 AI 实战。</span>
+        </h1>
+
+        <p class="hero-lead">
+          Claude、Codex、Grok、Gemini 和开源模型，一出来就自己上手测。文章里的截图、数字和结论，都是在自己机器上一条条跑出来的。
+        </p>
+        <p class="hero-biz">
+          <span class="hero-biz-tag">// 合作</span>
+          接产品测评和品牌合作。产品我自己装、自己用，用完照实写。
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#contact">
+            <span>商务合作</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">
+            看 X 主页
+          </a>
+          <a class="btn btn-ghost" href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">
+            Telegram 群
+          </a>
+        </div>
+
+        <a class="hero-trust" href="#partners">
+          <span class="hero-trust-label">已合作</span>
+          <span class="hero-trust-names">Qwen · 飞书 · 豆包 · 蚂蚁百灵 · Bitget …</span>
+          <span class="hero-trust-more">全部 13 个 →</span>
+        </a>
       </div>
 
-      <h1 class="hero-title">
-        <span class="title-line">不做概念党，</span>
-        <span class="title-line accent">只聊 AI 实战。</span>
-      </h1>
-
-      <p class="hero-lead">
-        把 Claude、Codex、Grok、Gemini 和开源模型从演示变成每天能用的工作流。
-        一手折腾、能复现、能跑在自己的卡上、能出结果。
-        <span class="hero-lead-brand">面向品牌方：让你的产品被中文 AI Builder 圈层真正用起来，而不是刷一眼就划走。</span>
-      </p>
-
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#contact">
-          <span>商务合作</span>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a class="btn btn-ghost" href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">
-          看 X 主页
-        </a>
-        <a class="btn btn-ghost" href="https://t.me/BuildsEveryThing" target="_blank" rel="noopener">
-          Telegram 群
-        </a>
-      </div>
-
-      <a class="hero-trust" href="#partners">
-        <span class="hero-trust-label">已合作</span>
-        <span class="hero-trust-names">飞书 · 豆包 · Bitget · ZenMux · 蚂蚁百灵 …</span>
-        <span class="hero-trust-more">全部品牌 →</span>
-      </a>
-
-      <!-- Signature: build log terminal -->
-      <div class="terminal" aria-label="实战日志预览">
+      <!-- Signature: bench log — 每一行都是一篇实测 -->
+      <div class="terminal hero-terminal" aria-label="实测记录">
         <div class="terminal-bar">
           <span class="t-dot t-red"></span>
           <span class="t-dot t-amber"></span>
           <span class="t-dot t-green"></span>
-          <span class="terminal-path">~/builds/field-notes.md</span>
+          <span class="terminal-path">~/bench/2026.log</span>
         </div>
         <div class="terminal-body" id="terminalLog">
-          <div class="log-line"><span class="log-ts">[sys]</span> session started · MinLiBuilds</div>
-          <div class="log-line"><span class="log-ts">[tool]</span> Claude · Codex · Grok · Gemini · 开源模型</div>
-          <div class="log-line"><span class="log-ts">[mode]</span> 实战优先 · 拒绝空谈</div>
-          <div class="log-line"><span class="log-ts log-ts-stat">[stat]</span> 21.2K 关注 · 单帖峰值 1.06M · 商单曝光 2M+</div>
-          <div class="log-line"><span class="log-ts log-ts-work">[work]</span> 飞书 · 豆包 · Bitget · ZenMux · 蚂蚁百灵 …</div>
-          <div class="log-line typing" id="typingLine"><span class="log-ts">[note]</span> <span id="typedText"></span><span class="cursor">█</span></div>
+          <div class="log-line log-cmd"><span class="log-prompt">$</span> tail -n 6 ~/bench/2026.log</div>
+          <div class="bench-head log-line" aria-hidden="true"><span>date</span><span>target</span><span>run</span><span>views</span></div>
+          <a class="bench-row log-line" href="/posts/llm-context-caching/"><span class="b-date">04-06</span><span class="b-name">context-cache</span><span class="b-detail">Gemma 4 → Claude Code 缓存机制</span><span class="b-views">648K</span></a>
+          <a class="bench-row log-line" href="/posts/notebooklm-claude-workflow/"><span class="b-date">04-20</span><span class="b-name">notebooklm</span><span class="b-detail">47 篇论文 · 5 轮研究会话 · $0.55</span><span class="b-views">817K</span></a>
+          <a class="bench-row log-line" href="https://x.com/MinLiBuilds/status/2089338660386992295" target="_blank" rel="noopener"><span class="b-date">08-17</span><span class="b-name">spark-vs-4090</span><span class="b-detail">2 台机器 × 2 个模型 · 4 组合</span><span class="b-views">298K</span></a>
+          <a class="bench-row log-line" href="https://x.com/MinLiBuilds/status/2101865626046542228" target="_blank" rel="noopener"><span class="b-date">09-21</span><span class="b-name">qwen-image-2.1</span><span class="b-detail">13 组实验 · 196 张图 · 48G 4090</span><span class="b-views">522K</span></a>
+          <a class="bench-row log-line" href="https://x.com/MinLiBuilds/status/2104219761370665256" target="_blank" rel="noopener"><span class="b-date">09-27</span><span class="b-name">qwen-image-2.1</span><span class="b-detail">安全边界 · 375 张 · 0 拒绝</span><span class="b-views">1.06M</span></a>
+          <a class="bench-row log-line" href="https://x.com/MinLiBuilds/status/2107988055101685781" target="_blank" rel="noopener"><span class="b-date">10-08</span><span class="b-name">ling-3.1-flash</span><span class="b-detail">12GB 显存跑 125B</span><span class="b-views">103K</span></a>
+          <div class="log-line typing" id="typingLine"><span class="log-prompt">$</span> <span id="typedText"></span><span class="cursor">█</span></div>
         </div>
       </div>
     </section>
@@ -157,12 +164,12 @@
         <div class="stat-label">X 关注者</div>
       </div>
       <div class="stat">
-        <div class="stat-num" data-count="1057601" data-format="m" data-digits="2">1.06M</div>
+        <div class="stat-num" data-count="1057872" data-format="m" data-digits="2">1.06M</div>
         <div class="stat-label">单帖峰值阅读</div>
       </div>
       <div class="stat">
-        <div class="stat-num" data-count="1400" data-format="k" data-suffix="+">1.4K+</div>
-        <div class="stat-label">高书签实战帖</div>
+        <div class="stat-num" data-count="8200346" data-format="m" data-digits="1">8.2M</div>
+        <div class="stat-label">38 篇长文累计阅读</div>
       </div>
       <div class="stat">
         <div class="stat-num" data-count="2000000" data-format="m" data-suffix="+">2M+</div>
@@ -220,694 +227,577 @@
             <h3>输出节奏</h3>
             <p>模型一出来就上手测。高密度短帖 + 可收藏长文，热点快评和硬核实测都有。</p>
           </article>
+          <article class="fact-card fact-card-rig">
+            <h3>测过的机器</h3>
+            <p><code>2× RTX 4090 48G</code> <code>DGX Spark</code> <code>12GB 显存</code></p>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Blog / top posts — X-style cards, ranked by real views -->
+    <!-- Blog — 阅读 5 万以上的长文，数据取自 X（2026-10-09 快照） -->
     <section class="section" id="blog">
       <div class="section-head">
-        <span class="eyebrow">02 · BLOG</span>
-        <h2>博客 · 近期高互动</h2>
-        <p class="section-desc">2026 年 2 月到 10 月的 X 长文按真实阅读排序。已经有站内全文的不重复挂。点赞、转发、书签取自原帖。</p>
+        <span class="eyebrow">02 · POSTS</span>
+        <h2>实测长文 · 阅读 5 万+</h2>
+        <p class="section-desc">2026 年 2 月以来，阅读超过 5 万的 38 篇，累计 8.2M 阅读。数据取自 X，2026-10-09 快照。站内有全文的在站内打开，其余跳到 X 原帖。</p>
       </div>
-      <div class="signal-grid">
-        <!-- 1 · Qwen-Image-2.1 安全边界 · 1.06M -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2104219761370665256" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-09-27 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+      <div class="log-toolbar" role="group" aria-label="排序">
+        <span class="log-toolbar-label">sort --by</span>
+        <button type="button" class="log-sort is-active" data-sort="views" aria-pressed="true">阅读</button>
+        <button type="button" class="log-sort" data-sort="date" aria-pressed="false">时间</button>
+        <span class="log-count">38 篇</span>
+      </div>
+      <div class="log-grid" id="logGrid">
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2104219761370665256" target="_blank" rel="noopener" data-views="1057872" data-date="2026-09-27">
+          <div class="log-cover"><img src="assets/x/2104219761370665256.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#01</span><time datetime="2026-09-27">2026-09-27</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>Qwen-Image-2.1 安全边界实测：375 张，0 拒绝</h3>
+            <p>上线之前安全边界到底在哪。375 张生成和编辑测试，模型没有稳定拒绝，检测器自己先翻车。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>1.06M</dd></div>
+              <div><dt>书签</dt><dd>1.7K</dd></div>
+              <div><dt>赞</dt><dd>782</dd></div>
+              <div><dt>回复</dt><dd>44</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">Qwen-Image-2.1 出来以后，大家最好奇的还有一个问题：上线之前，安全边界到底在哪。我替大家跑了一遍。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2104219761370665256.jpg" alt="文章头图：Qwen-Image-2.1 安全边界实测：375 张，0 拒绝" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>Qwen-Image-2.1 安全边界实测：375 张，0 拒绝</strong>
-            <em>1.06M 阅读 · 1.7K 书签 · 当前单帖峰值</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 44</span>
-            <span>🔁 69</span>
-            <span>❤️ 782</span>
-            <span>🔖 1.7K</span>
-            <span class="x-views">👁 1.06M</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 2 · Qwen-Image-2.1 196 张 · 522K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2101865626046542228" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-09-21 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/notebooklm-claude-workflow/" data-views="817499" data-date="2026-04-20">
+          <div class="log-cover"><img src="assets/article-notebooklm.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#02</span><time datetime="2026-04-20">2026-04-20</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>用好 NotebookLM，立省 80% Token</h3>
+            <p>$20 账号干出 $200 的活：让 NotebookLM 当老师存语料做检索，Claude 当助手只做推理和编排。47 篇论文实测 5 轮研究会话贵档 token 只花 $0.55，比塞 prompt 便宜 17 倍。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>817K</dd></div>
+              <div><dt>书签</dt><dd>4.1K</dd></div>
+              <div><dt>赞</dt><dd>1.6K</dd></div>
+              <div><dt>回复</dt><dd>43</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">Qwen-Image-2.1 刚发布，我在一张 48GB 的 4090 上跑了 13 组实验、196 张图、零失败。中文排版、原生透明、多图身份保持，弱在「替换」。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2101865626046542228.jpg" alt="文章头图：Qwen-Image-2.1 上手：13 组实验、196 张图" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>Qwen-Image-2.1 上手：13 组实验、196 张图</strong>
-            <em>522K 阅读 · 995 书签 · 部署向实测</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 45</span>
-            <span>🔁 70</span>
-            <span>❤️ 599</span>
-            <span>🔖 995</span>
-            <span class="x-views">👁 522K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 3 · Spark vs 4090 · 298K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2089338660386992295" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-08-17 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/llm-context-caching/" data-views="648495" data-date="2026-04-06">
+          <div class="log-cover"><img src="assets/article-cache.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#03</span><time datetime="2026-04-06">2026-04-06</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>搞懂缓存机制：从 Gemma 4 到 Claude Code 省 80% Token</h3>
+            <p>同一段对话为什么有时 30 秒有时 0.2 秒？从本地 Gemma 4 实验讲到 Transformer KV 缓存原理，再逆向 Claude Code 源码看 Anthropic 的缓存工程——理解前缀匹配和 TTL，同样的套餐能多干 3-5 倍的活。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>648K</dd></div>
+              <div><dt>书签</dt><dd>3.5K</dd></div>
+              <div><dt>赞</dt><dd>1.6K</dd></div>
+              <div><dt>回复</dt><dd>54</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">部署本地模型，是选 NVIDIA DGX Spark，还是两张魔改 48G 的 RTX 4090？两台偏科的机器，两个偏科的模型，四个组合我全测了一遍。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2089338660386992295.jpg" alt="文章头图：DGX Spark 还是双 4090：本地模型到底怎么买" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>DGX Spark 还是双 4090：本地模型到底怎么买</strong>
-            <em>298K 阅读 · 110 条回复 · Ling-3.0 实测</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 110</span>
-            <span>🔁 50</span>
-            <span>❤️ 263</span>
-            <span>🔖 391</span>
-            <span class="x-views">👁 298K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 6 · UU 远程终端 · 231K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2096238709381476424" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-09-05 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2101865626046542228" target="_blank" rel="noopener" data-views="521679" data-date="2026-09-21">
+          <div class="log-cover"><img src="assets/x/2101865626046542228.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#04</span><time datetime="2026-09-21">2026-09-21</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>Qwen-Image-2.1 上手：13 组实验、196 张图</h3>
+            <p>一张 48GB 4090，16 小时，纯 GPU 约 2.5 小时。强在中文排版、原生透明和多图身份保持，弱在「替换」语义。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>522K</dd></div>
+              <div><dt>书签</dt><dd>995</dd></div>
+              <div><dt>赞</dt><dd>599</dd></div>
+              <div><dt>回复</dt><dd>45</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">开源模型有手机端了。家里跑着的 Qwen，出门用手机点进终端，会话就在那里。没写一行代码。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2096238709381476424.jpg" alt="文章头图：开源模型的手机端：UU 远程把本地会话搬到手机上" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>开源模型的手机端：UU 远程把本地会话搬到手机上</strong>
-            <em>231K 阅读 · 网易 UU 远程</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 24</span>
-            <span>🔁 12</span>
-            <span>❤️ 109</span>
-            <span>🔖 198</span>
-            <span class="x-views">👁 231K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 7 · Nex-AGI 3D 打印 · 168K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2099805386429915380" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-09-15 · 动手</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/karpathy-autoresearch-skills/" data-views="507983" data-date="2026-03-19">
+          <div class="log-cover"><img src="assets/posts/karpathy-autoresearch-skills-cover.jpg" alt="" loading="lazy" width="1408" height="563" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#05</span><time datetime="2026-03-19">2026-03-19</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>你搭的 Claude Skills 还能提升 10 倍效果——用 Karpathy 的 autoresearch 方法【译】</h3>
+            <p>Karpathy 的 autoresearch 方法拆解：让 Claude 先自我研究、生成评测基准，再迭代你的 Skill，把已经能用的 Skills 效果再提升 10 倍。505K 阅读爆款译文，附实践哥导读。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>508K</dd></div>
+              <div><dt>书签</dt><dd>2K</dd></div>
+              <div><dt>赞</dt><dd>774</dd></div>
+              <div><dt>回复</dt><dd>21</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">一句 Prompt：做一根 6cm 的粉色活动香蕉，省点料。Nex-AGI 自己用 Blender 建模、看结果、修，吐出 STL。我扔进拓竹，视频里正在一层一层长出来。</p>
-          <div class="x-card-media">
-            <img src="assets/x/2099805386429915380.jpg" alt="视频截图：Nex-AGI 3D 打印" loading="lazy" width="1200" height="675" />
-            <span class="x-media-play" aria-hidden="true">▶</span>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 120</span>
-            <span>🔁 189</span>
-            <span>❤️ 335</span>
-            <span>🔖 237</span>
-            <span class="x-views">👁 168K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 数字人营销视频 · 飞书 × 豆包 · 155K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2087393323468325290" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-08-12 · X Articles · 商单</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/naval-digital-clone/" data-views="356571" data-date="2026-02-18">
+          <div class="log-cover"><img src="assets/posts/naval-digital-clone-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#06</span><time datetime="2026-02-18">2026-02-18</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>我零代码克隆了纳瓦尔数字分身：Step by Step 保姆级教程</h3>
+            <p>我想请硅谷顶级哲人纳瓦尔 (@naval) 做我的 24 小时人生教练，但他太贵，也没空理我。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>357K</dd></div>
+              <div><dt>书签</dt><dd>2.1K</dd></div>
+              <div><dt>赞</dt><dd>1K</dd></div>
+              <div><dt>回复</dt><dd>76</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">数字人营销视频有五个位置：形象、声音、口型、内容、环境。本地用手机素材加 VoiceBox / Qwen TTS，MuseTalk 对口型。营销链路换成飞书里的豆包：选题和主播库进多维表格，Seedance 音画同出。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2087393323468325290.jpg" alt="文章头图：从数字人到营销视频：本地 MuseTalk，飞书里的豆包加 Seedance" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>从数字人到营销视频：本地 MuseTalk，飞书里的豆包加 Seedance</strong>
-            <em>155K 阅读 · 364 书签 · 飞书造浪者同一单</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 39</span>
-            <span>🔁 27</span>
-            <span>❤️ 211</span>
-            <span>🔖 364</span>
-            <span class="x-views">👁 155K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 防封号 · Starryblu · 112K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2094017117096161331" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-08-30 · X Articles · 商单</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/claude-code-tun-mode/" data-views="304849" data-date="2026-04-15">
+          <div class="log-cover"><img src="assets/posts/claude-code-tun-mode-cover.jpg" alt="" loading="lazy" width="1825" height="730" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#07</span><time datetime="2026-04-15">2026-04-15</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>Claude Code 在 TUN 模式下为何还活不过 1 个月？</h3>
+            <p>我用Claude Code一个下午烧完extra credit 200刀，然后账号没了。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>305K</dd></div>
+              <div><dt>书签</dt><dd>981</dd></div>
+              <div><dt>赞</dt><dd>444</dd></div>
+              <div><dt>回复</dt><dd>69</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">账号用了一年两个月，没被封过。规则只有一条：订阅国家、网络、账单地址、卡，必须是同一个国家。这篇把防封做法、一张国内护照能办的新加坡卡，和订阅顺序写完了。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2094017117096161331.jpg" alt="文章头图：Claude 防封号：订阅国家和网络必须是同一个" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>Claude 防封号：订阅国家和网络必须是同一个</strong>
-            <em>112K 阅读 · 460 书签 · Starryblu 合作</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 35</span>
-            <span>🔁 26</span>
-            <span>❤️ 285</span>
-            <span>🔖 460</span>
-            <span class="x-views">👁 112K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 口播原理 · 系列第一篇 · 106K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2081412645513818542" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-07-26 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2089338660386992295" target="_blank" rel="noopener" data-views="297796" data-date="2026-08-17">
+          <div class="log-cover"><img src="assets/x/2089338660386992295.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#08</span><time datetime="2026-08-17">2026-08-17</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>DGX Spark 还是双 4090：本地模型到底怎么买</h3>
+            <p>两台偏科的机器，Dense 的 Qwen3.8-27B 和 MoE 的 Ling-3.0-flash，四个组合全测了一遍。一个人用和几十个人用，结论不一样。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>298K</dd></div>
+              <div><dt>书签</dt><dd>391</dd></div>
+              <div><dt>赞</dt><dd>263</dd></div>
+              <div><dt>回复</dt><dd>110</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">口播系列第一篇，先不做数字人。五个角色：HTML 画面、本地 VoiceBox 复刻声音、Whisper 从成片倒推字幕、Playwright 录屏、ffmpeg 合成。跑通以后收成一个 skill。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2081412645513818542.jpg" alt="文章头图：从 0 搭建口播视频：先把原理吃透" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>从 0 搭建口播视频：先把原理吃透</strong>
-            <em>106K 阅读 · 406 书签 · 数字人那篇的前传</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 21</span>
-            <span>🔁 30</span>
-            <span>❤️ 222</span>
-            <span>🔖 406</span>
-            <span class="x-views">👁 106K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 8 · Muse × OpenRouter · 105K / 624 书签 -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2108204485478953149" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-10-08 · 工作流</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/clone-baoyu-ai-advisor/" data-views="232776" data-date="2026-02-14">
+          <div class="log-cover"><img src="assets/posts/clone-baoyu-ai-advisor-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#09</span><time datetime="2026-02-14">2026-02-14</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>我克隆了「宝玉」之保姆教程：用 Gemini + NotebookLM 打造你的 24h 首席 AI 顾问</h3>
+            <p>我想请宝玉 ( @dotey  ) 做我的 24小时 AI首席顾问，但他太忙了。  所以我干了一件很 Geek 的事：用宝玉skills抓取宝玉的公开数据，用NotebookLM打造他的大脑，在 Gemini 里用GEM克隆了一个拥有他…</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>233K</dd></div>
+              <div><dt>书签</dt><dd>1.6K</dd></div>
+              <div><dt>赞</dt><dd>743</dd></div>
+              <div><dt>回复</dt><dd>61</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">让 Muse 强大十倍：白嫖 OpenRouter 上的旗舰免费模型，每天自动更新。一条安装命令，一分钟接上。</p>
-          <div class="x-card-media">
-            <img src="assets/x/2108204485478953149.jpg" alt="视频截图：Muse × OpenRouter" loading="lazy" width="1200" height="675" />
-            <span class="x-media-play" aria-hidden="true">▶</span>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 47</span>
-            <span>🔁 57</span>
-            <span>❤️ 401</span>
-            <span>🔖 624</span>
-            <span class="x-views">👁 105K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 8 · 12GB 部署 Qwen · 99K，还在涨 -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2107988055101685781" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-10-08 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2096238709381476424" target="_blank" rel="noopener" data-views="230999" data-date="2026-09-05">
+          <div class="log-cover"><img src="assets/x/2096238709381476424.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#10</span><time datetime="2026-09-05">2026-09-05</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>开源模型的手机端：UU 远程把本地会话搬到手机上</h3>
+            <p>家里的 Qwen 27B 不再只活在终端里。手机点进 UU 远程，tmux 会话原样在，并开源了 uu-term-bridge。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>231K</dd></div>
+              <div><dt>书签</dt><dd>198</dd></div>
+              <div><dt>赞</dt><dd>109</dd></div>
+              <div><dt>回复</dt><dd>24</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">Qwen3.8-Flash-Next，125B 参数，每个 token 只激活约 6B。用 Strata 把 GPU、CPU、RAM 和 SSD 一起用上，12GB 显卡接近 100 tok/s。这次让 Ling-3.1-flash 从零部署。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2107988055101685781.jpg" alt="文章头图：12GB 跑 125B：Ling-3.1-flash 从零部署 Qwen" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>12GB 跑 125B：Ling-3.1-flash 从零部署 Qwen</strong>
-            <em>99K 阅读 · 595 书签 · 10 月新长文，还在涨</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 67</span>
-            <span>🔁 84</span>
-            <span>❤️ 381</span>
-            <span>🔖 595</span>
-            <span class="x-views">👁 99K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- Qwen 0.8B · 34K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2028741231220781084" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-03-03 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/phone-remote-coding-uu/" data-views="223513" data-date="2026-05-19">
+          <div class="log-cover"><img src="assets/posts/phone-remote-coding-uu-cover.jpg" alt="" loading="lazy" width="555" height="1200" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#11</span><time datetime="2026-05-19">2026-05-19</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>真正顺手的手机远程 AI 编程只要一步：UU 远程 + Claude Code 移动工作流</h3>
+            <p>突然发现之前折腾什么Tailscale+tmux，claude remotion，codex远程全他妈浪费时间。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>224K</dd></div>
+              <div><dt>书签</dt><dd>1.1K</dd></div>
+              <div><dt>赞</dt><dd>806</dd></div>
+              <div><dt>回复</dt><dd>182</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">Qwen3.5-0.8B 视觉模型，两个命令在 Mac 上跑起来，再拿去对 Claude Haiku。识字还行，写代码和当 Agent 总指挥不行。适合嵌进链路里看屏幕，不适合扛长任务。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2028741231220781084.jpg" alt="文章头图：0.8B 视觉模型对上 Haiku：本地两个命令部署" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>0.8B 视觉模型对上 Haiku：本地两个命令部署</strong>
-            <em>34K 阅读 · 116 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 14</span>
-            <span>🔁 12</span>
-            <span>❤️ 106</span>
-            <span>🔖 116</span>
-            <span class="x-views">👁 34K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- gbed · 26K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2029958621208228143" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-03-06 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/claude-code-dynamic-workflow/" data-views="222364" data-date="2026-06-03">
+          <div class="log-cover"><img src="assets/article-dw.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#12</span><time datetime="2026-06-03">2026-06-03</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>Claude Code 动态工作流：每个任务都可以有自己的 Harness【译】</h3>
+            <p>Claude Code 能即时写出为任务量身定制的编排脚本，在单个会话里跑数十到数百个并行 subagent。译自 Anthropic 员工 Thariq 的长文，附实践哥导读批注。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>222K</dd></div>
+              <div><dt>书签</dt><dd>714</dd></div>
+              <div><dt>赞</dt><dd>306</dd></div>
+              <div><dt>回复</dt><dd>7</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">Gemini 订阅送的 2TB Drive 闲着。gbed 在本地接住 Obsidian 的粘贴，用 Google Workspace CLI 上传，返回能直接插进 Markdown 的直链。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2029958621208228143.jpg" alt="文章头图：闲置的 Google Drive，做成 Obsidian 图床" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>闲置的 Google Drive，做成 Obsidian 图床</strong>
-            <em>26K 阅读 · 195 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 15</span>
-            <span>🔁 22</span>
-            <span>❤️ 111</span>
-            <span>🔖 195</span>
-            <span class="x-views">👁 26K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- EverOS · 24K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2070507026078384450" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-06-26 · X Articles · 商单</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/claude-code-quota-reset/" data-views="193306" data-date="2026-04-05">
+          <div class="log-cover log-cover-text" aria-hidden="true">
+            <code>$ cat claude-code-quota-reset.md</code>
+            <span>&gt; 纯文字长帖，没有封面图</span>
           </div>
-          <p class="x-card-text">发小做跨境电商，数据不能上云。我没先搞懂他的生意，把表格和录音交给 AI 对齐需求，交付成几个跑在本地小模型上的 skill。记忆放在 EverOS 里。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2070507026078384450.jpg" alt="文章头图：最难的不是写代码，是搞懂他要什么" loading="lazy" width="1200" height="480" />
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#13</span><time datetime="2026-04-05">2026-04-05</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>用 crontab 锁死 Claude Code 的 5 小时额度重置窗口</h3>
+            <p>有没有人跟我一样？
+        Claude Code 5小时重置一次，并以当天第一次使用开始计算周期。
+        我会使用crontab每天早上7:01定时用Haiku发一句“早安”。
+        这样一来，每5小时重置…</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>193K</dd></div>
+              <div><dt>书签</dt><dd>751</dd></div>
+              <div><dt>赞</dt><dd>854</dd></div>
+              <div><dt>回复</dt><dd>59</dd></div>
+            </dl>
           </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>最难的不是写代码，是搞懂他要什么</strong>
-            <em>24K 阅读 · 104 书签 · EverOS</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 27</span>
-            <span>🔁 7</span>
-            <span>❤️ 81</span>
-            <span>🔖 104</span>
-            <span class="x-views">👁 24K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 可点击路径 · 23K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2040580427916919180" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-04-05 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2099805386429915380" target="_blank" rel="noopener" data-views="167554" data-date="2026-09-15">
+          <div class="log-cover"><img src="assets/x/2099805386429915380.jpg" alt="" loading="lazy" width="1200" height="675" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#14</span><time datetime="2026-09-15">2026-09-15</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>一句话到实物：Nex-AGI 设计香蕉，拓竹打出来</h3>
+            <p>做一根 6cm 的粉色活动香蕉。它自己用 Blender 建模、看结果、修，吐出 STL，打印机一层一层长出来。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>168K</dd></div>
+              <div><dt>书签</dt><dd>237</dd></div>
+              <div><dt>赞</dt><dd>335</dd></div>
+              <div><dt>回复</dt><dd>120</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">Claude Code 打出来的文件路径不能点。iTerm2 开 Shell Integration 和 Semantic History，Cmd+Click 就能打开。要覆盖更多路径格式，用 osc8wrap。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2040580427916919180.jpg" alt="文章头图：终端里的文件路径，Cmd+Click 直接打开" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>终端里的文件路径，Cmd+Click 直接打开</strong>
-            <em>23K 阅读 · 62 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 6</span>
-            <span>🔁 3</span>
-            <span>❤️ 37</span>
-            <span>🔖 62</span>
-            <span class="x-views">👁 23K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- Mail Agent · 23K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2089156472324452465" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-08-17 · X Articles · 商单</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2087393323468325290" target="_blank" rel="noopener" data-views="154758" data-date="2026-08-12">
+          <div class="log-cover"><img src="assets/x/2087393323468325290.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#15</span><time datetime="2026-08-12">2026-08-12</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>从数字人到营销视频：本地 MuseTalk，飞书里的豆包加 Seedance</h3>
+            <p>五个位置：形象、声音、口型、内容、环境。本地链路是 VoiceBox / Qwen TTS 加 MuseTalk。营销链路是飞书里的豆包，选题和主播库进多维表格，Seedance 音画同出。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>155K</dd></div>
+              <div><dt>书签</dt><dd>364</dd></div>
+              <div><dt>赞</dt><dd>211</dd></div>
+              <div><dt>回复</dt><dd>39</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">月底整理发票，以前要自己开 IMAP、写两个 Skill。网易邮箱大师把 Mail Agent 装进邮箱里，说清月份和字段，它整理成表。特殊流程还是自己做 Skill。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2089156472324452465.jpg" alt="文章头图：发票 Skill 之后：网易邮箱里的 Mail Agent" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>发票 Skill 之后：网易邮箱里的 Mail Agent</strong>
-            <em>23K 阅读 · 37 书签 · 网易邮箱</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 12</span>
-            <span>🔁 2</span>
-            <span>❤️ 44</span>
-            <span>🔖 37</span>
-            <span class="x-views">👁 23K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 视觉骨架 · 17K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2026968494223544495" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-02-26 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/fork-context-skill/" data-views="153588" data-date="2026-06-09">
+          <div class="log-cover"><img src="assets/posts/fork-context-skill-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#16</span><time datetime="2026-06-09">2026-06-09</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>一个 Skill 成为 TOP 1% Context 管理大师：比官方好用 100x 的 /fork</h3>
+            <p>和 Claude Code 聊了半小时，调教好了上下文。偏偏这时你想试个更狠的改法，或者冒出个岔路问题想顺嘴问一句。非常难堪，当前窗口直接动手，主线被带跑、上下文越搅越乱；新开一个 claude，它干干净净啥都不知道，半小时的铺垫得从头…</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>154K</dd></div>
+              <div><dt>书签</dt><dd>577</dd></div>
+              <div><dt>赞</dt><dd>244</dd></div>
+              <div><dt>回复</dt><dd>35</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">垫图总是跑偏，是因为没把构图、透视和光拆出来。先让一个 GEM 把参考图的视觉骨架翻成英文提示词，再交给出图模型渲染。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2026968494223544495.jpg" alt="文章头图：把一张图的视觉骨架拆下来，换上新主体" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>把一张图的视觉骨架拆下来，换上新主体</strong>
-            <em>17K 阅读 · 181 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 12</span>
-            <span>🔁 18</span>
-            <span>❤️ 114</span>
-            <span>🔖 181</span>
-            <span class="x-views">👁 17K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 供应链 · 16K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2039319515830608216" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-04-01 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/how-to-be-good-at-research/" data-views="152399" data-date="2026-06-14">
+          <div class="log-cover log-cover-text" aria-hidden="true">
+            <code>$ cat how-to-be-good-at-research.md</code>
+            <span>&gt; 纯文字长帖，没有封面图</span>
           </div>
-          <p class="x-card-text">LiteLLM 被植入木马，Axios 维护者账号被劫持。AI 会幻觉出不存在的包名，攻击者先去抢注。装之前先确认这个包真的存在、是谁在维护。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2039319515830608216.jpg" alt="文章头图：AI 写的依赖，先确认这个包真的存在" loading="lazy" width="1200" height="480" />
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#17</span><time datetime="2026-06-14">2026-06-14</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>How to Be Good at Research：AI 时代的研究方法论【译介】</h3>
+            <p>vivek @itsreallyvivek 如何做好研究（how to be good at research） 并没有人真正教过你如何做研究。你得到一张办公桌、一个别人挑好的问题，以及一个“做出点新东西”的模糊指令。因此，大多数人通过…</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>152K</dd></div>
+              <div><dt>书签</dt><dd>1.5K</dd></div>
+              <div><dt>赞</dt><dd>1.1K</dd></div>
+              <div><dt>回复</dt><dd>38</dd></div>
+            </dl>
           </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>AI 写的依赖，先确认这个包真的存在</strong>
-            <em>16K 阅读 · 19 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 28</span>
-            <span>🔁 3</span>
-            <span>❤️ 55</span>
-            <span>🔖 19</span>
-            <span class="x-views">👁 16K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- 判断负债 · 16K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2037120482093523048" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-03-26 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/viral-video-finder-skill/" data-views="151090" data-date="2026-05-12">
+          <div class="log-cover"><img src="assets/posts/viral-video-finder-skill-cover.jpg" alt="" loading="lazy" width="1278" height="511" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#18</span><time datetime="2026-05-12">2026-05-12</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>一个 Skill 每天节省 25 个小时找爆款视频</h3>
+            <p>我花了两周, 研究了 30 多个不出镜、不写 thread、不发自拍的泛流量博主。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>151K</dd></div>
+              <div><dt>书签</dt><dd>1.1K</dd></div>
+              <div><dt>赞</dt><dd>532</dd></div>
+              <div><dt>回复</dt><dd>100</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">判断标准只装在脑子里，人一走就蒸发。Austin 把搜词时先看什么、留什么、杀什么写成 Claude 能跑的步骤。模型说该否定的词，他有时不批，因为那是战略词。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2037120482093523048.jpg" alt="文章头图：判断负债：把只装在脑子里的标准导出来" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>判断负债：把只装在脑子里的标准导出来</strong>
-            <em>16K 阅读 · 171 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 5</span>
-            <span>🔁 15</span>
-            <span>❤️ 80</span>
-            <span>🔖 171</span>
-            <span class="x-views">👁 16K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- claude-bubble · 13K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2042986491903905972" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-04-11 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="/posts/gtm-strategy-claude-prompt/" data-views="134551" data-date="2026-03-09">
+          <div class="log-cover"><img src="assets/posts/gtm-strategy-claude-prompt-cover.jpg" alt="" loading="lazy" width="1200" height="675" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#19</span><time datetime="2026-03-09">2026-03-09</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>Claude 满级 Prompt：用浓缩资料 3 小时做出 GTM 战略</h3>
+            <p>人类能达到的满级 prompt 能力，值得学习。经常听说降维打击，这次来看看怎么用 Claude 做升维打击的，从浓缩数据里挖出隐藏的关键细节信息。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>135K</dd></div>
+              <div><dt>书签</dt><dd>1.5K</dd></div>
+              <div><dt>赞</dt><dd>890</dd></div>
+              <div><dt>回复</dt><dd>30</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">盯着 Claude 终端发呆，分不清它在想还是断了。claude-bubble 只读本地日志的时间戳：绿是在干活，黄是在重试，红是网络挂了。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2042986491903905972.jpg" alt="文章头图：右上角一只螃蟹：它在干活，还是在重试" loading="lazy" width="1200" height="480" />
-          </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>右上角一只螃蟹：它在干活，还是在重试</strong>
-            <em>13K 阅读 · 60 书签</em>
-          </div>
-          <div class="x-card-stats">
-            <span>💬 4</span>
-            <span>🔁 2</span>
-            <span>❤️ 48</span>
-            <span>🔖 60</span>
-            <span class="x-views">👁 13K</span>
-          </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
         </a>
-
-        <!-- Karpathy 笔记 · 5.1K -->
-        <a class="x-card" href="https://x.com/MinLiBuilds/status/2035738039608340984" target="_blank" rel="noopener">
-          <div class="x-card-head">
-            <img class="x-card-avatar" src="assets/avatar.jpg" alt="" width="40" height="40" />
-            <div class="x-card-meta">
-              <div class="x-card-name-row">
-                <strong>实践哥 Li</strong>
-                <svg class="x-badge" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#1d9bf0"/><path fill="#fff" d="M9.7 15.3 5.9 11.5l1.4-1.4 2.4 2.4 5-5 1.4 1.4z"/></svg>
-              </div>
-              <span class="x-card-handle">@MinLiBuilds · 2026-03-22 · X Articles</span>
-            </div>
-            <span class="x-logo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
-            </span>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2108204485478953149" target="_blank" rel="noopener" data-views="114561" data-date="2026-10-08">
+          <div class="log-cover"><img src="assets/x/2108204485478953149.jpg" alt="" loading="lazy" width="1200" height="675" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#20</span><time datetime="2026-10-08">2026-10-08</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>让 Muse 接上 OpenRouter 免费旗舰，每天自动更新</h3>
+            <p>免费模型会过期。让 Muse 每天自己找到新的，一条命令接上。发布第二天，书签已经 624。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>115K</dd></div>
+              <div><dt>书签</dt><dd>650</dd></div>
+              <div><dt>赞</dt><dd>425</dd></div>
+              <div><dt>回复</dt><dd>52</dd></div>
+            </dl>
           </div>
-          <p class="x-card-text">看 Karpathy 那期访谈停了好几次。答案变得太便宜，学习里那种必要的困难会被跳过。他的办法是隔一段时间进实验室更新认知，再退出来自己做。</p>
-          <div class="x-card-media x-card-article">
-            <img src="assets/x/2035738039608340984.jpg" alt="文章头图：Karpathy 访谈笔记：答案太廉价的时候" loading="lazy" width="1200" height="480" />
+        </a>
+        <a class="log-card" href="/posts/wechat-layout-skill/" data-views="112452" data-date="2026-05-17">
+          <div class="log-cover"><img src="assets/posts/wechat-layout-skill-cover.jpg" alt="" loading="lazy" width="1278" height="511" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#21</span><time datetime="2026-05-17">2026-05-17</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>创建真正可用的 Skill 完整教程——拆解公众号排版</h3>
+            <p>我每次要把 MD 草稿排版到公众号，手动调样式 30 ～120分钟一篇。这种中频场景，非常适合做一个 Skill 。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>112K</dd></div>
+              <div><dt>书签</dt><dd>626</dd></div>
+              <div><dt>赞</dt><dd>302</dd></div>
+              <div><dt>回复</dt><dd>51</dd></div>
+            </dl>
           </div>
-          <div class="x-article-bar">
-            <span>From MinLiBuilds · X Articles</span>
-            <strong>Karpathy 访谈笔记：答案太廉价的时候</strong>
-            <em>5.1K 阅读 · 48 书签</em>
+        </a>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2094017117096161331" target="_blank" rel="noopener" data-views="111875" data-date="2026-08-30">
+          <div class="log-cover"><img src="assets/x/2094017117096161331.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#22</span><time datetime="2026-08-30">2026-08-30</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>Claude 防封号：订阅国家和网络必须是同一个</h3>
+            <p>一年两个月没被封。订阅区、网络、账单地址和卡放在同一个国家。后半篇是一张国内护照能办的新加坡卡，含 Starryblu 合作。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>112K</dd></div>
+              <div><dt>书签</dt><dd>460</dd></div>
+              <div><dt>赞</dt><dd>285</dd></div>
+              <div><dt>回复</dt><dd>35</dd></div>
+            </dl>
           </div>
-          <div class="x-card-stats">
-            <span>💬 5</span>
-            <span>🔁 2</span>
-            <span>❤️ 43</span>
-            <span>🔖 48</span>
-            <span class="x-views">👁 5.1K</span>
+        </a>
+        <a class="log-card" href="/posts/schedule-quota-reset/" data-views="111247" data-date="2026-04-09">
+          <div class="log-cover"><img src="assets/posts/schedule-quota-reset-cover.jpg" alt="" loading="lazy" width="1716" height="820" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#23</span><time datetime="2026-04-09">2026-04-09</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>用 /schedule 云端定时触发 Claude Code 额度重置（免开机版）</h3>
+            <p>花一分钟设置，利用Claude Code 5小时重置一次的机制，让你每天9～12点，午休后14～17点，17～下班前从容不迫使用容量100%的token window。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>111K</dd></div>
+              <div><dt>书签</dt><dd>385</dd></div>
+              <div><dt>赞</dt><dd>279</dd></div>
+              <div><dt>回复</dt><dd>27</dd></div>
+            </dl>
           </div>
-          <span class="x-card-cta">在 X 上打开原帖 →</span>
+        </a>
+        <a class="log-card" href="/posts/agent-memory-workshop/" data-views="106247" data-date="2026-05-24">
+          <div class="log-cover"><img src="assets/posts/agent-memory-workshop-cover.jpg" alt="" loading="lazy" width="1200" height="675" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#24</span><time datetime="2026-05-24">2026-05-24</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>Anthropic 工程师的 Agent Memory Workshop 实操笔记</h3>
+            <p>Anthropic的工程师Kevin的一个分享。 价值$1000 刀，关于agent memory的workshop。 这将是 AI memory的主流，提前一年了解它，成为记忆专家。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>106K</dd></div>
+              <div><dt>书签</dt><dd>1.2K</dd></div>
+              <div><dt>赞</dt><dd>661</dd></div>
+              <div><dt>回复</dt><dd>18</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2081412645513818542" target="_blank" rel="noopener" data-views="105735" data-date="2026-07-26">
+          <div class="log-cover"><img src="assets/x/2081412645513818542.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#25</span><time datetime="2026-07-26">2026-07-26</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>从 0 搭建口播视频：先把原理吃透</h3>
+            <p>系列第一篇，先不做数字人。HTML、本地 TTS、Whisper、Playwright、ffmpeg 五个角色自己接，跑通以后收成 skill。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>106K</dd></div>
+              <div><dt>书签</dt><dd>406</dd></div>
+              <div><dt>赞</dt><dd>222</dd></div>
+              <div><dt>回复</dt><dd>21</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="https://x.com/MinLiBuilds/status/2107988055101685781" target="_blank" rel="noopener" data-views="102676" data-date="2026-10-08">
+          <div class="log-cover"><img src="assets/x/2107988055101685781.jpg" alt="" loading="lazy" width="1200" height="480" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#26</span><time datetime="2026-10-08">2026-10-08</time><span class="log-src">X 原帖 ↗</span></div>
+            <h3>12GB 跑 125B：Ling-3.1-flash 从零部署 Qwen3.8-Flash-Next</h3>
+            <p>Strata 让 GPU、CPU、RAM、SSD 一起干活。部署本身交给 Ling-3.1-flash，从读文档到测速验收没有断。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>103K</dd></div>
+              <div><dt>书签</dt><dd>601</dd></div>
+              <div><dt>赞</dt><dd>385</dd></div>
+              <div><dt>回复</dt><dd>70</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/build-your-own-skill/" data-views="100072" data-date="2026-04-25">
+          <div class="log-cover"><img src="assets/posts/build-your-own-skill-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#27</span><time datetime="2026-04-25">2026-04-25</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>实现一个自己的 Skill，一篇文章就够了</h3>
+            <p>你有没有那种每月固定要花两小时做、但又毫无意义、做完毫无成就感的事？比如整理发票？</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>100K</dd></div>
+              <div><dt>书签</dt><dd>452</dd></div>
+              <div><dt>赞</dt><dd>239</dd></div>
+              <div><dt>回复</dt><dd>39</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/auto-subtitle-skill/" data-views="94732" data-date="2026-05-29">
+          <div class="log-cover"><img src="assets/posts/auto-subtitle-skill-cover.jpg" alt="" loading="lazy" width="1983" height="793" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#28</span><time datetime="2026-05-29">2026-05-29</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>1 个 Skill 自动添加字幕，ByeBye 剪映会员</h3>
+            <p>剪映的自动字幕要充会员，一年 ¥599。钱掏了，识别也就七成准：专有名词全错、语速一快整句漏掉、错别字一串，剩下的还得你一条条对着时间轴手补。花了钱，活还得自己干一半。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>95K</dd></div>
+              <div><dt>书签</dt><dd>551</dd></div>
+              <div><dt>赞</dt><dd>310</dd></div>
+              <div><dt>回复</dt><dd>71</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/fable-first-week-tips/" data-views="94527" data-date="2026-07-02">
+          <div class="log-cover log-cover-text" aria-hidden="true">
+            <code>$ cat fable-first-week-tips.md</code>
+            <span>&gt; 纯文字长帖，没有封面图</span>
+          </div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#29</span><time datetime="2026-07-02">2026-07-02</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>第一周最大化 Fable 价值的 7 条用法（含 Skill 蒸馏技巧）</h3>
+            <p>不要用它写简单代码：从最难的 backlog 开始、花在架构与核心抽象上、把每月重复的事拆成 skill、让 Fable 当老师小模型当学生——7 条把 Fable 价值最大化的实操用法。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>95K</dd></div>
+              <div><dt>书签</dt><dd>96</dd></div>
+              <div><dt>赞</dt><dd>117</dd></div>
+              <div><dt>回复</dt><dd>45</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/gemini-canvas-starlink/" data-views="93664" data-date="2026-02-20">
+          <div class="log-cover"><img src="assets/posts/gemini-canvas-starlink-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#30</span><time datetime="2026-02-20">2026-02-20</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>零代码带娃手搓 Starlink？Gemini 3.1 Canvas 开年保姆级教学</h3>
+            <p>Gemini Pro 3.1 刚刚更新，我对它史诗级加强的 Canvas 功能爱不释手。刚好周末准备带五年级的儿子去天文馆，我决定不翻科普书，也不给他用豆包，我准备用Gemini Pro 3.1可视化概念验证。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>94K</dd></div>
+              <div><dt>书签</dt><dd>482</dd></div>
+              <div><dt>赞</dt><dd>274</dd></div>
+              <div><dt>回复</dt><dd>14</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/claude-code-max-iq-skill/" data-views="87461" data-date="2026-05-09">
+          <div class="log-cover"><img src="assets/posts/claude-code-max-iq-skill-cover.jpg" alt="" loading="lazy" width="1940" height="776" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#31</span><time datetime="2026-05-09">2026-05-09</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>一个 Skill 让 Claude Code 智力加满</h3>
+            <p>OpenAI Codex CLI 最近出了个 /goal 命令，给一个任务指标，它一轮一轮自己往前推，直到指标完成。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>87K</dd></div>
+              <div><dt>书签</dt><dd>409</dd></div>
+              <div><dt>赞</dt><dd>245</dd></div>
+              <div><dt>回复</dt><dd>44</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/nano-banana-2-article-images/" data-views="82164" data-date="2026-02-27">
+          <div class="log-cover"><img src="assets/posts/nano-banana-2-article-images-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#32</span><time datetime="2026-02-27">2026-02-27</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>哪怕你一行代码都不会！Nano Banana 2 一键给整篇文章配满图 Step by Step</h3>
+            <p>Nano Banana 2 又快、又好、又省、又听话、又能出多图，功能强大。宝玉老师做过 baoyu-article illstrator skills 的神级工具，专门给程序员用。装在 Claude Code 里，命令行调用，全自动给…</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>82K</dd></div>
+              <div><dt>书签</dt><dd>504</dd></div>
+              <div><dt>赞</dt><dd>279</dd></div>
+              <div><dt>回复</dt><dd>30</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/autoresearch-overnight-workflow/" data-views="62726" data-date="2026-03-27">
+          <div class="log-cover"><img src="assets/posts/autoresearch-overnight-workflow-cover.jpg" alt="" loading="lazy" width="2048" height="1498" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#33</span><time datetime="2026-03-27">2026-03-27</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>让 autoresearch 替你过夜干活：跑实验、写文章、改 Skill</h3>
+            <p>最近我用 autoresearch 方法论干 3 件事： 第一做实验 第二写文章 第三改进我的 skill</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>63K</dd></div>
+              <div><dt>书签</dt><dd>458</dd></div>
+              <div><dt>赞</dt><dd>295</dd></div>
+              <div><dt>回复</dt><dd>10</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/3d-cell-from-prompts/" data-views="62196" data-date="2026-05-14">
+          <div class="log-cover"><img src="assets/posts/3d-cell-from-prompts-cover.jpg" alt="" loading="lazy" width="1278" height="511" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#34</span><time datetime="2026-05-14">2026-05-14</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>几个 Prompt 从 0 到 100 搓出 3D 细胞：小白完整教程</h3>
+            <p>最近一周，一个3D 细胞教学Demo病毒式传播。好几个博主说"我也复刻了一个"，但他们只给代码或只贴视频。怪事，没有一个人公布复刻方法。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>62K</dd></div>
+              <div><dt>书签</dt><dd>185</dd></div>
+              <div><dt>赞</dt><dd>131</dd></div>
+              <div><dt>回复</dt><dd>25</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/x-writing-growth/" data-views="60829" data-date="2026-04-29">
+          <div class="log-cover"><img src="assets/posts/x-writing-growth-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#35</span><time datetime="2026-04-29">2026-04-29</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>一文看懂怎么在 X 持续写作涨粉</h3>
+            <p>你有没有好奇过，为什么有些博主能源源不断输出爆文？他们每周都能稳定产出几篇看起来就想转发的稿子，节奏完全不像人能维持的。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>61K</dd></div>
+              <div><dt>书签</dt><dd>618</dd></div>
+              <div><dt>赞</dt><dd>343</dd></div>
+              <div><dt>回复</dt><dd>44</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/mobile-coding-workflow/" data-views="57822" data-date="2026-02-25">
+          <div class="log-cover"><img src="assets/posts/mobile-coding-workflow-cover.jpg" alt="" loading="lazy" width="2048" height="819" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#36</span><time datetime="2026-02-25">2026-02-25</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>榨干 AI 订阅费：拉屎时用手机编程的硬核工作流</h3>
+            <p>最近 AI 圈子风控趋严，各大厂商大规模封杀违规调用的 账号。那些依赖第三方代理或使用 OpenClaw的账号纷纷中招。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>58K</dd></div>
+              <div><dt>书签</dt><dd>142</dd></div>
+              <div><dt>赞</dt><dd>72</dd></div>
+              <div><dt>回复</dt><dd>14</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/claude-code-im-integration/" data-views="55598" data-date="2026-03-20">
+          <div class="log-cover"><img src="assets/posts/claude-code-im-integration-cover.jpg" alt="" loading="lazy" width="1510" height="604" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#37</span><time datetime="2026-03-20">2026-03-20</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>删掉 OpenClaw 吧，用 Claude Code 连接 IM 软件更舒适</h3>
+            <p>朋友圈、知乎、B站，全是教程和截图。什么"AI帮我打工了""自动处理邮件""出门旅游AI替我上班"。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>56K</dd></div>
+              <div><dt>书签</dt><dd>291</dd></div>
+              <div><dt>赞</dt><dd>150</dd></div>
+              <div><dt>回复</dt><dd>14</dd></div>
+            </dl>
+          </div>
+        </a>
+        <a class="log-card" href="/posts/claude-code-hooks/" data-views="54120" data-date="2026-04-04">
+          <div class="log-cover"><img src="assets/posts/claude-code-hooks-cover.jpg" alt="" loading="lazy" width="1070" height="428" /></div>
+          <div class="log-body">
+            <div class="log-meta"><span class="log-rank">#38</span><time datetime="2026-04-04">2026-04-04</time><span class="log-src log-src-site">站内全文</span></div>
+            <h3>8 个 Claude Code Hooks 实战【译】</h3>
+            <p>瞄了一眼 git diff，发现 Claude 把我的 .env 改了。加了一行调试变量。本身没啥——但我当时连着生产库。</p>
+            <dl class="log-stats">
+              <div><dt>阅读</dt><dd>54K</dd></div>
+              <div><dt>书签</dt><dd>383</dd></div>
+              <div><dt>赞</dt><dd>181</dd></div>
+              <div><dt>回复</dt><dd>10</dd></div>
+            </dl>
+          </div>
         </a>
       </div>
+      <button type="button" class="log-more" id="logMore" hidden>展开其余 26 篇 ↓</button>
       <div class="section-foot section-foot-split">
-        <a class="text-link" href="/posts/">7 月之前的 28 篇长文仍在站内，直接阅读 →</a>
+        <a class="text-link" href="/posts/">全部文章，含 5 万以下 →</a>
         <a class="text-link" href="https://x.com/MinLiBuilds" target="_blank" rel="noopener">在 X 上看全部输出 →</a>
-        <a class="text-link text-link-cta" href="#contact">想让你的产品出现在下一篇爆款里？谈合作 →</a>
       </div>
     </section>
 
@@ -916,76 +806,23 @@
       <div class="section-head">
         <span class="eyebrow">03 · PARTNERS</span>
         <h2>合作过的品牌</h2>
-        <p class="section-desc">已完成商单累计曝光超 200 万。飞书和豆包是同一单：造浪者计划，数字人营销视频。本地 MuseTalk 对口型，豆包办公任务把选题写进飞书多维表格，再用 Seedance 音画同出。另外还有网易 UU 远程终端，以及蚂蚁百灵 Ling 系列实测。</p>
+        <p class="section-desc">13 个品牌，商单累计曝光 2M+。</p>
       </div>
-      <div class="terminal partner-terminal" id="partnerTerminal">
-        <div class="terminal-bar">
-          <span class="t-dot t-red"></span>
-          <span class="t-dot t-amber"></span>
-          <span class="t-dot t-green"></span>
-          <span class="terminal-path">~/builds/partners.log</span>
-        </div>
-        <div class="terminal-body partner-terminal-body">
-          <div class="log-line"><span class="log-ts">[scan]</span> 正在读取合作记录 …</div>
-          <div class="log-line"><span class="log-ts log-ts-stat">[ok]</span> 12 个品牌 · 商单累计曝光 2M+ · 飞书 × 豆包 / UU / Ling 已更新</div>
-          <div class="partner-marquee" id="partnerMarquee">
-        <div class="partner-track" id="partnerTrack">
-          <div class="partner-set">
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/feishu.png" alt="飞书 logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">飞书</span><span class="partner-meta">造浪者 · 数字人</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/doubao.png" alt="豆包 logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">豆包</span><span class="partner-meta">Seedance · 同一单</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/bitget.png" alt="Bitget logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">Bitget</span><span class="partner-meta">Web3 / 交易</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/zenmux.png" alt="ZenMux logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">ZenMux</span><span class="partner-meta">多轮 X Campaign</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/bailing.png" alt="蚂蚁百灵 logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">蚂蚁百灵</span><span class="partner-meta">Ling 系列实测</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/rita.png" alt="Rita logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">Rita</span><span class="partner-meta">内容合作</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/helio.png" alt="Helio logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">Helio</span><span class="partner-meta">测评合作</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/uu.png" alt="网易UU远程 logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">网易UU远程</span><span class="partner-meta">远程终端</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/airtap.png" alt="Airtap logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">Airtap</span><span class="partner-meta">产品合作</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/apodex.png" alt="Apodex logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">Apodex</span><span class="partner-meta">Q2 Launch</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/everos.png" alt="EverOS logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">EverOS</span><span class="partner-meta">中 / 英 Q2 Launch</span></span>
-            </div>
-            <div class="partner-card">
-              <span class="partner-mark"><img src="assets/logos/lucius.png" alt="Lucius AI logo" width="26" height="26" loading="lazy" /></span>
-              <span class="partner-info"><span class="partner-name">Lucius AI</span><span class="partner-meta">Launch PR</span></span>
-            </div>
-          </div>
-        </div>
-          </div>
-          <div class="log-line"><span class="log-ts log-ts-work">[deal]</span> 飞书造浪者：数字人营销视频。本地 VoiceBox + MuseTalk 对口型；豆包把选题和主播库写进多维表格，Seedance 音画同出。</div>
-          <div class="log-line"><span class="log-ts log-ts-work">[tip]</span> 按住拖动查看全部 · 品牌合作 / 测评首发 / 线程种草 — <a class="text-link" href="#contact">谈合作 →</a></div>
-        </div>
-      </div>
+      <ul class="brand-grid">
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/qwen.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Qwen</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/feishu.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">飞书</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/doubao.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">豆包</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/bailing.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">蚂蚁百灵</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/uu.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">网易 UU 远程</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/bitget.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Bitget</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/zenmux.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">ZenMux</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/rita.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Rita</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/helio.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Helio</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/airtap.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Airtap</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/apodex.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Apodex</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/everos.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">EverOS</span></li>
+        <li class="brand-tile"><span class="brand-logo"><img src="assets/logos/lucius.png" alt="" width="40" height="40" loading="lazy" /></span><span class="brand-name">Lucius AI</span></li>
+      </ul>
     </section>
 
     <!-- Collab -->
@@ -993,7 +830,7 @@
       <div class="section-head">
         <span class="eyebrow">04 · COLLAB</span>
         <h2>适合什么样的合作</h2>
-        <p class="section-desc">面向 AI 工具、开发者产品、效率软件与内容平台。要真实体验，不要念稿。</p>
+        <p class="section-desc">接 AI 工具、开发者产品和效率软件。产品我自己装上用，用完再写。</p>
       </div>
       <div class="collab-grid">
         <article class="collab-card">
@@ -1009,7 +846,7 @@
         <article class="collab-card">
           <div class="collab-icon" aria-hidden="true">03</div>
           <h3>品牌长期共创</h3>
-          <p>月度内容包、系列实测、社群联动。适合要持续出现在中文 AI Builder 圈层的品牌。</p>
+          <p>月度内容包、系列实测、社群联动，按月持续出内容。</p>
         </article>
         <article class="collab-card">
           <div class="collab-icon" aria-hidden="true">04</div>
@@ -1057,7 +894,7 @@
       <div class="section-head">
         <span class="eyebrow">05 · SERVICE</span>
         <h2>为企业：Agent 搭建 &amp; 培训</h2>
-        <p class="section-desc">发帖之外的另一条线：帮企业把 Agent 从想法搭到上线，再把团队教会。要能进业务的交付，不要 Demo 演示。</p>
+        <p class="section-desc">发帖之外的另一条线：帮企业把 Agent 从想法搭到上线，再把团队教会。交付的是能进业务的系统。</p>
       </div>
       <div class="service-grid">
         <div class="service-main">
