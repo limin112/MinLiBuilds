@@ -257,6 +257,9 @@ kbd{font:inherit;font-weight:700;font-size:12.5px;padding:1px 7px;border-radius:
 .actions .done-btn{flex:1}
 .done-btn.on{background:var(--ok);color:#fff}
 .done-btn.pop{animation:pop .45s ease}
+.auto-btn{gap:6px}
+.auto-btn::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--muted);opacity:.45}
+.auto-btn[aria-pressed="true"]::before{background:var(--ok);opacity:1}
 @keyframes pop{0%{scale:1}40%{scale:1.08}100%{scale:1}}
 .next-hint{flex:none;width:100%;display:flex;align-items:center;gap:8px;padding:10px 18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
 .next-hint:hover{color:var(--ink);background:var(--bg)}
@@ -385,7 +388,7 @@ body.tv .tv-bar{position:fixed;left:0;right:0;bottom:0;height:60px;z-index:61;di
       <h2 class="sec">怎么用</h2>
       <ul>
         <li><strong>路线</strong>：「从零到深度学习」一共 9 关。前 6 关小学就能看，第 7 关留到小学毕业前后，最后 2 关是初中以后的事。每一关最后有一个动手任务。</li>
-        <li><strong>播放</strong>：一屏一条视频。手机上往上滑是下一条，往下滑是上一条；电脑上用滚轮，或者按 <kbd>J</kbd> <kbd>K</kbd>。点封面才开始播，滑过去不会自己响。</li>
+        <li><strong>播放</strong>：一屏一条视频。手机上往上滑是下一条，往下滑是上一条；电脑上用滚轮，或者按 <kbd>J</kbd> <kbd>K</kbd>。滑到哪条就自动播哪条；不想自动播，点顶上的「自动播放」关掉（电脑按 <kbd>A</kbd>），之后就要点封面才播。有的手机浏览器不让网页自动出声，这时点一下播放器就行。</li>
         <li><strong>看完了</strong>：看完一条点「✓ 看完了」，路线会记进度。进度只存在这台设备的浏览器里，换设备不同步，清除浏览数据会丢。</li>
         <li><strong>去 B 站看高清</strong>：B 站限制站外播放器最高 480P，点这个按钮到 B 站播放，登录后可看 1080P（快捷键 <kbd>H</kbd>）。</li>
         <li><strong>大屏模式</strong>：接电视或投屏时用，只留视频和一条控制栏。<kbd>T</kbd> 进入，<kbd>Esc</kbd> 退出。</li>
@@ -413,6 +416,7 @@ body.tv .tv-bar{position:fixed;left:0;right:0;bottom:0;height:60px;z-index:61;di
       <div class="feed-ctx"><b id="feed-name"></b><span id="feed-pos"></span></div>
       <button type="button" class="btn sm wide-only" id="btn-prev" title="快捷键 K">上一条</button>
       <button type="button" class="btn sm wide-only" id="btn-next" title="快捷键 J">下一条</button>
+      <button type="button" class="btn sm auto-btn" id="btn-auto" aria-pressed="true">自动播放</button>
       <button type="button" class="btn sm" id="btn-list" title="快捷键 L">列表</button>
       <button type="button" class="btn sm wide-only" id="btn-tv" title="快捷键 T">大屏模式</button>
     </div>
@@ -480,7 +484,7 @@ const state = {
 };
 
 // ---------- 看完标记、动手任务（只存在这台设备的浏览器里） ----------
-const DONE_KEY = 'bilipicks-done-v1', MISSION_KEY = 'bilipicks-missions-v1', THEME_KEY = 'bilipicks-theme';
+const DONE_KEY = 'bilipicks-done-v1', MISSION_KEY = 'bilipicks-missions-v1', THEME_KEY = 'bilipicks-theme', AUTO_KEY = 'bilipicks-autoplay';
 const done = store.get(DONE_KEY, {}) || {};
 const missions = store.get(MISSION_KEY, {}) || {};
 const isDone = id => !!done[id];
@@ -812,13 +816,39 @@ function unmount(slide) {
   const box = $('.player', slide);
   if ($('iframe', box)) box.innerHTML = posterHTML(feedList[+slide.dataset.i]);
 }
-function activate(i, play) {
+// 滑到就播：默认开，手机开了「省流量」时默认关；选择记在本机
+let autoplay = store.get(AUTO_KEY, !(navigator.connection && navigator.connection.saveData));
+let autoTimer;
+function paintAuto() {
+  const b = $('#btn-auto');
+  b.setAttribute('aria-pressed', autoplay);
+  b.title = autoplay ? '滑到哪条就自动播哪条，点一下关掉（快捷键 A）' : '现在要点封面才播，点一下打开自动播放（快捷键 A）';
+}
+function toggleAuto() {
+  autoplay = !autoplay;
+  store.set(AUTO_KEY, autoplay);
+  paintAuto();
+  toast(autoplay ? '自动播放已打开' : '自动播放已关闭，点封面才播');
+  if (autoplay && state.view === 'watch' && feedList.length) mount(slideEl(state.idx), feedList[state.idx], true);
+}
+// 停稳一会儿再加载播放器：一口气连滑好几条时，中途经过的不加载
+function autoMount(slide) {
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => {
+    if (state.view !== 'watch' || !slide.isConnected || !slide.classList.contains('active')) return;
+    mount(slide, feedList[+slide.dataset.i], true);
+  }, 350);
+}
+// swiped：用户自己滑过来、或按了上一条/下一条（刚打开页面不算）
+function activate(i, play, swiped = false) {
   const v = feedList[i], slide = slideEl(i);
   if (!v || !slide) return;
   state.idx = i;
+  clearTimeout(autoTimer);
   $$('.slide.active', feed).forEach(s => { if (s !== slide) { s.classList.remove('active'); unmount(s); } });
   slide.classList.add('active');
   if (play || state.tv) mount(slide, v, true);
+  else if (swiped && autoplay && state.view === 'watch') autoMount(slide);
   else if (state.view === 'watch' && $('#sheet').hidden) $('.poster', slide)?.focus({preventScroll: true});
   $('#feed-pos').textContent = `${i + 1} / ${feedList.length}`;
   $('#tv-title').textContent = v.title;
@@ -830,7 +860,7 @@ const io = new IntersectionObserver(entries => {
   for (const e of entries) {
     if (!e.isIntersecting || e.intersectionRatio < .6) continue;
     const i = +e.target.dataset.i;
-    if (i !== state.idx) activate(i, false);
+    if (i !== state.idx) activate(i, false, true);
   }
 }, {root: feed, threshold: .6});
 
@@ -862,7 +892,7 @@ function goTo(i, {play = false} = {}) {
     slideEl(i).scrollIntoView({behavior: 'smooth', block: 'start'}); // 滑到位后由 IntersectionObserver 接手
   } else {
     feed.scrollTop = i * feed.clientHeight;
-    activate(i, play);
+    activate(i, play, true);
   }
 }
 const step = delta => goTo(state.idx + delta);
@@ -1069,6 +1099,8 @@ $('#feed-back').onclick = () => go(state.from === 'watch' ? 'home' : state.from,
 $('#btn-prev').onclick = () => step(-1);
 $('#btn-next').onclick = () => step(1);
 $('#btn-list').onclick = openSheet;
+$('#btn-auto').onclick = toggleAuto;
+paintAuto();
 $('#btn-tv').onclick = () => setTV(true);
 $('#tv-prev').onclick = () => step(-1);
 $('#tv-next').onclick = () => step(1);
@@ -1097,6 +1129,7 @@ document.addEventListener('keydown', e => {
   if (state.view !== 'watch' || !feedList.length) return;
   if (k === 'j' || k === 'arrowdown' || k === 'arrowright') { e.preventDefault(); step(1); }
   else if (k === 'k' || k === 'arrowup' || k === 'arrowleft') { e.preventDefault(); step(-1); }
+  else if (k === 'a') toggleAuto();
   else if (k === 'l') { $('#sheet').hidden ? openSheet() : closeSheet(); }
   else if (k === 'h') window.open(feedList[state.idx].url, '_blank', 'noopener');
   else if ((k === ' ' || k === 'enter') && !(el && /^(BUTTON|A|SUMMARY)$/.test(el.tagName))) { e.preventDefault(); mount(slideEl(state.idx), feedList[state.idx], true); }
