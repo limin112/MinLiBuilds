@@ -51,3 +51,15 @@ python3 bili/update.py --deploy   # 刷新后提交并推送到 main，Cloudflar
 - 成长路线每一关（`path.stages[]`）的字段：`icon`、`name`、`age`、`goal`、`items`（`id` + `note`）、`mission`（动手任务：`text`，可选 `url` / `label`）、`later`（初中以后的关卡，路线页默认折叠）。
 - 页面：默认浅色（右上角可切深色）；播放页一屏一条，手机上滑切下一条，滑到哪条自动播哪条（顶上「自动播放」可关，关了就点封面才播）；首页往下滚时顶栏、分类条、底部标签栏会收起。地址 `#watch/BV…` 可以直接打开某条视频。
 
+### 同步到开源仓库
+
+开源版在单独的仓库 [limin112/bilipicks](https://github.com/limin112/bilipicks)（`index.html` + `data.js` + `update.py`，策展人信息写在 `data.js` 的 `site` 里，没有部署，Demo 指回本站）。这里改完、上线后，同步一次：
+
+```bash
+python3 bili/sync_bilipicks.py ../../bilipicks --check   # 先试转换，不写文件
+python3 bili/sync_bilipicks.py ../../bilipicks           # 写入 index.html、data.js、update.py
+cd ../../bilipicks && git diff && git commit -am "…" && git push
+```
+
+脚本会核对每一处要替换的原文（策展人署名、页面描述等），网站上的文字改过、对不上时会报错停下。README 不会自动改，功能有变化要自己补。
+
