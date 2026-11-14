@@ -60,7 +60,9 @@ python3 bili/update.py --deploy   # 刷新后提交并推送到 main，Cloudflar
 
 给电视、投影仪的遥控器界面：上面是「豆腐块」（继续闯关 + 9 关 + 随便看看），下面一排一排是各关和各分类的视频。方向键挑、OK 播放；播放时 ▲ 标记看完、▼ 选集（换一条）、返回键回首页；◀ ▶ 在安卓应用 1.1 起是快退 / 快进（应用往 B 站播放器里补按方向键，一下 5 秒），旧版应用和浏览器里是换上一条 / 下一条。数据运行时从 `index.html` 读（不用另外维护），看完进度和网页版共用。看了七成自动记为看完；成长路线放完一关就停，不连着刷下一关。
 
-安卓电视 / 投影仪上的应用在开源仓库的 [`android/`](https://github.com/limin112/bilipicks/tree/main/android)：一个全屏 WebView 外壳，打开就是 `tv.html`，遥控器按键由应用转给页面（所以 OK 键能暂停 B 站播放器，焦点也不会跑进播放器里的推荐视频）。家里那台极米 H3S（`192.168.0.106`）已经开了无线 ADB，在那个目录里 `./build.sh install` 就能装上去。网页内容更新不需要重装应用。
+安卓电视 / 投影仪上的应用在开源仓库的 [`android/`](https://github.com/limin112/bilipicks/tree/main/android)：一个全屏 WebView 外壳，打开就是 `tv.html`，遥控器按键由应用转给页面（所以 OK 键能暂停 B 站播放器，焦点也不会跑进播放器里的推荐视频）。家里那台极米 H3S（现在是 `192.168.0.108`）已经开了无线 ADB，在那个目录里 `DEVICE=192.168.0.108:5555 ./build.sh install` 就能装上去。网页内容更新不需要重装应用。
+
+应用 1.2 起能在电视版主页右上角「检查更新」：读 `bili/tv-app.json`，下载 `bili/BiliPicks-tv.apk`，核对后交给系统安装。发新版：在 `bilipicks/android` 里改 `versionCode` / `versionName`，运行 `SITE_DIR=../../tmp/site/bili ./release.sh "改了什么"`，然后两个仓库都提交、推送。
 
 ### 同步到开源仓库
 

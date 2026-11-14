@@ -648,7 +648,12 @@ window.tvUpdateState = function (st, arg) {
   if (st === 'checking') paintUpd('正在检查…', true);
   else if (st === 'download') paintUpd('正在下载 ' + arg + '%', true);
   else if (st === 'verify') paintUpd('正在校验…', true);
-  else if (st === 'install') { upd.busy = false; paintUpd('在弹出的窗口里选「安装」', true); }
+  else if (st === 'install') {
+    upd.busy = false;
+    paintUpd('在弹出的窗口里选「安装」', true);
+    // 有的电视（比如极米）不让应用装完自己重新打开，提前说一声
+    toast('装好后如果回到了桌面，再打开一次 BiliPicks 就是新版', 8000);
+  }
   else if (st === 'latest') { upd.busy = false; paintUpd('v' + arg + ' · 已是最新'); toast('已经是最新版了'); }
   else if (st === 'permission') {
     upd.busy = false;
