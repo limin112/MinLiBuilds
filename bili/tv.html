@@ -626,7 +626,8 @@ window.addEventListener('blur', function () { if (!IN_APP) setTimeout(function (
 // 1.2 起的应用会给页面一个 BiliPicksApp：versionCode() / versionName() / update()。
 // 最新版的信息在同目录的 tv-app.json（由 android/release.sh 生成）。下载、校验、安装都在应用里做，进度回调 tvUpdateState()。
 var APP = window.BiliPicksApp || null;
-var APK_URL = 'https://minlibuilds.com/bili/BiliPicks-tv.apk';
+// 安装包和 tv.html 放在同一个目录（android/release.sh 会复制过去）
+var APK_URL = location.href.replace(/[?#].*$/, '').replace(/[^/]*$/, '') + 'BiliPicks-tv.apk';
 var upd = {busy: false, latest: null, hasNew: false};
 var panelOpen = false;
 function setDot(on) {
