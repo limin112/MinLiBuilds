@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """把网站里的 BiliPicks（bili/）同步到开源仓库 bilipicks。
 
-网站版：bili/index.html 里内嵌数据（const DATA = {...};），策展人信息写死。
-开源版：index.html + data.js（数据单独一个文件，开头的 "site" 写策展人信息，别人改它就能做自己的版本）。
+网站版：bili/index.html 里内嵌数据（const DATA = {...};），策展人信息写死；bili/tv.html 是电视版，运行时从 index.html 读数据。
+开源版：index.html + tv.html + data.js（数据单独一个文件，开头的 "site" 写策展人信息，别人改它就能做自己的版本）。
+安卓电视版应用（android/）只在开源仓库里维护，不从这里同步。
 
 用法（在网站仓库根目录运行）：
   python3 bili/sync_bilipicks.py ../../bilipicks          只写文件，之后自己看 git diff、提交
@@ -49,6 +50,12 @@ HTML_SUBS = [
      "  const name = esc(who.join(' · ') || '家长');\n"
      "  const link = s.curatorUrl ? `<a href=\"${esc(s.curatorUrl)}\" target=\"_blank\" rel=\"noopener noreferrer\">${name}</a>` : name;\n"
      "  $('#about-credit').innerHTML = `策展：${link}${s.timezone ? `（${esc(s.timezone)}）` : ''}`;\n"),
+]
+
+# 网站版 tv.html → 开源版：数据改成从 data.js 加载
+TV_SUBS = [
+    ("\n<script>\n'use strict';", "\n<script src=\"data.js\"></script>\n<script>\n'use strict';"),
+    ("数据和网页版是同一份：读 index.html 里的 `const DATA = {...};`", "数据和网页版是同一份：data.js"),
 ]
 
 # 网站版 update.py → 开源版
@@ -105,6 +112,11 @@ def main():
     data = {"site": site, **{k: v for k, v in data.items() if k != "site"}}
     js = DATA_HEADER + "const DATA = " + json.dumps(data, ensure_ascii=False) + ";\n"
 
+    # ---- tv.html ----
+    tv = (HERE / "tv.html").read_text(encoding="utf-8")
+    for old, new in TV_SUBS:
+        tv = sub_once(tv, old, new, "tv.html")
+
     # ---- update.py ----
     py = (HERE / "update.py").read_text(encoding="utf-8")
     for old, new in PY_SUBS:
@@ -112,7 +124,7 @@ def main():
     for old, new in PY_ALL:
         py = py.replace(old, new)
 
-    for name, text in (("index.html", html), ("update.py", py)):
+    for name, text in (("index.html", html), ("tv.html", tv), ("update.py", py)):
         bad = [w for w in LEFTOVERS if w in text]
         if bad:
             sys.exit(f"转换后的 {name} 里还有网站专属内容：{bad}，请更新 sync_bilipicks.py")
@@ -124,9 +136,10 @@ def main():
         print("（--check：没有写入文件）")
         return
     (repo / "index.html").write_text(html, encoding="utf-8")
+    (repo / "tv.html").write_text(tv, encoding="utf-8")
     (repo / "data.js").write_text(js, encoding="utf-8")
     (repo / "update.py").write_text(py, encoding="utf-8")
-    print(f"已写入 {repo}/index.html、data.js、update.py。README 需要的话手动改。")
+    print(f"已写入 {repo}/index.html、tv.html、data.js、update.py。README 需要的话手动改。")
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ python3 -m http.server 5173
 | `index.html` | 单页内容：关于 / 代表帖 / 合作 / 联系 |
 | `styles.css` | Bench Log 视觉系统（首页与文章页共用） |
 | `main.js` | 终端打字、复制账号、brief 生成邮件草稿 |
-| `bili/` | BiliPicks：给五六年级孩子的 B 站精选播放页（9 关成长路线、频道榜），见下方 |
+| `bili/` | BiliPicks：给五六年级孩子的 B 站精选播放页（9 关成长路线、频道榜、电视版），见下方 |
 
 ## 上线前建议改
 
@@ -50,14 +50,25 @@ python3 bili/update.py --deploy   # 刷新后提交并推送到 main，Cloudflar
 - `--title`：B 站标题太长或太标题党时换一个；这样的视频刷新时不再提醒「标题变了」。
 - 成长路线每一关（`path.stages[]`）的字段：`icon`、`name`、`age`、`goal`、`items`（`id` + `note`）、`mission`（动手任务：`text`，可选 `url` / `label`）、`later`（初中以后的关卡，路线页默认折叠）。
 - 页面：默认浅色（右上角可切深色）；播放页一屏一条，手机上滑切下一条，滑到哪条自动播哪条（顶上「自动播放」可关，关了就点封面才播）；首页往下滚时顶栏、分类条、底部标签栏会收起。地址 `#watch/BV…` 可以直接打开某条视频。
+- 老浏览器：电视、投影仪、老平板自带的内核常常停在几年前（极米投影仪是 Chrome 66）。`index.html` 和 `tv.html` 的脚本只用 ES2019 语法（不用 `?.`、`??`、`Object.fromEntries`、`replaceChildren`），新 CSS 写法在 `<style>` 末尾的 `@supports not (…)` 里有兜底。改完可以这样查语法（没输出就是通过）：
+
+  ```bash
+  for f in bili/index.html bili/tv.html; do sed -n '/^<script>$/,/^<\/script>$/p' $f | sed '1d;$d' | npx -y acorn --ecma2019 --silent; done
+  ```
+
+### 电视版（/bili/tv.html）
+
+给电视、投影仪的遥控器界面：上面是「豆腐块」（继续闯关 + 9 关 + 随便看看），下面一排一排是各关和各分类的视频。方向键挑、OK 播放；播放时 ◀ ▶ 换一条、▲ 标记看完、▼ 选集、返回键回首页。数据运行时从 `index.html` 读（不用另外维护），看完进度和网页版共用。看了七成自动记为看完；成长路线放完一关就停，不连着刷下一关。
+
+安卓电视 / 投影仪上的应用在开源仓库的 [`android/`](https://github.com/limin112/bilipicks/tree/main/android)：一个全屏 WebView 外壳，打开就是 `tv.html`，遥控器按键由应用转给页面（所以 OK 键能暂停 B 站播放器，焦点也不会跑进播放器里的推荐视频）。家里那台极米 H3S（`192.168.0.106`）已经开了无线 ADB，在那个目录里 `./build.sh install` 就能装上去。网页内容更新不需要重装应用。
 
 ### 同步到开源仓库
 
-开源版在单独的仓库 [limin112/bilipicks](https://github.com/limin112/bilipicks)（`index.html` + `data.js` + `update.py`，策展人信息写在 `data.js` 的 `site` 里，没有部署，Demo 指回本站）。这里改完、上线后，同步一次：
+开源版在单独的仓库 [limin112/bilipicks](https://github.com/limin112/bilipicks)（`index.html` + `tv.html` + `data.js` + `update.py`，策展人信息写在 `data.js` 的 `site` 里，没有部署，Demo 指回本站；安卓电视版应用 `android/` 只在那边维护）。这里改完、上线后，同步一次：
 
 ```bash
 python3 bili/sync_bilipicks.py ../../bilipicks --check   # 先试转换，不写文件
-python3 bili/sync_bilipicks.py ../../bilipicks           # 写入 index.html、data.js、update.py
+python3 bili/sync_bilipicks.py ../../bilipicks           # 写入 index.html、tv.html、data.js、update.py
 cd ../../bilipicks && git diff && git commit -am "…" && git push
 ```
 
