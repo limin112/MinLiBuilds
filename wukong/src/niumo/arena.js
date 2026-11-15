@@ -11,7 +11,7 @@
 import * as THREE from 'three';
 import { makeNoiseTexture } from '../arena/textures.js';
 import {
-  SEAT, SPAWN, BOUNDS, DUEL_BOUNDS, CAM_BOUNDS, ALTAR, MASK, LAVA_Y, RIVERS, buildMasks, buildGround, sampleField, propColliders,
+  SEAT, SPAWN, BOUNDS, DUEL_BOUNDS, DUEL_SCALE, CAM_BOUNDS, ALTAR, MASK, LAVA_Y, RIVERS, buildMasks, buildGround, sampleField, propColliders,
 } from './arena/layout.js';
 import {
   makeCrackTexture, makeBasaltTexture, makeAshTexture, makeRuneTexture, makeFriezeTexture, fieldTexture,
@@ -248,7 +248,7 @@ export async function createVolcanoArena({ scene, renderer, quality = 'high', te
   {
     const own = new Set(sinkers.map((k) => k.object));
     for (const obj of props.group.children) {
-      if (own.has(obj) || obj.name === 'altar') continue;
+      if (own.has(obj)) continue;
       const y0 = obj.position.y;
       sinkers.push({ object: obj, apply(collapse) { obj.position.y = y0 - collapse * collapse * 30; obj.visible = collapse < 0.995; } });
     }
@@ -304,13 +304,29 @@ export async function createVolcanoArena({ scene, renderer, quality = 'high', te
     }
   }
 
+  // 法相天地: the duel is fought in the same caldera drawn DUEL_SCALE times wider (the floor, the walls and the falls
+  // are stretched in plan; heights stay), so two forty-metre bodies have room to run. ks is the scale now in force.
+  let ks = 1;
+  function setDuelScale(on) {
+    const k = on ? DUEL_SCALE : 1;
+    if (k === ks) return;
+    ks = k;
+    for (const o of [terrain.mesh, falls.group, props.group]) { o.scale.set(k, 1, k); o.updateMatrixWorld(true); }
+    VOLCANO.vMaskRect.value.set(MASK.x0 * k, MASK.z0 * k, 1 / (MASK.size * k), 1 / (MASK.size * k));       // the lava map follows the floor (its fine textures keep their world size)
+    const sc = sunLight.shadow.camera, w = on ? 58 * k * 1.15 : 58, h = on ? 50 * k * 1.25 : 50;
+    sc.left = -w; sc.right = w; sc.top = h; sc.bottom = -h; sc.far = on ? 270 + 300 * k : 270;
+    sunLight.position.copy(sunLight.target.position).addScaledVector(lightDir, on ? -150 - 60 * k : -150);
+    sc.updateProjectionMatrix();
+  }
   function groundY(x, z) {
+    if (ks !== 1) { x /= ks; z /= ks; }
     if (Math.abs(x - ALTAR.x) <= ALTAR.hx && Math.abs(z - ALTAR.z) <= ALTAR.hz) return ALTAR.top;
     return ground.heightAt(x, z, collapse);
   }
 
   /** c: how far the floor has given way (default: now); pass 1 to ask what will be lava once it has. */
   function lavaAt(x, z, c = collapse) {
+    if (ks !== 1) { x /= ks; z /= ks; }
     if (x < MASK.x0 || z < MASK.z0 || x > MASK.x0 + MASK.size || z > MASK.z0 + MASK.size) return 0;
     const r = sampleField(masks.mask, masks.res, x, z, 0);
     const g = c > 0 ? sampleField(masks.mask, masks.res, x, z, 1) * c : 0;
@@ -471,7 +487,9 @@ export async function createVolcanoArena({ scene, renderer, quality = 'high', te
 
   return {
     bounds: { ...BOUNDS },
-    duelBounds: { ...DUEL_BOUNDS },       // the giants' duel: the whole pit
+    duelBounds: { minX: DUEL_BOUNDS.minX * DUEL_SCALE, maxX: DUEL_BOUNDS.maxX * DUEL_SCALE, minZ: DUEL_BOUNDS.minZ * DUEL_SCALE, maxZ: DUEL_BOUNDS.maxZ * DUEL_SCALE },       // the giants' duel: the whole (widened) pit
+    setDuelScale,
+    get duelScale() { return ks; },
     playerSpawn: { ...SPAWN },
     bullSeat: { ...SEAT, y: ALTAR.top },
     groundY,

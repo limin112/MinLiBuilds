@@ -55,7 +55,7 @@ export const MONKEY_TUNING = {
   // 法相天地: his size in phase two (times his own 1.5 m: a little smaller than the standing bull), how fast a giant
   // walks / runs / sprints (m/s), how far his moves carry him and how high they lift him (times the size), the pace of
   // his moves, and the level he stands on (he wades through whatever is on the floor)
-  giant: 20, giantWalk: 11, giantRun: 25, giantSprint: 32, giantStep: 0.3, giantLift: 0.5, giantPace: 0.85, giantStaff: 1.3,
+  giant: 20, giantWalk: 14, giantRun: 40, giantBack: 50, giantSprint: 56, giantStep: 0.3, giantLift: 0.5, giantPace: 0.85, giantStaff: 1.3,
 };
 
 // ------------------------------------------------------------------ sound: niumo names first, cathedral stand-ins
@@ -1172,6 +1172,7 @@ export class Monkey {
     this.sprintingNow = sprint;
     let target = wish < 0.05 ? 0 : wish < 0.6 && !this.giant ? T.walkSpeed : T.runSpeed;
     if (this.blocking) target = Math.min(target, T.walkSpeed * 0.8);
+    if (this.giant && this.backpedal && target > 0 && !this.blocking) target = this.T0.giantBack;       // (backing off a giant's blow is the fastest he moves)
     if (sprint) { target = T.sprintSpeed; this.st -= T.sprintCost * dt; this.stDelay = T.stDelay; }
     this.speed += (target - this.speed) * damp(target > this.speed ? 10 : 14, dt);
     let twist = 0;
@@ -1212,7 +1213,7 @@ export class Monkey {
     const natural = a.clipSpeed(name) || (useRun ? 4 : 1.2);
     a.playBase(name, { fade: 0.22 });
     // a giant's legs keep a runner's cadence (his strides are not twenty times longer: the ground slides a little)
-    const rate = this.giant ? clamp(this.speed / this.T.runSpeed, 0.6, 1.25) * (useRun ? 1 : 1.3) : clamp(this.speed / (natural * this.S), 0.55, 1.7);
+    const rate = this.giant ? clamp(this.speed / this.T.runSpeed, 0.6, 1.3) * (useRun ? 1 : 1.3) : clamp(this.speed / (natural * this.S), 0.55, 1.7);
     a.setBaseTimeScale(rate * (this.backpedal ? -1 : 1));
   }
 

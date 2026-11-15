@@ -1235,7 +1235,7 @@ export class EndingScene extends Scene {
     }
     this.standMonkey(dt, t);
     this.speak(t);
-    this.once('card', 20.4, () => this.ui.card_('火焰山 · 熄', 'ending', 3600, '八 百 里 火 焰 · 千 年 来 第 一 场 雨'));
+    this.once('card', 20.4, () => this.ui.card_('火焰山 · 熄', 'ending', 3600, '八 百 里 火 焰 · 千 年 来 第 一 场 雨<i>The Flame Mountain is out — the first rain in a thousand years</i>'));
     if (t > 11) this.rainOnMask(dt);
     this.post = { warm: -0.1 * smooth(6, 11, t), desat: 0.08 * smooth(6, 12, t) };
     const info = this.track.apply(this.camera, t, dt);
@@ -1306,7 +1306,7 @@ export class EndingScene extends Scene {
     }
     this.hush(); this.si = Math.max(this.si || 0, 1);       // (his last words are not said late)
     this.t = 15.4;
-    this.ui.card_('火焰山 · 熄', 'ending', 3600, '八 百 里 火 焰 · 千 年 来 第 一 场 雨');
+    this.ui.card_('火焰山 · 熄', 'ending', 3600, '八 百 里 火 焰 · 千 年 来 第 一 场 雨<i>The Flame Mountain is out — the first rain in a thousand years</i>');
     this.fired.add('card');
     this.G.slowmo = 1; this.G.slowmoT = 0;
   }

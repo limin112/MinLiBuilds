@@ -38,7 +38,7 @@ export const BULL_TUNING = {
   turn2: 22, walk2: 3.0,
   // the duel (phase two against the monkey at his own scale): every blow of the rod counts this much, his poise is
   // short, he turns and walks faster and keeps the monkey at the staff's length
-  duelMul: 2.3, duelHead: 1.3, duelPoise: 135, duelTurn: 70, duelWalk: 6, duelReach: 27,
+  duelMul: 2.3, duelHead: 1.3, duelPoise: 135, duelTurn: 70, duelWalk: 16, duelReach: 27,
   // ... a heavy blow that finds him not swinging rocks him (僵直, at most once every flinchCd seconds); a broken
   // posture (架势崩) leaves him sagging and taking reelMul; below enrageAt of his health he calls the fire down (火雨)
   // and from then on fights faster, with the charge

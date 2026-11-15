@@ -248,7 +248,7 @@ async function boot() {
     G.bot = new DemoBot(G);
     G.bot.debug = FLAG.debug;
     document.body.classList.add('demo');
-    const go = $('#splash .go'); if (go) go.textContent = '点 击 观 看 演 示';
+    const go = $('#splash .go'); if (go) go.textContent = '点 击 观 看 演 示'; const goe = $('#splash .goe'); if (goe) goe.textContent = 'Click to watch the demo';
     // the sound needs one gesture: any click or key lets it play
     const wake = () => { audio.context?.resume?.().catch?.(() => {}); };
     addEventListener('pointerdown', wake); addEventListener('keydown', wake);
@@ -376,7 +376,7 @@ async function boot() {
     music('niumo_defeat', 0.3);
     G.slowmo = 0.4; G.slowmoT = 1.4;
     const id = G.deaths;
-    setTimeout(() => { if (G.state === 'dead' && G.deaths === id) ui.card_('火 未 熄', 'death', 4.2); }, 900);
+    setTimeout(() => { if (G.state === 'dead' && G.deaths === id) ui.card_('火 未 熄', 'death', 4.2, '<i>The fire still burns</i>'); }, 900);
     setTimeout(() => { if (G.state === 'dead' && G.deaths === id) $('#fade').classList.add('on'); }, 4600);
     setTimeout(() => {
       if (G.state !== 'dead' || G.deaths !== id) return;
@@ -446,7 +446,7 @@ async function boot() {
       }
       if (e.type === 'stagger') { G.slowmo = e.reel ? 0.3 : 0.45; G.slowmoT = e.reel ? 0.7 : 0.5; G.flash = Math.max(G.flash, e.reel ? 0.16 : 0.1); cam.addTrauma?.(0.35); if (e.reel) { G.hitstop = Math.max(G.hitstop, 0.2); G.aberr = 1; input.rumble?.(1, 0.8, 300); } }
       if (e.type === 'flinch') { G.hitstop = Math.max(G.hitstop, 0.16); G.aberr = Math.max(G.aberr, 0.8); cam.addTrauma?.(0.2); }
-      if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 用 芭 蕉 扇 扇 灭 它'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
+      if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 用 芭 蕉 扇 扇 灭 它<i>His true form: wreathed in fire — blow it out with the fan</i>'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
         G.slowmo = 0.5; G.slowmoT = 0.8; cam.pullBack?.(1, 3); cam.addTrauma?.(0.6); G.heatKick = Math.max(G.heatKick || 0, 0.8); }
       if (e.type === 'down') { G.slowmo = 0.5; G.slowmoT = 0.6; }
       // 'critical' { stage: 'open' } = his head is down (the hint shows); { stage: 'hit' } (or no stage) = 牵牛鼻子 lands
@@ -611,15 +611,27 @@ async function boot() {
    * it leaves (large, low in the middle), and the keys (along the bottom). Only in the fight.
    */
   const K = k => `<kbd>${k}</kbd>`;
+  // the English under every tip (matched by a phrase of the Chinese; first match wins)
+  const TIP_EN = [
+    ['横扫', `Sweep — hold ${K('L')} to guard`], ['破绽', `Opening! ${K('J')}`], ['连扫两下', `Two sweeps — keep ${K('L')} held`],
+    ['震地火浪', `Fire wave — ${K('Space')} through it as it reaches you`], ['火雨要来了', 'Fire rain coming — watch the red rings'],
+    ['火雨——跑出', `Fire rain — out of the red rings! He is roaring: hit him ${K('J')}`], ['冲撞', `Charge — ${K('Space')} to the side`],
+    ['他刹不住', `He cannot stop — run him down! ${K('J')}`], ['跳劈锤地', `Leaping smash — ${K('Space')} away, then run out`],
+    ['地面烧起来了', 'The ground is burning — get out of the ring!'], ['往旁边翻开', `Overhead smash — roll aside ${K('Space')}`],
+    ['砸棍', `Overhead smash — ${K('Space')} away`], ['敲他的铁棍', `Now — strike his staff! ${K('J')}`],
+    ['巨掌', 'Giant palm — out of the shadow on the ground'], ['手掌落地了', `The hand is down — strike it! ${K('J')}`],
+    ['架势崩了', `Posture broken — all out! ${K('J')} ${K('K')}`], ['他站不稳了', `He is staggered — all out! ${K('J')}`],
+    ['脚下是熔岩', `Lava underfoot — run out (or fan it out ${K('I')})`], ['火甲挡住了', `The fire armour holds — break it with the fan ${K('I')} (or a parry)`],
+  ];
   function coach() {
     if (G.state !== 'fight' || monkey.dead || bull.dead) { ui.setGoal(''); ui.setTip(''); ui.setKeys(''); return; }
     const duel = monkey.giant, at = bull.state === 'attack' ? bull.atk : null, mv = bull.a?.move, t = mv ? mv.t : 0;
-    ui.setKeys(duel ? `WASD 绕着他跑（始终锁定）　${K('J')} 出棍　${K('K')} 重击（按住蓄力）　${K('L')} 格挡　${K('空格')} 闪步　${K('I')} 芭蕉扇`
-      : `WASD 移动　${K('J')} 出棍　${K('K')} 重击　${K('L')} 格挡　${K('空格')} 翻滚`);
+    ui.setKeys(duel ? `WASD 绕着他跑（始终锁定）　${K('J')} 出棍　${K('K')} 重击（按住蓄力）　${K('L')} 格挡　${K('空格')} 闪步　${K('I')} 芭蕉扇<i>WASD circle him (always locked) · J strike · K heavy (hold to charge) · L guard · Space step · I fan</i>`
+      : `WASD 移动　${K('J')} 出棍　${K('K')} 重击　${K('L')} 格挡　${K('空格')} 翻滚<i>WASD move · J strike · K heavy · L guard · Space roll</i>`);
     if (bull.phase === 1 && bull.state !== 'transition') {
       const n = bull.T.preludeHits || 6;
-      ui.setGoal(`敲他！棍子打中他 ${n} 下，逼他站起来<b>${Math.min(bull.preludeHits || 0, n)} / ${n}</b>`);
-    } else if (duel) ui.setGoal(!bull.enraged ? '法相天地　·　打倒牛魔王' : bull.armored ? `牛魔王现了真身 · 火甲护体（伤害大减）——用芭蕉扇 ${K('I')} 扇灭` : '火甲灭了 · 趁现在猛攻');
+      ui.setGoal(`敲他！棍子打中他 ${n} 下，逼他站起来<b>${Math.min(bull.preludeHits || 0, n)} / ${n}</b><i>Strike him ${n} times with the staff to make him stand</i>`);
+    } else if (duel) ui.setGoal(!bull.enraged ? '法相天地　·　打倒牛魔王<i>Stand as Heaven and Earth · bring the Bull Demon King down</i>' : bull.armored ? `牛魔王现了真身 · 火甲护体（伤害大减）——用芭蕉扇 ${K('I')} 扇灭<i>His true form: fire armour (damage much reduced) — blow it out with the fan ${K('I')}</i>` : '火甲灭了 · 趁现在猛攻<i>The fire is out · all out, now</i>');
     else ui.setGoal('');
     let tip = '', kind = '';
     if (at && mv) {
@@ -657,6 +669,7 @@ async function boot() {
       if (inFire) { tip = `脚下是熔岩——快跑出去（或 ${K('I')} 芭蕉扇 扇灭）`; kind = 'danger'; }
       else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——${K('I')} 芭蕉扇 破防（弹反也行）`; kind = 'danger'; }
     }
+    if (tip) { const en = TIP_EN.find(([key]) => tip.includes(key)); if (en) tip += `<i>${en[1]}</i>`; }
     ui.setTip(tip, kind);
   }
 
@@ -739,6 +752,7 @@ async function boot() {
     eyes?.update(dt, G.time);
     updateLooks(camera);
     fx.update(gdt);
+    arena.setDuelScale?.(!!monkey.giant);       // the giants fight in the widened caldera (it changes on the cut into the duel)
     arena.update(dt, G.time, camera);
     camera.getWorldDirection(listenerFwd);
     audio.setListener({ position: camera.position, forward: listenerFwd });

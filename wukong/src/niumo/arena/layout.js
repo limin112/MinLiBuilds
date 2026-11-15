@@ -15,6 +15,8 @@ export const SPAWN = { x: 0, z: 40, yaw: Math.PI };
 export const BOUNDS = { minX: -40, maxX: 40, minZ: -42, maxZ: 48 };
 // the giants' duel uses the whole pit (the walls of the caldera stand about 75 m out)
 export const DUEL_BOUNDS = { minX: -64, maxX: 64, minZ: -66, maxZ: 62 };
+// ... and for the duel the caldera itself is drawn this many times wider: 320 x 320 m to fight in, sixteen times the prologue's floor
+export const DUEL_SCALE = 2.5;
 export const CAM_BOUNDS = { minX: -45, maxX: 45, minZ: -44, maxZ: 54 };
 export const LAVA_Y = -0.42;   // river / moat surface
 export const SEAM_Y = -0.66;   // phase-two seams and lake (the plates are left standing above it)
