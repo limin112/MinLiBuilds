@@ -760,12 +760,12 @@ export class Monkey {
       let name = m > 0.2 ? 'roll' : 'backflip', stepYaw = null;
       const lt = this.lockTarget;
       if (this.giant && lt) {
-        // 法相天地, locked on: a step (闪步) the way the keys point (back, with none held), still facing him
+        // 法相天地, locked on: a real tumble the way the keys point - he turns into it, goes over his shoulder and
+        // comes up turning back to the bull; straight back (or with no key held) it is the back flip, still facing him
         const face = Math.atan2(lt.pos.x - this.pos.x, lt.pos.z - this.pos.z);
-        stepYaw = m > 0.2 ? Math.atan2(_v.x, _v.z) : face + Math.PI;
-        const rel = wrap(stepYaw - face);
-        name = Math.abs(rel) < 0.79 ? 'dodgeF' : Math.abs(rel) > 2.36 ? 'dodgeB' : rel > 0 ? 'dodgeL' : 'dodgeR';
-        this.yaw = face;
+        const want = m > 0.2 ? Math.atan2(_v.x, _v.z) : face + Math.PI;
+        if (Math.abs(wrap(want - face)) > 2.36) { name = 'backflip'; this.yaw = face; }
+        else { name = 'roll'; this.yaw = want; }
       } else if (m > 0.2) this.yaw = Math.atan2(_v.x, _v.z);
       this.spend(MONKEY[name].stamina);
       this.startMove(name);
@@ -1178,11 +1178,13 @@ export class Monkey {
     let twist = 0;
     this.backpedal = false;
     const lt = this.lockTarget;
+    // (a giant is locked on: standing still he turns back to the bull too - after a tumble, when the bull circles him)
+    if (this.giant && lt && wish <= 0.05) this.yaw = yawLerp(this.yaw, Math.atan2(lt.pos.x - this.pos.x, lt.pos.z - this.pos.z), 12 * dt);
     if (wish > 0.05) {
       const want = Math.atan2(_v.x, _v.z);
-      if ((this.blocking || (this.giant && !sprint)) && lt) {
+      if ((this.blocking || this.giant) && lt) {       // (a giant stays locked even at a sprint)
         // guarding (and a giant, always: he is locked on the bull): keep the rod toward the target and side-step
-        this.yaw = yawLerp(this.yaw, Math.atan2(lt.pos.x - this.pos.x, lt.pos.z - this.pos.z), 9 * dt);
+        this.yaw = yawLerp(this.yaw, Math.atan2(lt.pos.x - this.pos.x, lt.pos.z - this.pos.z), 12 * dt);
         const rel = wrap(want - this.yaw);
         if (Math.abs(rel) > 1.95) { this.backpedal = true; twist = rel - Math.sign(rel) * Math.PI; }
         else twist = clamp(rel, -1.05, 1.05);
@@ -1220,14 +1222,15 @@ export class Monkey {
   footsteps(dt) {
     if (this.giant) {       // a giant's tread: the ground answers
       if (this.speed < 2) { this.footAcc = 0; return; }
-      this.footAcc += this.speed * dt;
-      if (this.footAcc < 11) return;
-      this.footAcc -= 11; this.footSide ^= 1;
+      // (by the clock, not the distance: at a run he covers 50 m a second, and a footfall every 11 m shook the lens
+      // four times a second - it read as dropped frames)
+      this.footAcc += dt;
+      if (this.footAcc < 0.36) return;
+      this.footAcc -= 0.36; this.footSide ^= 1;
       const foot = this.a.bonePos(this.footSide ? 'LeftFoot' : 'RightFoot', new THREE.Vector3());
       foot.y = this.ground(foot.x, foot.z);
       this.fx.dust?.(foot, 3.5, 16);
-      this.sfx(['bull_stomp', 'boss_step'], { pos: foot, volume: 0.5, pitch: 1.25 });
-      this.cam.addTrauma?.(0.08); this.arena.shake?.(0.1);
+      this.sfx(['bull_stomp', 'boss_step'], { pos: foot, volume: 0.4, pitch: 1.25 });
       return;
     }
     if (this.speed < 0.4) { this.footAcc = 0; return; }
@@ -1387,6 +1390,13 @@ export class Monkey {
   }
 
   afterActor(dt, boss, mv) {
+    // a tumble turns him about his hips, and with the tuck that put his head and back under the floor for a few
+    // frames (a giant vanished into the lake): carry the whole body up so that nothing of his trunk goes below it
+    if (mv && (mv.name === 'roll' || mv.name === 'backflip') && this.a.char.pivot) {
+      const pv = this.a.char.pivot, floor = this.pos.y + 0.16 * this.S;
+      const low = Math.min(this.a.bonePos('Hips', _a).y, this.a.bonePos('Head', _b).y, this.a.bonePos('Spine2', _c1).y);
+      if (low < floor) { pv.position.y += (floor - low) / this.S; pv.updateMatrixWorld(true); }
+    }
     this.updateStaff(mv);
     this.leftHand();
     this.updateFan();

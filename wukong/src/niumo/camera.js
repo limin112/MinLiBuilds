@@ -388,7 +388,9 @@ export class AutoCam {
     this.lockTarget = bp ? monkey.lockTarget || null : null; this.focus = null; this.locked = !!this.lockTarget; this.lockPoint = null;
     const S = this.S;
     if (first) S.copy(P);
-    else { S.x += (P.x - S.x) * damp(16, dt); S.z += (P.z - S.z) * damp(16, dt); S.y += (P.y - S.y) * damp(8, dt); }
+    // rigid in plan: he never slides in the frame, however fast he runs (a damped follow lags by speed x frame time,
+    // which at 50 m/s shows every uneven frame as a jolt)
+    else { S.x = P.x; S.z = P.z; S.y += (P.y - S.y) * damp(8, dt); }
     let d = this.duelD || 30;
     if (bp) {
       const hx = bp.x - S.x, hz = bp.z - S.z, dn = Math.hypot(hx, hz);
@@ -396,7 +398,7 @@ export class AutoCam {
       d = first ? dn : d + (dn - d) * damp(5, dt);
     }
     this.duelD = d;
-    this.yaw = first ? this.yawGoal : wrap(this.yaw + wrap(this.yawGoal - this.yaw) * damp(5.5, dt));
+    this.yaw = first ? this.yawGoal : wrap(this.yaw + wrap(this.yawGoal - this.yaw) * damp(9, dt));
     const fwd = this.forward(new THREE.Vector3()), rgt = this.right(new THREE.Vector3());
     if (this.pullT > 0) this.pullT -= dt; else this.pullGoal = 0;
     this.pull += (this.pullGoal - this.pull) * damp(this.pullGoal > this.pull ? 3 : 0.9, dt);

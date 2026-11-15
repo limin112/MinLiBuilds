@@ -147,10 +147,13 @@ export class Rig {
     // whole body
     if (p.pivot) {
       const pv = p.pivot;
-      this.pivot.position.set(0, (pv.y || 0) * this.h * W, (pv.z || 0) * this.h * W);
+      // (the pivot sits under the character's root: when the root is scaled - 法相天地 - the rig's lengths, which are
+      // in world metres, have to be taken back into the root's own units, or a tumble throws him out of the world)
+      const ps = this.pivot.parent ? this.pivot.parent.getWorldScale(new THREE.Vector3()).y || 1 : 1;
+      this.pivot.position.set(0, (pv.y || 0) * this.h * W / ps, (pv.z || 0) * this.h * W / ps);
       this.pivot.rotation.set((pv.pitch || 0) * DEG * W, (pv.yaw || 0) * DEG * W, (pv.roll || 0) * DEG * W);
       // rotate about the hips height instead of the feet
-      const hy = this.hipsRestY * 0.85;
+      const hy = this.hipsRestY * 0.85 / ps;
       const off = new THREE.Vector3(0, hy, 0).applyEuler(this.pivot.rotation);
       this.pivot.position.add(new THREE.Vector3(0, hy, 0).sub(off));
       this.pivot.updateMatrixWorld(true);

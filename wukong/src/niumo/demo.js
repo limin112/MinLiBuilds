@@ -96,7 +96,7 @@ export class DemoBot {
   solid(x, z, r = 0.5) {
     for (const c of this.arena.colliders || []) if (hyp(x - c.x, z - c.z) < c.r + r) return true;
     const b = this.bull;
-    if (b && !b.dead && b.colliders) for (const c of b.colliders() || []) if (c.r > 0 && hyp(x - c.x, z - c.z) < c.r + r) return true;
+    if (b && !b.dead && b.colliders) for (const c of b.colliders() || []) if (c.r > 0 && !c.staff && hyp(x - c.x, z - c.z) < c.r + r) return true;       // (the staff on the stone is what he walks up to and hits)
     return false;
   }
   /** Ground the monkey can stand on: no lava (with a margin), not in a body, inside the field. */
@@ -837,7 +837,7 @@ export class DemoBot {
   /** A straight walk from (x0, z0) to (x1, z1) crosses no lava / pillar? */
   clearLine(x0, z0, x1, z1) {
     const L = hyp(x1 - x0, z1 - z0), n = Math.ceil(L / 0.5);
-    const b = this.bull, body = b && !b.dead && b.colliders ? (b.colliders() || []).filter(c => c.r > 0) : [];
+    const b = this.bull, body = b && !b.dead && b.colliders ? (b.colliders() || []).filter(c => c.r > 0 && !c.staff) : [];
     for (let i = 1; i <= n; i++) {
       const f = i / n, x = x0 + (x1 - x0) * f, z = z0 + (z1 - z0) * f;
       if (this.lava(x, z) > 0.2) return false;
@@ -861,7 +861,7 @@ export class DemoBot {
       const D = N.dist; D.fill(-1);
       // his feet / knees / hands on the ground block the way as well (they move: taken at the time of the search)
       const b = this.bull, body = [];
-      if (b && !b.dead && b.colliders) for (const c of b.colliders() || []) if (c.r > 0) body.push({ x: c.x, z: c.z, rr: (c.r + 0.5) ** 2 });
+      if (b && !b.dead && b.colliders) for (const c of b.colliders() || []) if (c.r > 0 && !c.staff) body.push({ x: c.x, z: c.z, rr: (c.r + 0.5) ** 2 });
       const q = new Int32Array(N.nx * N.nz); let h = 0, t = 0;
       D[gk] = 0; q[t++] = gk;
       while (h < t) {

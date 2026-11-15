@@ -2343,7 +2343,7 @@ export class BullKing {
     for (let i = 0; i < STAFF_CIRCLES; i++) {
       const k = c[6 + i], f = i / (STAFF_CIRCLES - 1);
       if (!lying) { k.r = 0; continue; }
-      k.x = A.x + (B.x - A.x) * f; k.z = A.z + (B.z - A.z) * f; k.r = sr; k.top = 2.6;
+      k.x = A.x + (B.x - A.x) * f; k.z = A.z + (B.z - A.z) * f; k.r = sr; k.top = 2.6; k.staff = true;
     }
   }
 
