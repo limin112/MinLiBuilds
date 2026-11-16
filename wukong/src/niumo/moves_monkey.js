@@ -188,21 +188,76 @@ export const MONKEY = {
   },
 
   // ------------------------------------------------------------------ evasion (Space tap)
-  // forward somersault, the rod tucked along the back
+  // a combat roll ALONG THE GROUND (2026-11-16 user: the old one, a somersault turning about his standing hip height,
+  // "is not a real roll"): he drops and dives forward onto his hands, balls up - chin down, knees to the chest, the rod
+  // along his back - and rolls over his shoulder with the ball's centre a third of a metre off the floor, then comes up
+  // out of a crouch. (pivot.y lowers the whole turning body; afterActor keeps every bone above the floor.)
   roll: {
-    iframes: [0.04, 0.38], cancel: 0.46, moveRoot: [[0.0, 0.48, 3.8, 'out']], stamina: 16, blendIn: 0.03, blendOut: 0.1, pivotBlade: true,
+    iframes: [0.04, 0.4], cancel: 0.5, moveRoot: [[0.02, 0.5, 3.6, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
     keys: [
-      k(0, { ...G, pivot: { pitch: 0 }, pblade: [0.25, 0.75, -0.6] }),
-      k(0.07, { ease: 'out', pivot: { pitch: 35 }, hips: [0, -0.25, 0.05], spine: [40, 0, 0], head: [30, 0, 0],
-        armR: { at: [0.2, -0.3, 0.42], pole: [0.6, -0.6, -0.2] }, armL: { at: [-0.15, -0.35, 0.45], pole: [-0.6, -0.6, -0.2] }, lhand: 0,
-        legL: { at: [-0.05, -0.55, 0.35], pole: [0, 0, 1] }, legR: { at: [0.05, -0.55, 0.35], pole: [0, 0, 1] }, pblade: [0.2, 0.55, -0.81] }),
-      k(0.21, { ease: 'linear', pivot: { pitch: 165 }, legL: { at: [-0.05, -0.32, 0.38], pole: [0, 0, 1] }, legR: { at: [0.05, -0.32, 0.38], pole: [0, 0, 1] } }),
-      k(0.36, { ease: 'linear', pivot: { pitch: 300 } }),
-      k(0.46, { ease: 'out', pivot: { pitch: 360 }, hips: [0, -0.2, 0.04], spine: [24, 0, 0], head: [12, 0, 0],
-        legL: { at: [-0.06, -0.75, 0.15], pole: [0, 0, 1] }, legR: { at: [0.06, -0.75, 0.15], pole: [0, 0, 1] }, pblade: [0.25, 0.75, -0.6] }),
-      k(0.62, { ease: 'inOut', ...G, pivot: { pitch: 360 }, ...LEGS_FREE, pblade: [-0.14, 0.45, 0.88] }),
+      k(0, { ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: 0 }, pblade: [0.25, 0.75, -0.6] }),
+      // the dive: low, the chest over the knee, both hands reaching for the floor ahead, the back leg pushing
+      k(0.08, { ease: 'out', bodyFrame: true, pivot: { pitch: 38, y: -0.1, roll: 6 }, hips: [0, -0.32, 0.1], spine: [55, 0, 0], head: [42, 0, 0],
+        armR: { at: [0.16, -0.62, 0.5], pole: [0.6, -0.2, -0.5] }, armL: { at: [-0.16, -0.62, 0.52], pole: [-0.6, -0.2, -0.5] }, lhand: 0, gripL: 0.6,
+        legL: { at: [-0.07, -0.55, 0.36], pole: [0, 0, 1] }, legR: { at: [0.07, -0.86, -0.22], pole: [0, 0, 1] }, pblade: [0.2, 0.55, -0.81] }),
+      // balled up and over the shoulder, close to the ground
+      k(0.17, { ease: 'linear', bodyFrame: true, pivot: { pitch: 120, y: -0.24, roll: 14 }, hips: [0, -0.2, 0.06], spine: [72, 0, 0], head: [52, 0, 0],
+        armR: { at: [0.16, -0.36, 0.38], pole: [0.6, -0.5, -0.4] }, armL: { at: [-0.16, -0.38, 0.4], pole: [-0.6, -0.5, -0.4] },
+        legL: { at: [-0.07, -0.26, 0.46], pole: [0, 0, 1] }, legR: { at: [0.07, -0.3, 0.42], pole: [0, 0, 1] } }),
+      k(0.29, { ease: 'linear', bodyFrame: true, pivot: { pitch: 245, y: -0.26, roll: 12 } }),
+      // the feet come round under him
+      k(0.39, { ease: 'out', bodyFrame: true, pivot: { pitch: 330, y: -0.16, roll: 4 }, spine: [50, 0, 0], head: [26, 0, 0],
+        legL: { at: [-0.07, -0.5, 0.3], pole: [0, 0, 1] }, legR: { at: [0.07, -0.44, 0.16], pole: [0, 0, 1] } }),
+      // on his feet in a crouch, rising
+      k(0.5, { ease: 'out', bodyFrame: true, pivot: { pitch: 360, y: -0.06, roll: 0 }, hips: [0, -0.3, 0.05], spine: [28, 0, 0], head: [10, 0, 0],
+        armR: { at: [0.22, -0.5, 0.4], pole: [0.6, -0.5, -0.3] }, armL: { at: [-0.2, -0.55, 0.32], pole: [-0.6, -0.5, -0.3] },
+        legL: { at: [-0.09, -0.7, 0.2], pole: [0, 0, 1] }, legR: { at: [0.09, -0.68, 0.02], pole: [0, 0, 1] }, pblade: [0.25, 0.75, -0.6] }),
+      k(0.68, { ease: 'inOut', ...G, bodyFrame: true, pivot: { pitch: 360, y: 0, roll: 0 }, ...LEGS_FREE, pblade: [-0.14, 0.45, 0.88] }),
     ],
   },
+  // the same ground roll backward (2026-11-16 user: front, back, left and right all roll along the ground): he sits
+  // back into a ball - chin down, knees up - goes over his shoulders and comes up on his feet facing the same way
+  rollB: {
+    iframes: [0.04, 0.4], cancel: 0.5, moveRoot: [[0.02, 0.5, -3.2, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
+    keys: [
+      k(0, { ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: 0 }, pblade: [0.25, 0.75, -0.6] }),
+      k(0.08, { ease: 'out', bodyFrame: true, pivot: { pitch: -28, y: -0.16, roll: 0 }, hips: [0, -0.42, -0.1], spine: [42, 0, 0], head: [40, 0, 0],
+        armR: { at: [0.18, -0.42, 0.42], pole: [0.6, -0.5, -0.4] }, armL: { at: [-0.18, -0.42, 0.42], pole: [-0.6, -0.5, -0.4] }, lhand: 0, gripL: 0.6,
+        legL: { at: [-0.08, -0.42, 0.36], pole: [0, 0, 1] }, legR: { at: [0.08, -0.42, 0.34], pole: [0, 0, 1] }, pblade: [0.2, 0.55, -0.81] }),
+      k(0.17, { ease: 'linear', bodyFrame: true, pivot: { pitch: -120, y: -0.25, roll: -6 }, hips: [0, -0.2, 0.04], spine: [70, 0, 0], head: [50, 0, 0],
+        armR: { at: [0.16, -0.36, 0.38], pole: [0.6, -0.5, -0.4] }, armL: { at: [-0.16, -0.38, 0.4], pole: [-0.6, -0.5, -0.4] },
+        legL: { at: [-0.07, -0.26, 0.46], pole: [0, 0, 1] }, legR: { at: [0.07, -0.3, 0.42], pole: [0, 0, 1] } }),
+      k(0.29, { ease: 'linear', bodyFrame: true, pivot: { pitch: -245, y: -0.26, roll: -6 } }),
+      // the feet come over his head and down behind him
+      k(0.39, { ease: 'out', bodyFrame: true, pivot: { pitch: -330, y: -0.16, roll: -2 }, spine: [46, 0, 0], head: [22, 0, 0],
+        legL: { at: [-0.08, -0.48, 0.12], pole: [0, 0, 1] }, legR: { at: [0.08, -0.5, 0.02], pole: [0, 0, 1] } }),
+      k(0.5, { ease: 'out', bodyFrame: true, pivot: { pitch: -360, y: -0.06, roll: 0 }, hips: [0, -0.3, 0.02], spine: [26, 0, 0], head: [8, 0, 0],
+        armR: { at: [0.22, -0.5, 0.4], pole: [0.6, -0.5, -0.3] }, armL: { at: [-0.2, -0.55, 0.32], pole: [-0.6, -0.5, -0.3] },
+        legL: { at: [-0.09, -0.7, 0.16], pole: [0, 0, 1] }, legR: { at: [0.09, -0.68, -0.02], pole: [0, 0, 1] }, pblade: [0.25, 0.75, -0.6] }),
+      k(0.68, { ease: 'inOut', ...G, bodyFrame: true, pivot: { pitch: -360, y: 0, roll: 0 }, ...LEGS_FREE, pblade: [-0.14, 0.45, 0.88] }),
+    ],
+  },
+  // sideways along the ground, still facing the enemy: down onto the shoulder on that side, balled up, over the back
+  // and up again (rollR to his right, rollL to his left; monkey.js moves him that way with moveYaw)
+  ...Object.fromEntries([['rollR', 1], ['rollL', -1]].map(([name, s]) => [name, {
+    iframes: [0.04, 0.4], cancel: 0.5, moveRoot: [[0.02, 0.5, 3.4, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true, side: s,
+    keys: [
+      k(0, { ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: 0 }, pblade: [0.25, 0.75, -0.6] }),
+      k(0.08, { ease: 'out', bodyFrame: true, pivot: { pitch: 8, y: -0.14, roll: s * 34 }, hips: [s * 0.08, -0.36, 0.04], spine: [46, 0, 0], head: [36, 0, 0],
+        armR: { at: [0.18, -0.42, 0.42], pole: [0.6, -0.5, -0.4] }, armL: { at: [-0.18, -0.42, 0.42], pole: [-0.6, -0.5, -0.4] }, lhand: 0, gripL: 0.6,
+        legL: { at: [-0.08, -0.45, 0.34], pole: [0, 0, 1] }, legR: { at: [0.08, -0.45, 0.32], pole: [0, 0, 1] }, pblade: [0.2, 0.55, -0.81] }),
+      k(0.17, { ease: 'linear', bodyFrame: true, pivot: { pitch: 10, y: -0.25, roll: s * 120 }, hips: [0, -0.2, 0.04], spine: [70, 0, 0], head: [50, 0, 0],
+        armR: { at: [0.16, -0.36, 0.38], pole: [0.6, -0.5, -0.4] }, armL: { at: [-0.16, -0.38, 0.4], pole: [-0.6, -0.5, -0.4] },
+        legL: { at: [-0.07, -0.26, 0.46], pole: [0, 0, 1] }, legR: { at: [0.07, -0.3, 0.42], pole: [0, 0, 1] } }),
+      k(0.29, { ease: 'linear', bodyFrame: true, pivot: { pitch: 10, y: -0.26, roll: s * 245 } }),
+      k(0.39, { ease: 'out', bodyFrame: true, pivot: { pitch: 6, y: -0.16, roll: s * 330 }, spine: [48, 0, 0], head: [24, 0, 0],
+        legL: { at: [-0.1, -0.5, 0.24], pole: [0, 0, 1] }, legR: { at: [0.1, -0.48, 0.14], pole: [0, 0, 1] } }),
+      k(0.5, { ease: 'out', bodyFrame: true, pivot: { pitch: 0, y: -0.06, roll: s * 360 }, hips: [0, -0.3, 0.03], spine: [26, 0, 0], head: [8, 0, 0],
+        armR: { at: [0.22, -0.5, 0.4], pole: [0.6, -0.5, -0.3] }, armL: { at: [-0.2, -0.55, 0.32], pole: [-0.6, -0.5, -0.3] },
+        legL: { at: [-0.12, -0.7, 0.12], pole: [0, 0, 1] }, legR: { at: [0.12, -0.68, 0.02], pole: [0, 0, 1] }, pblade: [0.25, 0.75, -0.6] }),
+      k(0.68, { ease: 'inOut', ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: s * 360 }, ...LEGS_FREE, pblade: [-0.14, 0.45, 0.88] }),
+    ],
+  }])),
   // 法相天地: a giant does not tumble. A quick step (闪步) in any direction, low and leaning into it, the rod still
   // toward the enemy: x = to his right (+) / left (-), z = forward (+) / back (-). monkey.js picks the variant.
   ...Object.fromEntries([['dodgeF', 0, 1], ['dodgeB', 0, -1], ['dodgeL', -1, 0], ['dodgeR', 1, 0]].map(([name, x, z]) => {

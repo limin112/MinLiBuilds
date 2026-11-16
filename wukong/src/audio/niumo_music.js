@@ -3,7 +3,9 @@
 //
 // Language: the opening and the ambience are decayed myth (low throat chant, war drums, sinking opera gongs, a far
 // temple bell, a suona's cry). The fight is the other tradition of this story: the 1980s television-fantasy sound, a
-// drum machine and a synth bass sequence under pipa, brass, a woman's voice and the suona (our own tune, yu mode on A).
+// drum machine and a synth bass sequence, an analog synth lead with glides and tape echo, sequencer arpeggios and
+// electronic sweeps (2026-11-16 user: 「用云宫迅音的电子音」 - the sound of that score, not its tune), with pipa, a woman's
+// voice and the suona (our own tune, yu mode on A).
 // The ending moves to D (D F G A C) with rain and a guqin.
 
 export const NIUMO_BPM = 68;
@@ -138,8 +140,11 @@ function battleBar(i, I) {
     const secs = (bar, shift = 0) => bar.map(([m, d, x]) => [m == null ? null : m + shift, d * Q, x]);
     if (sec === 'A' || sec === 'D') {
       const bar = TUNE[sec === 'A' ? fb - 8 : fb - 32];
-      if (p2 || sec === 'D') E.push(ev(off, 'brass', { notes: secs(bar).map(([m, d]) => [m, d, 1]), gain: p2 ? 0.083 : 0.056, bright: p2 ? 1 : 0.8, octave: p2 && sec === 'D' ? -1 : 0, send: 0.32, pan: -0.08 }));
-      if (!p2) E.push(ev(off, 'pluck', { notes: secs(bar, -12).map(([m, d]) => [m, d, 1, d >= 2 * Q - 1e-6 ? Q / 4 : 0]), gain: 0.14, send: 0.25, pan: 0.12 }));
+      // the theme on the analog synth lead: gliding between the notes, scooping into the long ones, tape echo
+      const lead = secs(bar).map(([m, d], j, a) => [m, d, 1, { scoop: m != null && d >= 2 * Q - 1e-6 ? 2 : 0, glide: j && a[j - 1][0] != null && Math.abs(m - a[j - 1][0]) > 4 ? 0.07 : 0.04 }]);
+      E.push(ev(off, 'slead', { notes: lead, gain: p2 ? 0.092 : 0.066, bright: p2 ? 1.05 : 0.8, vib: p2 ? 30 : 24, echoTime: 1.5 * Q, echoMix: p2 ? 0.34 : 0.28, send: 0.32, pan: -0.06 }));
+      if (p2 && sec === 'D') E.push(ev(off, 'brass', { notes: secs(bar, -12).map(([m, d]) => [m, d, 1]), gain: 0.04, bright: 0.8, send: 0.32, pan: -0.12 }));
+      if (!p2) E.push(ev(off, 'pluck', { notes: secs(bar, -12).map(([m, d]) => [m, d, 1, d >= 2 * Q - 1e-6 ? Q / 4 : 0]), gain: 0.085, send: 0.25, pan: 0.14 }));
       if (p2 && sec === 'D') E.push(ev(off, 'suona', { notes: secs(bar).map(([m, d]) => [m, d, d > 1.5 * Q ? { vib: 1.1 } : {}]), gain: 0.036, send: 0.4, pan: 0.16, vib: 30 }));
       if (p2 && sec === 'A') {       // the pipa answers in the gaps: the chord, broken, on the off-beats
         E.push(ev(off, 'pluck', { notes: [[null, Q / 2], [c.ch[2] + 12, Q / 2, 0.8], [null, Q], [null, Q / 2], [c.ch[1] + 12, Q / 2, 0.7], [c.ch[2] + 12, Q / 2, 0.8], [null, Q / 2]], gain: 0.074, send: 0.25, pan: 0.2 }));
@@ -153,6 +158,20 @@ function battleBar(i, I) {
       const a = c.ch.map((m) => m + 12);
       E.push(ev(off, 'pluck', { notes: [a[0], a[1], a[2], a[1], a[0], a[1], a[2], a[1]].map((m, j) => [m, Q / 2, j % 4 === 0 ? 0.9 : 0.65]), gain: 0.066, send: 0.3, pan: -0.15 }));
     }
+    // ---- the sequencer arpeggio (intro, under the theme in phase 2, over the voice): chord tones in sixteenths, echoed
+    const arpOn = (sec === 'I' && (fb >= 2 || p2)) || (p2 && sec === 'A') || sec === 'C';
+    if (arpOn) {
+      const up = sec === 'C' ? 12 : 0, a = [c.ch[0] + up, c.ch[1] + up, c.ch[2] + up, c.ch[0] + 12 + up];
+      const order = [0, 1, 2, 3, 2, 1, 2, 3], g = sec === 'I' ? (p2 ? 0.05 : 0.042) : sec === 'C' ? 0.026 : 0.03;
+      for (let qi = 0; qi < 4; qi++) {
+        const ns = [0, 1, 2, 3].map((j) => [a[order[(qi * 4 + j) % 8]], Q / 4, j === 0 ? 1 : 0.7]);
+        E.push(ev(off + qi * Q, 'arp', { notes: ns, gain: g, bright: sec === 'C' ? 0.7 : 1, echoTime: 1.5 * Q, send: 0.25, pan: qi % 2 ? 0.25 : -0.25 }));
+      }
+    }
+    // ---- electronic sweeps: a rising whoosh into each new section, a zap as the theme comes in
+    if (fb === 7 || fb === 23 || fb === 31 || fb === 39) E.push(ev(off + 2 * Q, 'zap', { kind: 'rise', from: 45, to: 93, dur: 2 * Q - 0.02, gain: p2 ? 0.05 : 0.038, send: 0.4 }));
+    if ((fb === 8 || fb === 40) && k === 0) E.push(ev(off, 'zap', { kind: 'laser', from: 96, to: 52, dur: 0.5, gain: p2 ? 0.045 : 0.034, send: 0.45, pan: 0.2 }));
+    if (p2 && sec === 'B' && fb % 4 === 0) E.push(ev(off, 'zap', { kind: 'laser', from: 93, to: 57, dur: 0.35, gain: 0.03, send: 0.45, pan: -0.2 }));
     // ---- the Chinese percussion marks the sections
     if (k === 0) {
       if (fb === 8 || fb === 40) { E.push(ev(0, 'gong', { kind: 'daluo', gain: p2 ? 0.34 : 0.26, rate: 0.95, send: 0.5, pan: 0.08 })); E.push(ev(0, 'cymbal', { kind: 'crash', gain: p2 ? 0.26 : 0.18, send: 0.4, pan: 0.18 })); }

@@ -700,7 +700,116 @@ export function pluckLayer(v, t, { notes, gain = 0.06, bright = 1, send = 0.22, 
   v.out(env, send, dry);
 }
 
+/**
+ * Tape-style echo for the synths (the 1980s studio sound): a delay line feeding back through a darkening low-pass.
+ * Returns the node to connect the dry signal into; the echoes go to the voice output too. The voice must keep a
+ * source running for `tail` seconds after the last note, or the echoes are cut when it is disposed.
+ */
+function echo(v, src, { time = 0.33, fb = 0.38, mix = 0.3, lp = 2600, send = 0.3, dry = 1 }) {
+  const d = v.ctx.createDelay(2); d.delayTime.value = time; v.nodes.push(d);
+  const f = v.biquad('lowpass', lp, 0.5), g = v.gain(fb), w = v.gain(mix);
+  src.connect(d); d.connect(f); f.connect(g); g.connect(d); f.connect(w);
+  v.out(src, send, dry);
+  v.out(w, send * 1.4, dry);
+}
+
+/**
+ * Analog synth lead: two detuned saws and a thin square an octave up through a resonant low-pass; legato notes glide
+ * (portamento), a note can scoop up into pitch, long notes get a delayed, wide vibrato; tape echo on the dotted eighth.
+ * notes: [[midi | null, seconds, accent, { scoop, glide }]]
+ */
+export function synthLeadLayer(v, t, {
+  notes, gain = 0.06, bright = 1, glide = 0.045, vib = 26, vibRate = 5.9, echoTime = 0.33, echoMix = 0.32, send = 0.3, dry = 1,
+}) {
+  let total = 0;
+  for (const n of notes) total += n[1];
+  const first = notes.find((n) => n[0] != null);
+  if (!first) return;
+  const tail = 2.4, stop = t + total + tail;
+  const f0 = mtof(first[0]);
+  const oscs = [[v.osc('sawtooth', f0, t, stop), -7, 0.42], [v.osc('sawtooth', f0, t, stop), 7, 0.42], [v.osc('square', f0 * 2, t, stop), 3, 0.16]];
+  const lp = v.biquad('lowpass', 1200, 4.5), env = v.gain(0);
+  const lfo = v.osc('sine', vibRate, t, stop), depth = v.gain(0);
+  lfo.connect(depth);
+  for (const [o, det, lvl] of oscs) { o.detune.value = det; depth.connect(o.detune); const g = v.gain(lvl); o.connect(g); g.connect(lp); }
+  lp.connect(env);
+  let tn = t, prev = null;
+  for (const [m, d, acc = 1, op = {}] of notes) {
+    if (m == null) { env.gain.setTargetAtTime(0, tn, 0.04); prev = null; tn += d; continue; }
+    const f = mtof(m), lvl = gain * acc, top = v.fclamp(3400 * bright * (0.8 + 0.3 * acc));
+    oscs.forEach(([o], i) => {
+      const fi = i === 2 ? f * 2 : f;
+      if (prev == null) {
+        const sc = op.scoop ?? 0;
+        o.frequency.setValueAtTime(fi * semis(-sc), tn);
+        if (sc) o.frequency.exponentialRampToValueAtTime(fi, tn + 0.09);
+      } else o.frequency.setTargetAtTime(fi, tn, op.glide ?? glide);   // the glide between legato notes
+    });
+    lp.frequency.setTargetAtTime(top, tn, 0.02);
+    lp.frequency.setTargetAtTime(top * 0.6, tn + 0.08, Math.max(0.1, d * 0.5));
+    if (prev == null) env.gain.setTargetAtTime(lvl, tn, 0.01); else env.gain.setTargetAtTime(lvl, tn, 0.03);
+    depth.gain.setTargetAtTime(0, tn, 0.03);
+    if (d > 0.35) depth.gain.setTargetAtTime(vib, tn + Math.min(0.25, d * 0.4), 0.12);
+    prev = m; tn += d;
+  }
+  env.gain.setTargetAtTime(0, tn - 0.03, 0.07);
+  echo(v, env, { time: echoTime, fb: 0.36, mix: echoMix, send, dry });
+}
+
+/** Sequencer arpeggio: a square blip with a snapping filter, echoed. notes: [[midi | null, seconds, accent]]. */
+export function arpLayer(v, t, { notes, gain = 0.035, bright = 1, echoTime = 0.33, echoMix = 0.35, send = 0.25, dry = 1 }) {
+  let total = 0;
+  for (const n of notes) total += n[1];
+  const first = notes.find((n) => n[0] != null);
+  if (!first) return;
+  const stop = t + total + 1.8;
+  const o = v.osc('square', mtof(first[0]), t, stop), o2 = v.osc('sawtooth', mtof(first[0]) * 2, t, stop), g2 = v.gain(0.3);
+  const lp = v.biquad('lowpass', 1500, 6), env = v.gain(0);
+  o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(env);
+  let tn = t;
+  for (const [m, d, acc = 1] of notes) {
+    if (m != null) {
+      const f = mtof(m);
+      o.frequency.setValueAtTime(f, tn); o2.frequency.setValueAtTime(f * 2, tn);
+      lp.frequency.setValueAtTime(v.fclamp(4800 * bright), tn);
+      lp.frequency.exponentialRampToValueAtTime(v.fclamp(Math.max(500, f * 1.3)), tn + Math.min(0.09, d * 0.8));
+      env.gain.setTargetAtTime(gain * acc, tn, 0.002);
+      env.gain.setTargetAtTime(0, tn + 0.012, Math.min(0.06, d * 0.4));
+    }
+    tn += d;
+  }
+  echo(v, env, { time: echoTime, fb: 0.4, mix: echoMix, send, dry });
+}
+
+/**
+ * Electronic sweeps: 'rise' (a resonant whoosh climbing into the next section), 'laser' (a fast falling zap),
+ * 'drop' (a long dive). from / to are midi.
+ */
+export function zapLayer(v, t, { kind = 'rise', from = 45, to = 93, dur = 1, gain = 0.05, send = 0.4, dry = 1 }) {
+  const stop = t + dur + 2.2;
+  const o = v.osc('sawtooth', mtof(from), t, stop), o2 = v.osc('square', mtof(from) * 1.006, t, stop), g2 = v.gain(0.5);
+  const lp = v.biquad('lowpass', 400, 11), env = v.gain(0);
+  o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(env);
+  for (const q of [o, o2]) {
+    q.frequency.setValueAtTime(mtof(from), t);
+    q.frequency.exponentialRampToValueAtTime(mtof(to), t + dur);
+  }
+  lp.frequency.setValueAtTime(v.fclamp(mtof(from) * 2), t);
+  lp.frequency.exponentialRampToValueAtTime(v.fclamp(Math.min(9000, mtof(to) * 3)), t + dur);
+  if (kind === 'rise') {
+    env.gain.setValueAtTime(0, t); env.gain.linearRampToValueAtTime(gain, t + dur * 0.92); env.gain.setTargetAtTime(0, t + dur, 0.03);
+    const n = v.noise('white', t, stop), bp = v.biquad('bandpass', 400, 2.5), ng = v.gain(0);
+    bp.frequency.setValueAtTime(400, t); bp.frequency.exponentialRampToValueAtTime(7000, t + dur);
+    ng.gain.setValueAtTime(0, t); ng.gain.linearRampToValueAtTime(gain * 0.9, t + dur * 0.95); ng.gain.setTargetAtTime(0, t + dur, 0.03);
+    n.connect(bp); bp.connect(ng); v.out(ng, send, dry);
+  } else {
+    env.gain.setTargetAtTime(gain, t, 0.003); env.gain.setTargetAtTime(0, t + dur * 0.5, dur * 0.3);
+  }
+  echo(v, env, { time: 0.33, fb: 0.42, mix: 0.4, send, dry });
+}
+
 export const NIUMO_INST = {
+  slead: synthLeadLayer, arp: arpLayer, zap: zapLayer,
   kit: kitLayer, sbass: synthBassLayer, brass: brassLayer, pluck: pluckLayer,
   wardrum: wardrumLayer, droll: drumRollLayer, gong: gongLayer, cymbal: cymbalLayer, tbell: templeBellLayer,
   muyu: muyuLayer, boom: boomLayer, monk: monkLayer, suona: suonaLayer, guqin: guqinLayer,

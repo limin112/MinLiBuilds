@@ -615,6 +615,8 @@ export class BullKing {
     if (!char.root.parent) scene.add(char.root);
     this.staff = staff || makeBullStaff();
     if (!this.staff.userData.length) this.staff.userData = { ...this.staff.userData, length: this.T.staffLength, gripFrac: this.T.staffGrip };
+    // (the fist closes round the rod at its own radius: Actor.fistOn / wrapHand)
+    if (!this.staff.userData.radius) this.staff.userData.radius = this.T.staffRadius;
     this.bfx = new BullFX(fx);
     this.B = char.bones;
     this.pos = new THREE.Vector3(); this.yaw = 0;
@@ -622,7 +624,7 @@ export class BullKing {
     this.centerClips();
     this.calibrate();           // before the first pose: bind-pose frames of the head and hands
     this.prepareCloth();
-    this.a = new Actor(char, { lib: BULL, hold: SEAT_SLEEP, sword: this.staff, scene });
+    this.a = new Actor(char, { lib: BULL, hold: SEAT_SLEEP, sword: this.staff, scene, fist: true });
     this.rig = this.a.rig;
     this.a.playBase('idle', { fade: 0 });
     this.a.setBaseTimeScale(0.55);

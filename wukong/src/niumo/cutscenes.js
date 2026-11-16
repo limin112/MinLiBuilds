@@ -903,7 +903,7 @@ export class CollapseScene extends Scene {
         this.go('sweep');
         this.cutTo('sweep', 2.6);
         bull.aimYaw = THREE.MathUtils.clamp(bull.relAngle(this.mpos), -1, 1);
-        bull.playMove('sweepLow', { aim: true });
+        bull.playMove('sweepLow', { aim: true, speed: 1.6 });          // (2026-11-16 user: the sweep has to come faster)
         this.audio.play('staff_swing', { pos: this.bf.head(), volume: 0.9, pitch: 0.4 });
       }
       return this.said === 'p2' && this.answerT !== undefined && t - this.answerT > 0.35 ? 'cinePoint' : 'cineStance';
@@ -912,7 +912,7 @@ export class CollapseScene extends Scene {
     switch (this.act) {
       case 'sweep': {
         const hitAt = (mv && mv.def.contactAt) || 1.62;
-        if (bt > hitAt - 0.34) this.rate = 0.2;                      // the last of it in slow motion
+        if (bt > hitAt - 0.2) this.rate = 0.5;                       // only the very end slows, and not by much
         if (bt >= hitAt - 0.03 || this.at > 6) {
           // it takes him
           this.go('fly'); this.cutTo('flung', 1.9);
@@ -928,7 +928,7 @@ export class CollapseScene extends Scene {
       }
       case 'fly': {
         const dur = 1.05, u = clamp01(this.at / dur);
-        this.rate = THREE.MathUtils.lerp(0.3, 1, smooth(0.05, 0.4, this.at));
+        this.rate = THREE.MathUtils.lerp(0.55, 1, smooth(0.03, 0.25, this.at));
         if (u < 1) {
           this.mpos.copy(this.from).lerp(this.land, u);
           this.mpos.y = THREE.MathUtils.lerp(this.groundAt(this.from), this.groundAt(this.land), u) + 4 * 4.2 * u * (1 - u);
