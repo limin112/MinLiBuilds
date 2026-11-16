@@ -2322,10 +2322,14 @@ export class BullKing {
     const c = this.bodyCircles || (this.bodyCircles = Array.from({ length: 6 + STAFF_CIRCLES }, () => ({ x: 0, z: 0, r: 0 })));
     const L = this.legLen;
     const set = (i, p, r) => { c[i].x = p.x; c[i].z = p.z; c[i].r = r; };
-    set(0, this.bonePos('Hips', _v), L * (this.phase === 1 ? 0.42 : this.duel ? 0.5 : 0.22));       // (the duel: a body a giant cannot stand inside)
+    set(0, this.bonePos('Hips', _v), L * (this.phase === 1 ? 0.42 : this.duel ? 0.62 : 0.22));       // (the duel: a body a giant cannot stand inside)
     if (this.phase === 1) {
       set(1, this.bonePos('LeftLeg', _v), L * 0.17); set(2, this.bonePos('RightLeg', _v), L * 0.17);
       set(3, this.bonePos('LeftFoot', _v), L * 0.15); set(4, this.bonePos('RightFoot', _v), L * 0.15);
+    } else if (this.duel) {
+      // two giants: the whole of him is solid - the feet, the chest that leans out over them in the swings, the head
+      set(1, this.bonePos('LeftFoot', _v), L * 0.2); set(2, this.bonePos('RightFoot', _v), L * 0.2);
+      set(3, this.bonePos('Spine2', _v), L * 0.5); set(4, this.bonePos('Head', _v), L * 0.3);
     } else {
       set(1, this.bonePos('LeftFoot', _v), L * 0.13); set(2, this.bonePos('RightFoot', _v), L * 0.13);
       set(3, this.bonePos('LeftLeg', _v), 0); set(4, this.bonePos('RightLeg', _v), 0);

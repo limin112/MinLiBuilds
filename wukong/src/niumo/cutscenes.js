@@ -505,7 +505,7 @@ const STANCE = {
 const SKID = {
   pivot: { roll: 0, pitch: 0, y: 0 }, hips: [0, -0.44, -0.04], spine: [30, 10, 0], head: [-30, -8, 0],
   legL: { at: [-0.3, -0.52, 0.34], pole: [-0.3, 0.2, 1] }, legR: { at: [0.26, -0.62, -0.52], pole: [0.2, -0.2, 1] },
-  armL: { at: [-0.2, -0.9, 0.36], pole: [-0.7, -0.2, -0.4], hand: [0, -0.3, 1], w: 1 }, gripL: 0,
+  armL: { at: [-0.2, -0.9, 0.36], pole: [-0.7, -0.2, -0.4], hand: [0, -0.3, 1], w: 1 }, gripL: 0.85,   // a loose fist on the knee (the model's open fingers splay like a claw)
   armR: { at: [0.56, -0.22, -0.36], pole: [0.6, -0.5, -0.4] }, blade: [0.6, 0.28, -0.75], grip: 1,
 };
 // sitting on the horn: thighs forward, shins hanging, the staff across the lap, face lifted a little to the rain

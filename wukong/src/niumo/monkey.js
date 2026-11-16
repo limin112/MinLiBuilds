@@ -535,7 +535,7 @@ export async function loadMonkeyAssets({ base = 'assets/models/', height = 1.5 }
 }
 
 export function createMonkeyActor(char, staff, scene) {
-  return new Actor(char, { lib: MONKEY, hold: MONKEY_HOLD, sword: staff, scene });
+  return new Actor(char, { lib: MONKEY, hold: MONKEY_HOLD, sword: staff, scene, fist: true });
 }
 
 // ------------------------------------------------------------------ the controller
@@ -1465,8 +1465,9 @@ export class Monkey {
     rig.frame();
     const pole = rig.dir([-0.6, -0.65, -0.3], _c2);
     rig.ik(B.LeftArm, B.LeftForeArm, B.LeftHand, target, pole, w);
-    const curled = (a.move ? (a.lastPose?.gripL || 0) * a.moveW : 0) + (a.guard?.gripL || 0) * (a.move ? 1 - a.moveW : 1);
-    if (w - curled > 0.05) rig.curl('Left', w - curled, 1);
+    if (this.ringW > 0.001 && a.move && a.move.name === 'critical') {
+      if (w - rig.curled.Left > 0.05) rig.curl('Left', w - rig.curled.Left, 1);
+    } else a.fistLeft(w);            // on the rod: the knuckles along it, the fist closed round it
   }
 
   updateFan() {

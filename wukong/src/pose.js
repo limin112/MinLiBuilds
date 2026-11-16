@@ -39,6 +39,7 @@ export class Rig {
     this.R = new THREE.Vector3(); this.U = new THREE.Vector3(); this.F = new THREE.Vector3();
     this.frame();
     this.gripCurl = 0;
+    this.curled = { Left: 0, Right: 0 };   // how far curl() closed each hand since the frame's pose was reset
   }
 
   /** Refresh the character axes from the root's world orientation (+Z forward). */
@@ -113,11 +114,12 @@ export class Rig {
     const thumb = this.b[side + 'HandThumb1'];
     const mid = this.b[side + 'HandMiddle1'];
     if (!thumb || !mid) return;
+    this.curled[side] = (this.curled[side] || 0) + amount * w;
     const fingerDir = mid.getWorldPosition(_a).sub(hand.getWorldPosition(_b)).normalize();
     const thumbDir = thumb.getWorldPosition(_c).sub(_b).normalize();
     // palm normal points away from the back of the hand; curl axis bends fingers toward the palm
     const axis = new THREE.Vector3().crossVectors(fingerDir, thumbDir).normalize();
-    if (side === 'Left') axis.negate();
+    // (no mirror flip for the left hand: the cross product above already changes sign with the mirrored thumb)
     const rot = new THREE.Quaternion();
     for (const f of ['Index', 'Middle', 'Ring', 'Pinky']) {
       for (let i = 1; i <= 3; i++) {
