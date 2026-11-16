@@ -316,9 +316,9 @@ if (!LOOK_PRESETS.niumoMonkey) {
 /** The monkey's look: the black-and-gold preset (the crimson cape is in the model's own texture). Idempotent. */
 export function dressMonkey(char) {
   const model = char && (char.model || char.root);
-  // The masked model (concept/niumo_w_monkey8_front.png, clean gold mask). polishMask polishes the front of the face
-  // (and sets eyes in its holes); keepFaceSkin keeps the rest of the head - the orange-brown fur - out of the gold test.
-  if (model && !model.userData.look) { applyLook(model, 'niumoMonkey'); polishMask(model); keepFaceSkin(model); }
+  // The first monkey (concept/niumo_w_monkey7_front.png; the user went back to him on 2026-11-17): polishMask turns
+  // the painted mask into clean gold and sets eyes in its holes. (keepFaceSkin is for an unmasked head: monkey9.)
+  if (model && !model.userData.look) { applyLook(model, 'niumoMonkey'); polishMask(model); }
 }
 
 /**
@@ -419,8 +419,6 @@ function addMaskEyes(mesh, headBone, hi, ti) {
  * there as real polished gold: full metal, smooth, one even colour that takes its light and shade from the sky it
  * mirrors instead of from the paint. Hair, ears, eye sockets and neck keep the model's own surface.
  */
-// the top of the mask (the circlet) above the head bone, in head sizes: the fur above it keeps its own colour
-const MASK_TOP = 0.42;
 export function polishMask(model) {
   const meshes = [];
   model.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
@@ -441,7 +439,7 @@ export function polishMask(model) {
         for (let k = 0; k < 4; k++) if (headish.has(si.getComponent(v, k))) w += sw.getComponent(v, k);
         if (w < 0.5) continue;
         p.fromBufferAttribute(pos, v).applyMatrix4(mesh.bindMatrix).sub(hp);
-        mask[v] = ss(0.02, 0.22, p.dot(F) / size) * ss(-0.25, 0.0, p.y / size) * (1 - ss(MASK_TOP - 0.08, MASK_TOP, p.y / size)) * ss(0.5, 0.8, w);
+        mask[v] = ss(0.02, 0.22, p.dot(F) / size) * ss(-0.25, 0.0, p.y / size) * ss(0.5, 0.8, w);
       }
     }
     g.setAttribute('lkMask', new THREE.BufferAttribute(mask, 1));
@@ -955,6 +953,28 @@ export class Monkey {
     if (this.hp <= 0) { this.die(from); return; }
     this.yaw = Math.atan2(-dir.x, -dir.z);
     this.startMove(light || this.giant ? 'hurt' : 'knockdown');      // (a giant staggers, he is not thrown)
+  }
+
+  /** 金身: his blow rang off the bull's gold body and came back into his arms - no harm done to either, but he reels. */
+  recoil(point) {
+    if (this.dead || this.state === 'held' || this.state === 'critical') return false;
+    const p = point || this.seg.tip.clone();
+    const dir = _v.set(this.pos.x - p.x, 0, this.pos.z - p.z);
+    if (dir.lengthSq() < 1e-6) dir.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
+    dir.normalize();
+    this.fx.hitSpark?.(p, dir.clone(), true);
+    this.fx.light?.(p, 0xffd27a, 80, 0.3, 12 * this.S);
+    this.sfx(['parry'], { pos: p, pitch: 0.7 });
+    this.sfx(['block'], { pos: p, pitch: 0.6, volume: 1 });
+    this.a.jolt(dir, 0.16, 0.016);
+    this.cam.addTrauma?.(0.5); this.cam.punch?.(dir, 0.25);
+    this.input.rumble?.(0.8, 0.6, 220);
+    this.charge = 0; this.blocking = false;
+    this.yaw = Math.atan2(-dir.x, -dir.z);
+    this.startMove('recoil');
+    this.state = 'hurt';
+    this.events.push({ type: 'recoil', hitstop: 0.14 });
+    return true;
   }
 
   parry(dmg, from) {

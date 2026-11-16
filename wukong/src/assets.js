@@ -143,6 +143,15 @@ export async function loadCharacter(url, { height = 1.7, inPlace = ['walk', 'run
   model.scale.setScalar(s);
   model.rotation.y = -Math.PI / 2;
   model.position.y = -box.min.y * s;
+  // Tripo files usually face +X (hence the -90°), but not all of them (a model the user exported himself faced +Z and
+  // stood side-on to everything). Face +Z for sure: the hips' left-to-right axis must run along -X.
+  const lb = bones.LeftUpLeg, rb = bones.RightUpLeg;
+  if (lb && rb) {
+    model.updateMatrixWorld(true);
+    const lr = rb.getWorldPosition(new THREE.Vector3()).sub(lb.getWorldPosition(new THREE.Vector3()));
+    const off = Math.atan2(lr.z, -lr.x);          // 0 when lr points along -X
+    if (Math.abs(off) > 0.35) model.rotation.y -= off;
+  }
 
   const pivot = new THREE.Group();   // used for whole-body rotations (rolls, knockdowns)
   pivot.add(model);

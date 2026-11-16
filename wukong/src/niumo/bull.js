@@ -43,11 +43,11 @@ export const BULL_TUNING = {
   // ... a heavy blow that finds him not swinging rocks him (僵直, at most once every flinchCd seconds); a broken
   // posture (架势崩) leaves him sagging and taking reelMul; below enrageAt of his health he calls the fire down (火雨)
   // and from then on fights faster, with the charge
-  flinchCd: 3.2, reelMul: 1.4, enrageAt: 0.5, duelMeteorDmg: 15, duelWaveDmg: 17, duelCrushDmg: 22, chargeDmg: 26, chargeSpeed: 60,
-  // 金身: every goldStep of his health lost he turns to gold for goldSec; one blow then breaks it and rocks him (僵直)
+  flinchCd: 3.2, reelMul: 1.4, enrageAt: 0.5, duelMeteorDmg: 15, duelWaveDmg: 17, duelCrushDmg: 22, chargeDmg: 26, chargeSpeed: 60, chargeCd: 18,
+  // 金身: every goldStep of his health lost he turns to gold for goldSec: blows do nothing, and the striker reels (僵直)
   goldStep: 0.2, goldSec: 3,
   // 现原形: the charge is run as a great white bull this long (nose to tail, m) whose stride is played this fast
-  beastLen: 1.05, beastGait: 2.4,
+  beastLen: 2.1, beastStride: 0.62, beastSpeed: 1.45,
   // ... and how hard he presses: seconds between blows (calm / enraged), and how often a sweep runs straight on into the slam
   duelRest: [1.0, 1.9], rageRest: [0.45, 1.1], chainP: 0.25, rageChainP: 0.45,
   // 现真身 (under enrageAt): he wears the fire - blows count armorMul (his defence up by half) until the banana-leaf fan
@@ -391,7 +391,8 @@ export async function loadBullCharacter({ base = 'assets/models/', height = BULL
 
 /**
  * His true form for the charge: assets/models/niumo_whitebull.glb (a great white bull, Tripo quadruped rig, one walk
- * clip). Faces +Z in the file. Returns { root, model, mixer, action, len } (len: nose-to-tail at scale 1) or null.
+ * clip, unused: the gallop is procedural, see BullKing.gallop). Faces +Z in the file. Returns { root, model, bones,
+ * rest, len, height } (len: nose-to-tail at scale 1) or null.
  */
 export async function loadWhiteBull({ base = 'assets/models/' } = {}) {
   try {
@@ -402,12 +403,60 @@ export async function loadWhiteBull({ base = 'assets/models/' } = {}) {
     const box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3());
     model.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
     const root = new THREE.Group(); root.add(model); root.visible = false;
-    const mixer = new THREE.AnimationMixer(model);
-    const clip = gltf.animations[0];
-    const action = clip ? mixer.clipAction(clip) : null;
-    if (action) action.play();
-    return { root, model, mixer, action, len: size.z || 1, height: size.y || 1 };
+    const bones = {};
+    model.traverse(o => { if (o.isBone) bones[o.name.replace(/^tripo:?:?/, '')] = o; });
+    const rest = new Map();
+    for (const bn of Object.values(bones)) rest.set(bn, bn.quaternion.clone());
+    const out = { root, model, bones, rest, len: size.z || 1, height: size.y || 1 };
+    out.hoofRest = 0; out.hoofRest = hoofLift(out);          // (at scale 1, root at 0)
+    return out;
   } catch (e) { console.info('white bull: not loaded', e?.message || e); return null; }
+}
+
+/**
+ * The white bull's gallop, procedural (the model only came with a walk): a rotary gallop - hind legs, then forelegs,
+ * each pair a beat apart - the legs swinging about his side axis, the lower joints folding on the way forward, the
+ * back flexing, the head pumping, the tail streaming. b: loadWhiteBull()'s result; ph: the stride's phase (radians);
+ * k: 0..1 how hard he runs; ax: his left, in world space.
+ */
+const HOOVES = ['0_Left_Limb_3', '0_Right_Limb_3', '1_Left_Limb_3', '1_Right_Limb_3'];
+/** How far the lowest hoof sits above its height in the standing pose (m, world): what the body must sink to stay grounded. */
+export function hoofLift(b) {
+  b.root.updateMatrixWorld(true);
+  let lo = Infinity;
+  for (const n of HOOVES) { const bn = b.bones[n]; if (bn) lo = Math.min(lo, bn.getWorldPosition(_hc).y); }
+  if (lo === Infinity) return 0;
+  return lo - b.root.position.y - (b.hoofRest || 0) * b.root.scale.y;
+}
+export function gallopPose(b, ph, k, ax) {
+  const B = b.bones;
+  for (const [bn, q] of b.rest) bn.quaternion.copy(q);
+  const turn = (name, ang) => {
+    const bn = B[name]; if (!bn || !ang) return;
+    bn.parent.updateWorldMatrix(true, false);
+    const pw = bn.parent.getWorldQuaternion(_q);
+    // L' = Pw^-1 * R(world) * Pw * L
+    const r = new THREE.Quaternion().setFromAxisAngle(ax, ang);
+    bn.quaternion.premultiply(pw).premultiply(r).premultiply(pw.invert());
+  };
+  const D = Math.PI / 180, legs = [
+    // [chain, phase offset, front?]
+    ['1_Left_Limb', 0, false], ['1_Right_Limb', 0.55, false], ['0_Left_Limb', Math.PI, true], ['0_Right_Limb', Math.PI + 0.55, true],
+  ];
+  b.root.updateMatrixWorld(true);
+  turn('Spine_0', 5 * D * k * Math.sin(ph));
+  turn('Spine_2', -6 * D * k * Math.sin(ph + 0.5));
+  turn('Spine_4', 5 * D * k * Math.sin(ph + 1.0));
+  turn('Head_0', -10 * D * k * Math.sin(ph + 1.6) - 8 * D * k);      // head low, horns first, pumping
+  for (const [c, off, front] of legs) {
+    const p = ph + off, sw = Math.sin(p), fold = Math.max(0, Math.sin(p + 1.3));
+    turn(c + '_0', (front ? 30 : 28) * D * k * sw);                  // the whole leg swings
+    turn(c + '_1', (front ? 8 : -10) * D * k * sw);
+    turn(c + '_2', (front ? 55 : -50) * D * k * fold);               // fold on the way forward (knee back, hock forward)
+    turn(c + '_3', (front ? -30 : 30) * D * k * fold);
+  }
+  // the tail streams up and back
+  for (const [i, n] of ['bone_31', 'bone_32', 'bone_33', 'bone_34'].entries()) turn(n, (14 + 4 * i) * D * k + 4 * D * k * Math.sin(ph * 2 + i));
 }
 
 // ------------------------------------------------------------------------------------------------ scaled effects
@@ -1064,7 +1113,7 @@ export class BullKing {
       this.say('staff_hit', { pos: point, volume: 0.6 }, 'block');
       return;
     }
-    if (this.goldT > 0) this.breakGold(point);
+    if (this.goldT > 0) { this.goldRebound(point, fan); return; }
     let mul = this.T.bodyMul, lava = false;
     if (this.duel) { mul = this.T.duelMul * (part === 'head' ? this.T.duelHead : 1) * (this.reeling ? this.T.reelMul : 1); lava = true; if (this.armored) mul *= this.T.armorMul; }      // giant against giant: every blow tells (less through the fire he wears)
     else if (w && w.active) {
@@ -1277,16 +1326,15 @@ export class BullKing {
     this.look.uniforms.bkC.value.x = this.goldK;
   }
 
-  /** A blow on the gold body: it shatters and he reels (僵直), whatever he was doing. */
-  breakGold(point) {
-    this.goldT = 0; this.goldK = 1;
+  /** 金身: blows ring off the gold - he takes nothing, and the one who struck him reels back (僵直). */
+  goldRebound(point, fan = false) {
     const p = point || this.bonePos('Spine2');
-    this.fx.shockwave(p, this.duel ? 30 : 10, 0.45, new THREE.Color(1.0, 0.85, 0.4));
-    this.say('rock_crack', { pos: p, pitch: 1.3, volume: 1 }, 'wax_crack');
-    this.cam?.addTrauma(0.5); this.cam?.zoomPunch?.(3);
-    this.events.push({ type: 'goldBreak' });
-    this.flinchT = 0;
-    this.stagger();
+    this.goldK = 1;
+    this.fx.shockwave(p, this.duel ? 18 : 6, 0.3, new THREE.Color(1.0, 0.85, 0.4));
+    this.say('staff_hit', { pos: p, pitch: 1.6, volume: 1 }, 'block');
+    this.cam?.addTrauma(0.3);
+    if (!fan && this.player && !this.player.dead) this.player.recoil?.(p);
+    this.events.push({ type: 'goldRebound' });
   }
 
   stagger() {
@@ -1474,7 +1522,7 @@ export class BullKing {
       if (cd.slam <= 0 && aa < 0.9 && d < 40) w.push(['slam2', 2.4]);
       if (cd.stomp <= 0) w.push([ang > 0 ? 'stompR' : 'stompL', d < 30 ? 2 : 1.2]);
       if (rage && cd.meteor <= 0) w.push(['meteor', d > 40 ? 3 : 1.6]);
-      if (cd.horn <= 0 && aa < 0.7 && d > (rage ? 28 : 40)) w.push(['charge', d > 46 ? 5 : rage ? 2.6 : 1.6]);
+      if (cd.horn <= 0 && aa < 0.7 && d > (rage ? 28 : 40)) w.push(['charge', d > 60 ? 2.4 : rage ? 1.6 : 1]);      // (not his answer to every gap: it chained into itself)
       // 连击 then 锤地: two blows (four once he has changed) and the leap; or the leap alone, to close on a monkey who keeps away
       if (cd.quake <= 0 && aa < 1.3 && d < 50) w.push(['pattern', rage ? 3.4 : 2.2]);
       if (cd.quake <= 0 && d > 30) w.push(['quake', 2]);
@@ -1511,7 +1559,7 @@ export class BullKing {
       case 'sweep': cd.sweep = 6; break;
       case 'sweep2': cd.sweep = 3.5; break;
       case 'combo2': cd.sweep = 5; break;
-      case 'charge': cd.horn = 9; at.dist = 0; break;
+      case 'charge': cd.horn = this.T.chargeCd; at.dist = 0; break;
       case 'slam2': cd.slam = 4.5; at.holdFor = rand(0.15, 0.85); break;
       case 'quake': {
         cd.quake = 16; cd.slam = Math.max(cd.slam, 3); at.holdFor = 0;
@@ -2167,19 +2215,24 @@ export class BullKing {
     }
     if (!at.fired.has('go')) { at.fired.add('go'); this.say('bull_stomp', { volume: 1, pitch: 0.8 }, 'boss_slam'); this.cam?.addTrauma(0.5); this.a.playBase('walk', { fade: 0.15 }); }
     this.a.setBaseTimeScale(1.5);
-    const step = this.T.chargeSpeed * dt * mv.speed, f = this.fwd(_v);
+    const step = this.T.chargeSpeed * (this.beast ? this.T.beastSpeed : 1) * dt * mv.speed, f = this.fwd(_v);
     this.pos.x += f.x * step; this.pos.z += f.z * step; at.dist += step;
     if (this.keepIn(16)) at.stopped = true;
     if ((at.paw = (at.paw || 0) + dt) > 0.22) { at.paw = 0; this.footfall(at.pawSide = at.pawSide === 'Left' ? 'Right' : 'Left', 0.9); }
     if (player && !player.dead) {
       const dx = player.pos.x - this.pos.x, dz = player.pos.z - this.pos.z, along = dx * f.x + dz * f.z, side = Math.abs(dx * f.z - dz * f.x);
-      const reach = 8 + 0.45 * (player.S || 1);
-      if (!at.hit.has('c') && along > -4 && along < reach + 6 && side < reach) {
+      const L = this.beast ? this.T.beastLen * this.T.height : 0;
+      const reach = 8 + 0.45 * (player.S || 1), front = this.beast ? 0.2 * L + 0.3 * (player.S || 1) : reach + 6, wide = this.beast ? 0.16 * L + 0.3 * (player.S || 1) : reach;
+      // the moment to step aside: his horns are a breath away (the coach says 现在闪)
+      at.dodgeNow = !at.hit.has('c') && side < wide && along > front && (along - front) / Math.max(1, step / dt) < 0.45;
+      if (!at.hit.has('c') && along > -4 && along < front && side < wide) {
         at.hit.add('c');
-        this.hitPlayer(player, { dmg: this.T.chargeDmg, kind: 'heavy', blockable: false }, this.bonePos('Head', new THREE.Vector3()), 'charge');
+        // a charge is the most telegraphed blow he has: any roll / step still going when he arrives gets out of the way
+        if (player.state === 'roll') { this.events.push({ type: 'dodged', name: 'charge' }); this.cam?.addTrauma(0.4); }
+        else this.hitPlayer(player, { dmg: this.T.chargeDmg, kind: 'heavy', blockable: false }, this.bonePos('Head', new THREE.Vector3()), 'charge');
         this.cam?.addTrauma(0.8);
       }
-      if (along < (this.beast ? -45 : -22) && at.dist > 30) at.stopped = true;       // past him: dig the hooves in
+      if (along < -22 && at.dist > 30) at.stopped = true;       // past him: dig the hooves in
     }
   }
 
@@ -2316,24 +2369,34 @@ export class BullKing {
     if (!this.beastOn) return;
     const L = this.T.beastLen * this.T.height, k = L / b.len;
     // the skid: he slides on, his stride dying, before he turns back into himself
-    let gait = this.T.beastGait;
+    let gait = 1;
     if (at.skidV > 0) {
-      at.skidV *= Math.exp(-dt * 4.5); gait *= at.skidV / this.T.chargeSpeed;
+      at.skidV *= Math.exp(-dt * 3.5); gait = at.skidV / (this.T.chargeSpeed * this.T.beastSpeed);
       const f = this.fwd(_v); this.pos.x += f.x * at.skidV * dt; this.pos.z += f.z * at.skidV * dt; this.keepIn(16);
     }
-    this.beastPhase = (this.beastPhase || 0) + dt * gait;
-    b.mixer.update(dt * gait);
-    const gy = this.groundAt(this.pos.x, this.pos.z);
-    const bob = Math.abs(Math.sin(this.beastPhase * Math.PI * 1.35)) * 0.02 * L;
-    b.root.position.set(this.pos.x, gy + bob, this.pos.z);
-    b.root.rotation.set(-0.05 + 0.03 * Math.sin(this.beastPhase * Math.PI * 2.7), this.yaw, 0, 'YXZ');
-    b.root.scale.setScalar(k * Math.min(1, (this.beastIn = Math.min(1, (this.beastIn || 0) + dt * 6)) * 0.3 + 0.7));
+    this.beastIn = Math.min(1, (this.beastIn || 0) + dt * 5);
+    const ph = this.beastPhase = (this.beastPhase || 0) + dt * gait / this.T.beastStride;
+    this.gallop(ph * Math.PI * 2, gait);
+    const gy = this.groundAt(this.pos.x, this.pos.z), TAU = Math.PI * 2;
+    // the body rides the stride: up in the flight after the forelegs push off, down when the hind legs land
+    const bob = (0.5 + 0.5 * Math.sin(ph * TAU - 0.6)) * 0.035 * L * gait;
+    const f = this.fwd(_v);
+    b.root.position.set(this.pos.x - f.x * 0.3 * L, gy, this.pos.z - f.z * 0.3 * L);      // the horns lead: his head is where he is
+    b.root.rotation.set(0.07 * Math.sin(ph * TAU + 0.9) * gait - 0.03, this.yaw, 0.02 * Math.sin(ph * TAU * 0.5), 'YXZ');
+    b.root.scale.setScalar(k * (0.75 + 0.25 * this.beastIn));
+    b.root.position.y = gy + bob - hoofLift(b);          // the lowest hoof on the ground (plus the flight of the stride)
+    // each hoof that lands shakes the ground
+    const beat = Math.floor(ph * 2);
+    if (beat !== this.beastBeat) { this.beastBeat = beat; if (gait > 0.3) { this.cam?.addTrauma(0.18 * gait); this.say('bull_stomp', { pos: this.pos, volume: 0.5 * gait, pitch: 0.7 + Math.random() * 0.15 }, 'boss_step'); } }
     // dust from the hooves
-    if (Math.random() < dt * 14) {
-      const f = this.fwd(_v), r = this.right(_w), side = Math.random() < 0.5 ? -1 : 1, back = rand(-0.4, 0.4) * L;
-      this.bfx.add.emit(_p.set(this.pos.x + f.x * back + r.x * side * 0.12 * L, gy + 0.3, this.pos.z + f.z * back + r.z * side * 0.12 * L), new THREE.Vector3(rand(-2, 2) - f.x * 6, rand(2, 5), rand(-2, 2) - f.z * 6), Math.random() < 0.5 ? C.dust : C.dustLit, { size: rand(3, 7), life: rand(0.6, 1.2), drag: 0.8, grav: -0.5, alpha: 0.35, grow: 1.6 });
+    if (Math.random() < dt * 30 * gait) {
+      const r = this.right(_w), side = Math.random() < 0.5 ? -1 : 1, back = rand(-0.7, 0.1) * L;
+      this.bfx.add.emit(_p.set(this.pos.x + f.x * back + r.x * side * 0.12 * L, gy + 0.3, this.pos.z + f.z * back + r.z * side * 0.12 * L), new THREE.Vector3(rand(-2, 2) - f.x * 6, rand(2, 5), rand(-2, 2) - f.z * 6), Math.random() < 0.5 ? C.dust : C.dustLit, { size: rand(5, 12), life: rand(0.7, 1.4), drag: 0.8, grav: -0.5, alpha: 0.4, grow: 1.8 });
     }
   }
+
+  /** The white bull's stride (gallopPose), his side axis taken from his heading. */
+  gallop(ph, k) { gallopPose(this.beast, ph, k, this.right(_e).negate()); }
 
   /** Turn into the white bull (on) or back (off): a burst of smoke and gold hides the change. */
   setBeast(on, quiet = false) {
@@ -2345,7 +2408,7 @@ export class BullKing {
     if (this.staff) this.staff.visible = !on && this.hasStaff;
     for (const s of this.eyeSprites || []) s.visible = !on;
     if (this.mouthGlow) this.mouthGlow.visible = !on;
-    if (on) { b.action?.reset().play(); b.mixer.update(0); }
+    if (on) { this.beastPhase = 0; this.beastBeat = -1; }
     if (quiet) return;
     const c = this.bonePos('Spine2', new THREE.Vector3());
     this.bfx.smoke(c, 18, { size: [8, 18], spread: 9, rise: 6, life: [0.8, 1.6], alpha: 0.5, color: C.ash });

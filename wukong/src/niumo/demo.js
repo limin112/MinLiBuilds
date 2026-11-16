@@ -449,6 +449,9 @@ export class DemoBot {
         if (!this.standable(x, zz)) continue;
         if (this.inDanger(x, zz, 0)) continue;
         let s = hyp(x - P.x, zz - P.z) * 0.6;
+        // a spot across lava (the crack his staff opened lies between them now that he faces the monkey squarely) is
+        // a long way round: take the near side of the work when there is one
+        if (!this.clearLine(P.x, P.z, x, zz)) s += 14;
         if (b.phase === 1) {
           const rel = Math.abs(b.relAngle({ x, z: zz }));
           if (rel < 0.55) s += 9;                  // he grabs what lingers in front of him

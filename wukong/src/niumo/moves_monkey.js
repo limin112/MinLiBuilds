@@ -364,6 +364,20 @@ export const MONKEY = {
       k(0.42, { ease: 'inOut', ...G }),
     ],
   },
+  // 金身: the staff rings off the gold and the blow comes back into his own arms - staff flung up, he reels back, numb
+  recoil: {
+    cancel: 1.05, moveRoot: [[0.0, 0.35, -0.9, 'out']], blendIn: 0.03,
+    keys: [
+      k(0, G),
+      k(0.08, { ease: 'out', spine: [-22, 6, -4], head: [-24, 4, 0], hips: [0, -0.05, -0.1],
+        armR: { at: [0.36, 0.1, 0.25], pole: [0.6, -0.3, -0.5] }, armL: { at: [-0.34, 0.05, 0.3], pole: [-0.6, -0.3, -0.5] }, blade: [0.2, 0.95, 0.2] }),
+      k(0.45, { ease: 'inOut', spine: [-10, 14, -8], head: [-6, 10, 0], hips: [0, -0.12, -0.08],
+        armR: { at: [0.42, -0.4, 0.15], pole: [0.6, -0.4, -0.4] }, armL: { at: [-0.4, -0.5, 0.1], pole: [-0.6, -0.4, -0.4] }, blade: [0.4, 0.5, 0.76] }),
+      k(0.8, { ease: 'inOut', spine: [12, -6, 4], head: [10, -4, 0], hips: [0, -0.14, 0],
+        armR: { at: [0.4, -0.5, 0.25], pole: [0.6, -0.4, -0.4] }, armL: { at: [-0.4, -0.55, 0.15], pole: [-0.6, -0.4, -0.4] }, blade: [0.3, 0.4, 0.86] }),
+      k(1.15, { ease: 'inOut', ...G }),
+    ],
+  },
   // a giant's blow: thrown back off his feet, down on his back, then up again
   knockdown: {
     iframes: [0.22, 1.4], cancel: 1.5, moveRoot: [[0.0, 0.45, -2.6, 'out']], lift: [0.0, 0.42, 0.5], blendIn: 0.03, pivotBlade: true,

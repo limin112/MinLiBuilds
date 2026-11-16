@@ -450,7 +450,7 @@ async function boot() {
         G.slowmo = 0.5; G.slowmoT = 0.8; cam.pullBack?.(1, 3); cam.addTrauma?.(0.6); G.heatKick = Math.max(G.heatKick || 0, 0.8); }
       if (e.type === 'down') { G.slowmo = 0.5; G.slowmoT = 0.6; }
       if (e.type === 'gold') { G.flash = Math.max(G.flash, 0.12); cam.addTrauma?.(0.25); }
-      if (e.type === 'goldBreak') { G.hitstop = Math.max(G.hitstop, 0.22); G.slowmo = 0.35; G.slowmoT = 0.6; G.flash = Math.max(G.flash, 0.2); G.aberr = 1; input.rumble?.(1, 0.8, 300); }
+      if (e.type === 'goldRebound') { G.hitstop = Math.max(G.hitstop, 0.14); G.flash = Math.max(G.flash, 0.12); G.aberr = Math.max(G.aberr, 0.7); }
       // 'critical' { stage: 'open' } = his head is down (the hint shows); { stage: 'hit' } (or no stage) = 牵牛鼻子 lands
       if (e.type === 'critical' && e.stage !== 'open') { G.hitstop = Math.max(G.hitstop, 0.2); G.slowmo = 0.3; G.slowmoT = 0.7; G.flash = Math.max(G.flash, 0.18); }
       if (e.type === 'phase2' && G.state === 'fight') beginTransition();
@@ -618,14 +618,14 @@ async function boot() {
     ['子弹时间', `Bullet time — ${K('Space')} roll out from under it!`], ['躲开了', 'Dodged!'],
     ['横扫', `Sweep — hold ${K('L')} to guard`], ['破绽', `Opening! ${K('J')}`], ['连扫两下', `Two sweeps — keep ${K('L')} held`],
     ['震地火浪', `Fire wave — ${K('Space')} through it as it reaches you`], ['火雨要来了', 'Fire rain coming — watch the red rings'],
-    ['火雨——跑出', `Fire rain — out of the red rings! He is roaring: hit him ${K('J')}`], ['冲撞', `Charge — ${K('Space')} to the side`],
+    ['火雨——跑出', `Fire rain — out of the red rings! He is roaring: hit him ${K('J')}`], ['冲撞', `Charge — ${K('Space')} to the side`], ['现在闪', `Now — ${K('Space')}!`],
     ['他刹不住', `He cannot stop — run him down! ${K('J')}`], ['跳劈锤地', `Leaping smash — ${K('Space')} away, then run out`],
     ['地面烧起来了', 'The ground is burning — get out of the ring!'], ['往旁边翻开', `Overhead smash — roll aside ${K('Space')}`],
     ['砸棍', `Overhead smash — ${K('Space')} away`], ['敲他的铁棍', `Now — strike his staff! ${K('J')}`],
     ['巨掌', 'Giant palm — out of the shadow on the ground'], ['手掌落地了', `The hand is down — strike it! ${K('J')}`],
     ['架势崩了', `Posture broken — all out! ${K('J')} ${K('K')}`], ['他站不稳了', `He is staggered — all out! ${K('J')}`],
     ['脚下是熔岩', `Lava underfoot — run out (or fan it out ${K('I')})`], ['火甲挡住了', `The fire armour holds — break it with the fan ${K('I')} (or a parry)`],
-    ['金身', `Golden body — one hit ${K('J')} shatters it and stuns him`],
+    ['金身', 'Golden body — do not strike: the blow rebounds and stuns you'],
   ];
   function coach() {
     if (G.state !== 'fight' || monkey.dead || bull.dead) { ui.setGoal(''); ui.setTip(''); ui.setKeys(''); return; }
@@ -652,7 +652,8 @@ async function boot() {
       } else if (duel && at.name === 'meteor') {
         tip = t < def.rain[0] ? '火雨要来了——盯住地上的红圈' : `火雨——跑出红圈！他在吼，趁机打他 ${K('J')}`; kind = 'danger';
       } else if (at.name === 'charge') {
-        if (t < def.runEnd && !at.stopped) { tip = `冲撞——${K('空格')} 往旁边闪`; kind = 'danger'; }
+        if (at.dodgeNow) { tip = `现在闪！${K('空格')}`; kind = 'danger'; }
+        else if (t < def.runEnd && !at.stopped) { tip = `冲撞——${K('空格')} 往旁边闪`; kind = 'danger'; }
         else { tip = `他刹不住——追上去打！${K('J')}`; kind = 'go'; }
       } else if (at.name === 'quake') {
         if (!at.fired.has('impact')) { tip = `跳劈锤地——${K('空格')} 闪开，落地后往外跑`; kind = 'danger'; }
@@ -675,7 +676,7 @@ async function boot() {
       if (inFire) { tip = `脚下是熔岩——快跑出去（或 ${K('I')} 芭蕉扇 扇灭）`; kind = 'danger'; }
       else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——${K('I')} 芭蕉扇 破防（弹反也行）`; kind = 'danger'; }
     }
-    if (bull.goldT > 0 && kind !== 'danger') { tip = `金身！打他一下 ${K('J')} 金身就碎，他会僵直`; kind = 'go'; }
+    if (bull.goldT > 0 && kind !== 'danger') { tip = '金身——别打！打上去会被震开僵直'; kind = 'danger'; }
     if (tip) { const en = TIP_EN.find(([key]) => tip.includes(key)); if (en) tip += `<i>${en[1]}</i>`; }
     ui.setTip(tip, kind);
   }
