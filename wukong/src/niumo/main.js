@@ -25,7 +25,7 @@ import { FX } from '../fx.js';
 import { updateLooks } from '../look.js';
 import { separate, horizDist } from '../combat.js';
 import { createVolcanoArena } from './arena.js';
-import { BullKing, loadBullCharacter } from './bull.js';
+import { BullKing, loadBullCharacter, loadWhiteBull } from './bull.js';
 import { Monkey, loadMonkeyAssets, createMonkeyActor } from './monkey.js';
 import { NiumoInput } from './input.js';
 import { AutoCam } from './camera.js';
@@ -202,7 +202,7 @@ async function boot() {
   const [arena, audioRes] = await Promise.all([createVolcanoArena({ scene, renderer, quality: FLAG.quality }), loadAudio()]);
   if (!scene.environment) { scene.environment = volcanoEnv(); scene.environmentIntensity = 0.9; }
   setLoad('载入角色…');
-  const [bullChar, mAssets] = await Promise.all([loadBullCharacter({ height: SCALE.bull }), loadMonkeyAssets({ height: SCALE.monkey })]);
+  const [bullChar, mAssets, beast] = await Promise.all([loadBullCharacter({ height: SCALE.bull }), loadMonkeyAssets({ height: SCALE.monkey }), loadWhiteBull()]);
   const monkeyChar = mAssets.char, monkeyStaff = mAssets.staff;
   const { audio, cues } = audioRes;
   scene.add(bullChar.root, monkeyChar.root);
@@ -222,7 +222,7 @@ async function boot() {
   const monkey = new Monkey({ actor, fx, audio, cam, input, arena, staff: monkeyStaff });
 
   let bullStaff = null;
-  const makeBull = () => new BullKing({ char: bullChar, scene, fx, audio, arena, cam, staff: bullStaff });
+  const makeBull = () => new BullKing({ char: bullChar, scene, fx, audio, arena, cam, staff: bullStaff, beast });
   let bull = makeBull();
   bullStaff = bull.staff;      // reuse the same rod if the bull is ever rebuilt
   setLoad('');
@@ -449,6 +449,8 @@ async function boot() {
       if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 用 芭 蕉 扇 扇 灭 它<i>His true form: wreathed in fire — blow it out with the fan</i>'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
         G.slowmo = 0.5; G.slowmoT = 0.8; cam.pullBack?.(1, 3); cam.addTrauma?.(0.6); G.heatKick = Math.max(G.heatKick || 0, 0.8); }
       if (e.type === 'down') { G.slowmo = 0.5; G.slowmoT = 0.6; }
+      if (e.type === 'gold') { G.flash = Math.max(G.flash, 0.12); cam.addTrauma?.(0.25); }
+      if (e.type === 'goldBreak') { G.hitstop = Math.max(G.hitstop, 0.22); G.slowmo = 0.35; G.slowmoT = 0.6; G.flash = Math.max(G.flash, 0.2); G.aberr = 1; input.rumble?.(1, 0.8, 300); }
       // 'critical' { stage: 'open' } = his head is down (the hint shows); { stage: 'hit' } (or no stage) = 牵牛鼻子 lands
       if (e.type === 'critical' && e.stage !== 'open') { G.hitstop = Math.max(G.hitstop, 0.2); G.slowmo = 0.3; G.slowmoT = 0.7; G.flash = Math.max(G.flash, 0.18); }
       if (e.type === 'phase2' && G.state === 'fight') beginTransition();
@@ -623,6 +625,7 @@ async function boot() {
     ['巨掌', 'Giant palm — out of the shadow on the ground'], ['手掌落地了', `The hand is down — strike it! ${K('J')}`],
     ['架势崩了', `Posture broken — all out! ${K('J')} ${K('K')}`], ['他站不稳了', `He is staggered — all out! ${K('J')}`],
     ['脚下是熔岩', `Lava underfoot — run out (or fan it out ${K('I')})`], ['火甲挡住了', `The fire armour holds — break it with the fan ${K('I')} (or a parry)`],
+    ['金身', `Golden body — one hit ${K('J')} shatters it and stuns him`],
   ];
   function coach() {
     if (G.state !== 'fight' || monkey.dead || bull.dead) { ui.setGoal(''); ui.setTip(''); ui.setKeys(''); return; }
@@ -672,6 +675,7 @@ async function boot() {
       if (inFire) { tip = `脚下是熔岩——快跑出去（或 ${K('I')} 芭蕉扇 扇灭）`; kind = 'danger'; }
       else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——${K('I')} 芭蕉扇 破防（弹反也行）`; kind = 'danger'; }
     }
+    if (bull.goldT > 0 && kind !== 'danger') { tip = `金身！打他一下 ${K('J')} 金身就碎，他会僵直`; kind = 'go'; }
     if (tip) { const en = TIP_EN.find(([key]) => tip.includes(key)); if (en) tip += `<i>${en[1]}</i>`; }
     ui.setTip(tip, kind);
   }

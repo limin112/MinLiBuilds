@@ -316,9 +316,9 @@ if (!LOOK_PRESETS.niumoMonkey) {
 /** The monkey's look: the black-and-gold preset (the crimson cape is in the model's own texture). Idempotent. */
 export function dressMonkey(char) {
   const model = char && (char.model || char.root);
-  // (polishMask / addMaskEyes made the old model's painted face read as a gold mask; since 2026-11-16 the model is
-  // concept/niumo_w_monkey9_front.png - his own face, real eyes, no mask - so the face keeps its own surface)
-  if (model && !model.userData.look) { applyLook(model, 'niumoMonkey'); keepFaceSkin(model); }
+  // The masked model (concept/niumo_w_monkey8_front.png, clean gold mask). polishMask polishes the front of the face
+  // (and sets eyes in its holes); keepFaceSkin keeps the rest of the head - the orange-brown fur - out of the gold test.
+  if (model && !model.userData.look) { applyLook(model, 'niumoMonkey'); polishMask(model); keepFaceSkin(model); }
 }
 
 /**
@@ -340,6 +340,8 @@ function keepFaceSkin(model) {
       for (let k = 0; k < 4; k++) if (head.has(si.getComponent(v, k))) w += sw.getComponent(v, k);
       skin[v] = Math.min(1, Math.max(0, (w - 0.3) / 0.4));
     }
+    const mk = g.attributes.lkMask;          // polishMask's mask area stays gold
+    if (mk) for (let v = 0; v < si.count; v++) skin[v] *= 1 - Math.min(1, mk.getX(v) * 1.6);
     g.setAttribute('lkSkin', new THREE.BufferAttribute(skin, 1));
     for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       if (!m || m.userData.skinKept) continue;
@@ -350,7 +352,8 @@ function keepFaceSkin(model) {
         shader.vertexShader = 'attribute float lkSkin;\nvarying float vLkSkin;\n' + shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vLkSkin = lkSkin;');
         shader.fragmentShader = 'varying float vLkSkin;\n' + shader.fragmentShader.replace('lkGoldM = lkD.w *', 'lkGoldM = ( 1.0 - vLkSkin ) * lkD.w *');
       };
-      m.customProgramCacheKey = () => 'look-v1-skin';
+      const key = mk ? 'look-v1-mask-skin' : 'look-v1-skin';
+      m.customProgramCacheKey = () => key;
       m.needsUpdate = true;
     }
   });
@@ -416,6 +419,8 @@ function addMaskEyes(mesh, headBone, hi, ti) {
  * there as real polished gold: full metal, smooth, one even colour that takes its light and shade from the sky it
  * mirrors instead of from the paint. Hair, ears, eye sockets and neck keep the model's own surface.
  */
+// the top of the mask (the circlet) above the head bone, in head sizes: the fur above it keeps its own colour
+const MASK_TOP = 0.42;
 export function polishMask(model) {
   const meshes = [];
   model.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
@@ -436,7 +441,7 @@ export function polishMask(model) {
         for (let k = 0; k < 4; k++) if (headish.has(si.getComponent(v, k))) w += sw.getComponent(v, k);
         if (w < 0.5) continue;
         p.fromBufferAttribute(pos, v).applyMatrix4(mesh.bindMatrix).sub(hp);
-        mask[v] = ss(0.02, 0.22, p.dot(F) / size) * ss(-0.25, 0.0, p.y / size) * ss(0.5, 0.8, w);
+        mask[v] = ss(0.02, 0.22, p.dot(F) / size) * ss(-0.25, 0.0, p.y / size) * (1 - ss(MASK_TOP - 0.08, MASK_TOP, p.y / size)) * ss(0.5, 0.8, w);
       }
     }
     g.setAttribute('lkMask', new THREE.BufferAttribute(mask, 1));

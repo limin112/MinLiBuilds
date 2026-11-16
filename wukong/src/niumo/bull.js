@@ -12,7 +12,8 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { Actor } from '../actor.js';
 import { ease } from '../pose.js';
-import { loadCharacter } from '../assets.js';
+import { loadCharacter, loadGLTF } from '../assets.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { sweepBlade, segSeg, horizDist, yawLerp } from '../combat.js';
 import { BULL, SEAT, SEAT_SLEEP, STAND, STAND_EMPTY } from './moves_bull.js';
 
@@ -43,6 +44,10 @@ export const BULL_TUNING = {
   // posture (架势崩) leaves him sagging and taking reelMul; below enrageAt of his health he calls the fire down (火雨)
   // and from then on fights faster, with the charge
   flinchCd: 3.2, reelMul: 1.4, enrageAt: 0.5, duelMeteorDmg: 15, duelWaveDmg: 17, duelCrushDmg: 22, chargeDmg: 26, chargeSpeed: 60,
+  // 金身: every goldStep of his health lost he turns to gold for goldSec; one blow then breaks it and rocks him (僵直)
+  goldStep: 0.2, goldSec: 3,
+  // 现原形: the charge is run as a great white bull this long (nose to tail, m) whose stride is played this fast
+  beastLen: 1.05, beastGait: 2.4,
   // ... and how hard he presses: seconds between blows (calm / enraged), and how often a sweep runs straight on into the slam
   duelRest: [1.0, 1.9], rageRest: [0.45, 1.1], chainP: 0.25, rageChainP: 0.45,
   // 现真身 (under enrageAt): he wears the fire - blows count armorMul (his defence up by half) until the banana-leaf fan
@@ -73,7 +78,7 @@ uniform float bkTime;
 uniform float bkNearK;
 uniform vec4 bkA;   // ember veins, lava texels, lava under-light, ash
 uniform vec4 bkB;   // rim, bind units -> meters, ground y, albedo gain
-uniform vec4 bkC;   // unused, unused, cooling (death), unused
+uniform vec4 bkC;   // 金身 (gold body, 0..1), unused, cooling (death), unused
 uniform vec3 bkRimCol; uniform vec3 bkLavaCol; uniform vec3 bkUnderCol;
 uniform vec4 bkWA[4]; uniform vec4 bkWB[4]; uniform vec4 bkWC[4];
 varying vec3 vBkBind; varying vec3 vBkWorld; varying vec3 vBkNrm;
@@ -126,6 +131,12 @@ const BK_EMIT = /* glsl */`
     float up = clamp( wn.y * 0.7 + 0.45, 0.0, 1.0 );
     totalEmissiveRadiance += bkRimCol * ( fres * bkB.x * up );
     totalEmissiveRadiance += bkUnderCol * ( fres * bkB.x * 0.35 * ( 1.0 - up ) * cool );
+    // 金身: a golden radiance, a bright halo on the silhouette and bands of light running up his body
+    if ( bkC.x > 0.001 ) {
+      float band = smoothstep( 0.82, 1.0, sin( pm.y * 0.3 - bkTime * 7.0 ) );
+      float glint = smoothstep( 0.92, 1.0, bkNoise( pm * 1.3 + vec3( bkTime * 2.0 ) ) );
+      totalEmissiveRadiance += vec3( 1.0, 0.72, 0.28 ) * bkC.x * ( 0.04 + 0.35 * band + 0.9 * glint + 0.55 * pow( 1.0 - ndv, 3.0 ) );
+    }
     // the four lava cracks (hand backs, knees)
     for ( int i = 0; i < 4; i ++ ) {
       vec4 wa = bkWA[ i ], wb = bkWB[ i ], wc = bkWC[ i ];
@@ -176,7 +187,9 @@ const BK_MAP_W = /* glsl */`
     // hide and cloth: the sculpt's colours, a touch darker and warmer so the pale hide does not glare in the dark
     float lk = dot( c, vec3( 0.3, 0.59, 0.11 ) );
     vec3 keep = mix( vec3( lk ), c, 0.85 ) * bkB.w;
-    diffuseColor.rgb = mix( keep, gold, bkBronzeM );
+    // 金身: all of him turns to polished gold
+    bkBronzeM = max( bkBronzeM, bkC.x );
+    diffuseColor.rgb = mix( keep, mix( gold, vec3( 1.0, 0.74, 0.32 ) * ( 0.55 + 0.6 * L ), bkC.x ), bkBronzeM );
   }`;
 
 const BK_METAL_W = /* glsl */`
@@ -376,6 +389,27 @@ export async function loadBullCharacter({ base = 'assets/models/', height = BULL
   return char;
 }
 
+/**
+ * His true form for the charge: assets/models/niumo_whitebull.glb (a great white bull, Tripo quadruped rig, one walk
+ * clip). Faces +Z in the file. Returns { root, model, mixer, action, len } (len: nose-to-tail at scale 1) or null.
+ */
+export async function loadWhiteBull({ base = 'assets/models/' } = {}) {
+  try {
+    const gltf = await loadGLTF(base + 'niumo_whitebull.glb');
+    const model = SkeletonUtils.clone(gltf.scene);
+    model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; if (o.material) { o.material = o.material.clone(); o.material.envMapIntensity = 1.2; } } });
+    model.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3());
+    model.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+    const root = new THREE.Group(); root.add(model); root.visible = false;
+    const mixer = new THREE.AnimationMixer(model);
+    const clip = gltf.animations[0];
+    const action = clip ? mixer.clipAction(clip) : null;
+    if (action) action.play();
+    return { root, model, mixer, action, len: size.z || 1, height: size.y || 1 };
+  } catch (e) { console.info('white bull: not loaded', e?.message || e); return null; }
+}
+
 // ------------------------------------------------------------------------------------------------ scaled effects
 
 const C = {
@@ -384,10 +418,12 @@ const C = {
   stone: new THREE.Color(0.2, 0.175, 0.155), fire: new THREE.Color(1.0, 0.42, 0.1), fireCore: new THREE.Color(1.1, 0.68, 0.26),
   // the dust a blow throws up: warm ash in the evening light, some of it catching the sun (particles are unlit: these are their final colours)
   dust: new THREE.Color(0.25, 0.21, 0.18), dustLit: new THREE.Color(0.42, 0.27, 0.17),
+  gold: new THREE.Color(1.3, 0.95, 0.45),
 };
 
 /** Effects at the bull's scale, on the shared FX particle pools. */
 const STAFF_CIRCLES = 16;
+const GOLD_BONES = ['Spine2', 'Head', 'LeftArm', 'RightArm', 'LeftForeArm', 'RightForeArm', 'Hips', 'LeftUpLeg', 'RightUpLeg', 'LeftLeg', 'RightLeg'];
 const ARMOR_BONES = ['Spine2', 'LeftArm', 'RightArm', 'LeftForeArm', 'RightForeArm', 'Head', 'Hips', 'LeftUpLeg', 'RightUpLeg', 'Spine'];
 
 class BullFX {
@@ -609,11 +645,13 @@ class GroundMark {
 const PARTS = ['handL', 'handR', 'kneeL', 'kneeR'];
 
 export class BullKing {
-  constructor({ char, scene, fx, audio, arena, cam, staff = null }) {
+  constructor({ char, scene, fx, audio, arena, cam, staff = null, beast = null }) {
     this.T = { ...BULL_TUNING };
     this.char = char; this.scene = scene; this.fx = fx; this.audio = audio; this.arena = arena; this.cam = cam;
     if (!char.root.parent) scene.add(char.root);
     this.staff = staff || makeBullStaff();
+    this.beast = beast; this.beastOn = false;          // 现原形: the white bull he becomes for the charge
+    if (beast && !beast.root.parent) scene.add(beast.root);
     if (!this.staff.userData.length) this.staff.userData = { ...this.staff.userData, length: this.T.staffLength, gripFrac: this.T.staffGrip };
     // (the fist closes round the rod at its own radius: Actor.fistOn / wrapHand)
     if (!this.staff.userData.radius) this.staff.userData.radius = this.T.staffRadius;
@@ -862,6 +900,8 @@ export class BullKing {
     this.hasStaff = true; this.staffMode = 'hand'; this.staffBlend = 1; this.a.sword = this.staff; this.staff.visible = true;
     this.ik = { Left: null, Right: null }; this.carry = null; this.critYank = 0; this.thrown = null;
     this.lift = 0; this.liftW = 0; this.preludeHits = 0; this.openingT = -1; this.duel = false; this.enraged = false; this.flinchT = 0; this.reeling = false; this.chain = null; this.chainQ = []; this.armor = false; this.armorDownT = 0; this.jumpY = 0;
+    this.goldT = 0; this.goldK = 0; this.goldNext = 1 - this.T.goldStep; this.goldPending = false;
+    if (this.beastOn) this.setBeast(false, true);
     for (const p of PARTS) this.resetWeak(p, 1);
     for (const h of this.hazards) h.remove?.(); this.hazards = [];
     for (const m of this.marks) m.remove(); this.marks = [];
@@ -869,7 +909,7 @@ export class BullKing {
     if (this.stuckCollider && this.arena?.colliders) { const i = this.arena.colliders.indexOf(this.stuckCollider); if (i >= 0) this.arena.colliders.splice(i, 1); }
     this.stuckCollider = null;
     this.a.stopMove(); this.a.hold = this.holdPose; this.a.holdW = 1;
-    this.look.uniforms.bkC.value.z = 0;
+    this.look.uniforms.bkC.value.z = 0; this.look.uniforms.bkC.value.x = 0;
     this.setClothRelax(1);
     this.syncRoot();
     this.a.update(0);
@@ -1024,6 +1064,7 @@ export class BullKing {
       this.say('staff_hit', { pos: point, volume: 0.6 }, 'block');
       return;
     }
+    if (this.goldT > 0) this.breakGold(point);
     let mul = this.T.bodyMul, lava = false;
     if (this.duel) { mul = this.T.duelMul * (part === 'head' ? this.T.duelHead : 1) * (this.reeling ? this.T.reelMul : 1); lava = true; if (this.armored) mul *= this.T.armorMul; }      // giant against giant: every blow tells (less through the fire he wears)
     else if (w && w.active) {
@@ -1042,6 +1083,7 @@ export class BullKing {
       total = Math.min(total, Math.max(0, this.hp - this.maxHp * (this.T.preludeHp - 0.02)));
     }
     this.hp -= total;
+    while (this.phase >= 2 && this.hp > 0 && this.hp <= this.maxHp * this.goldNext + 1e-6) { this.goldNext -= this.T.goldStep; this.goldPending = true; }
     const armored = this.armored;
     this.events.push({ type: 'damage', amount: total, part, weak: !!(w && w.active), armored, prelude: this.phase === 1 ? this.preludeHits : undefined });
     if (armored) this.bfx.stoneHit(point, dir, heavy);
@@ -1210,6 +1252,41 @@ export class BullKing {
     this.breakArmor(this.T.armorParry);
     if (this.atk && this.a.move && (this.atk.name === 'sweep' || this.atk.name === 'sweep2' || this.atk.name === 'combo2')) this.a.move.speed = 0.45;       // the staff rebounds, the swing dies
     if (this.poise >= (this.duel ? this.T.duelPoise : this.T.poiseMax)) this.stagger();
+  }
+
+  /** 金身: a health threshold passed; he turns to gold as soon as he is on his feet and free (not down, rocked or in a cutscene). */
+  tickGold(dt) {
+    if (this.goldPending && !this.dead && this.phase >= 2 && (this.state === 'idle' || this.state === 'attack')) {
+      this.goldPending = false; this.goldT = this.T.goldSec;
+      const c = this.bonePos('Spine2');
+      this.fx.shockwave(c, this.duel ? 40 : 14, 0.6, new THREE.Color(1.0, 0.78, 0.3));
+      this.say('critical', { pos: c, pitch: 1.4, volume: 0.7 });
+      this.say('bull_roar', { pos: c, pitch: 0.9, volume: 0.6, delay: 0.1 }, 'stagger');
+      this.cam?.addTrauma(0.3);
+      this.events.push({ type: 'gold' });
+    }
+    if (this.goldT > 0) {
+      this.goldT -= dt;
+      if (this.goldT <= 0) { this.goldT = 0; this.events.push({ type: 'goldEnd' }); }
+      if (Math.random() < dt * 30) {
+        const q = this.bonePos(GOLD_BONES[(Math.random() * GOLD_BONES.length) | 0], _v), r = this.duel ? 3 : 1;
+        this.bfx.add.emit(_w.set(q.x + rand(-r, r), q.y + rand(-r, r), q.z + rand(-r, r)), _p.set(rand(-1, 1), rand(2, 6) * (this.duel ? 2 : 1), rand(-1, 1)), C.gold, { size: rand(0.6, 1.4) * (this.duel ? 3 : 1), life: rand(0.4, 0.9), drag: 0.6, grav: -1, alpha: 0.8, grow: 0.6 });
+      }
+    }
+    this.goldK += ((this.goldT > 0 ? 1 : 0) - this.goldK) * Math.min(1, dt * (this.goldT > 0 ? 8 : 4));
+    this.look.uniforms.bkC.value.x = this.goldK;
+  }
+
+  /** A blow on the gold body: it shatters and he reels (僵直), whatever he was doing. */
+  breakGold(point) {
+    this.goldT = 0; this.goldK = 1;
+    const p = point || this.bonePos('Spine2');
+    this.fx.shockwave(p, this.duel ? 30 : 10, 0.45, new THREE.Color(1.0, 0.85, 0.4));
+    this.say('rock_crack', { pos: p, pitch: 1.3, volume: 1 }, 'wax_crack');
+    this.cam?.addTrauma(0.5); this.cam?.zoomPunch?.(3);
+    this.events.push({ type: 'goldBreak' });
+    this.flinchT = 0;
+    this.stagger();
   }
 
   stagger() {
@@ -1526,6 +1603,7 @@ export class BullKing {
       this.events.push({ type: 'enrage' });
       this.eyeFlare = 1; this.fx.shockwave(this.pos.clone().setY(this.groundAt(this.pos.x, this.pos.z) + 1), 60, 0.9, new THREE.Color(1.0, 0.4, 0.1));
     }
+    this.tickGold(dt);
     this.tickWeak(dt);
     // lingering in front of him invites the grab
     if (player && !player.dead && this.phase === 1) {
@@ -2084,7 +2162,7 @@ export class BullKing {
       return;
     }
     if (t >= def.runEnd || at.stopped) {
-      if (!at.fired.has('skid')) { at.fired.add('skid'); mv.t = Math.max(mv.t, def.runEnd); this.footfall('Left', 1.2); this.footfall('Right', 1.2); this.a.playBase('idle', { fade: 0.5 }); }
+      if (!at.fired.has('skid')) { at.fired.add('skid'); at.skidV = this.T.chargeSpeed * mv.speed; mv.t = Math.max(mv.t, def.runEnd); this.footfall('Left', 1.2); this.footfall('Right', 1.2); this.a.playBase('idle', { fade: 0.5 }); }
       return;
     }
     if (!at.fired.has('go')) { at.fired.add('go'); this.say('bull_stomp', { volume: 1, pitch: 0.8 }, 'boss_slam'); this.cam?.addTrauma(0.5); this.a.playBase('walk', { fade: 0.15 }); }
@@ -2101,7 +2179,7 @@ export class BullKing {
         this.hitPlayer(player, { dmg: this.T.chargeDmg, kind: 'heavy', blockable: false }, this.bonePos('Head', new THREE.Vector3()), 'charge');
         this.cam?.addTrauma(0.8);
       }
-      if (along < -22 && at.dist > 30) at.stopped = true;       // past him: dig the hooves in
+      if (along < (this.beast ? -45 : -22) && at.dist > 30) at.stopped = true;       // past him: dig the hooves in
     }
   }
 
@@ -2225,6 +2303,55 @@ export class BullKing {
     }
     // bodies
     this.updateBodyCircles();
+    this.syncBeast(dt);
+  }
+
+  /** 现原形: during the run of his charge he is a great white bull; before and after, the bull king again. */
+  syncBeast(dt) {
+    const b = this.beast;
+    if (!b) return;
+    const at = this.atk, mv = this.a.move;
+    const want = !this.dead && this.state === 'attack' && at && at.name === 'charge' && mv && mv.t >= at.def.runAt && mv.t < at.def.runEnd + 0.5;
+    if (want !== this.beastOn) this.setBeast(want);
+    if (!this.beastOn) return;
+    const L = this.T.beastLen * this.T.height, k = L / b.len;
+    // the skid: he slides on, his stride dying, before he turns back into himself
+    let gait = this.T.beastGait;
+    if (at.skidV > 0) {
+      at.skidV *= Math.exp(-dt * 4.5); gait *= at.skidV / this.T.chargeSpeed;
+      const f = this.fwd(_v); this.pos.x += f.x * at.skidV * dt; this.pos.z += f.z * at.skidV * dt; this.keepIn(16);
+    }
+    this.beastPhase = (this.beastPhase || 0) + dt * gait;
+    b.mixer.update(dt * gait);
+    const gy = this.groundAt(this.pos.x, this.pos.z);
+    const bob = Math.abs(Math.sin(this.beastPhase * Math.PI * 1.35)) * 0.02 * L;
+    b.root.position.set(this.pos.x, gy + bob, this.pos.z);
+    b.root.rotation.set(-0.05 + 0.03 * Math.sin(this.beastPhase * Math.PI * 2.7), this.yaw, 0, 'YXZ');
+    b.root.scale.setScalar(k * Math.min(1, (this.beastIn = Math.min(1, (this.beastIn || 0) + dt * 6)) * 0.3 + 0.7));
+    // dust from the hooves
+    if (Math.random() < dt * 14) {
+      const f = this.fwd(_v), r = this.right(_w), side = Math.random() < 0.5 ? -1 : 1, back = rand(-0.4, 0.4) * L;
+      this.bfx.add.emit(_p.set(this.pos.x + f.x * back + r.x * side * 0.12 * L, gy + 0.3, this.pos.z + f.z * back + r.z * side * 0.12 * L), new THREE.Vector3(rand(-2, 2) - f.x * 6, rand(2, 5), rand(-2, 2) - f.z * 6), Math.random() < 0.5 ? C.dust : C.dustLit, { size: rand(3, 7), life: rand(0.6, 1.2), drag: 0.8, grav: -0.5, alpha: 0.35, grow: 1.6 });
+    }
+  }
+
+  /** Turn into the white bull (on) or back (off): a burst of smoke and gold hides the change. */
+  setBeast(on, quiet = false) {
+    const b = this.beast;
+    if (!b) return;
+    this.beastOn = on; this.beastIn = 0;
+    b.root.visible = on;
+    this.char.root.visible = !on;
+    if (this.staff) this.staff.visible = !on && this.hasStaff;
+    for (const s of this.eyeSprites || []) s.visible = !on;
+    if (this.mouthGlow) this.mouthGlow.visible = !on;
+    if (on) { b.action?.reset().play(); b.mixer.update(0); }
+    if (quiet) return;
+    const c = this.bonePos('Spine2', new THREE.Vector3());
+    this.bfx.smoke(c, 18, { size: [8, 18], spread: 9, rise: 6, life: [0.8, 1.6], alpha: 0.5, color: C.ash });
+    this.fx.shockwave(c, on ? 30 : 22, 0.45, new THREE.Color(1.0, 0.85, 0.5));
+    if (on) this.say('bull_roar', { pos: c, pitch: 0.6, volume: 1 }, 'stagger');
+    this.events.push({ type: on ? 'beast' : 'beastEnd' });
   }
 
   /** The surface a hoof (or a knee) at (x, z) rests on: pressed a little into rock, ankle-deep in the lava lake. */
