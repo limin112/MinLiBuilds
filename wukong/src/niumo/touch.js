@@ -161,13 +161,15 @@ export const TOUCH_CSS = `
   #touch.play .stick { opacity: .45; } #touch.play .stick.on { opacity: 1; }
   #touch .knob { position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; border-radius: 50%; background: rgba(220,194,142,.5); transform: translate(-50%, -50%); }
   /* a phone: nothing in English, nothing big in the middle (2026-11-17 user: the tips and subtitles covered the screen) */
-  body.touch #hint, body.touch #keyline, body.touch #mvtext .en, body.touch #chapter .en, body.touch #title .en, body.touch #subtitle i { display: none !important; }
+  body.touch #hint, body.touch #keyline, body.touch #mvtext.hasen .zh, body.touch #chapter .en, body.touch #title .en, body.touch #subtitle i { display: none !important; }
   body.touch #tip { font-size: 15px !important; letter-spacing: .12em !important; padding: 4px 12px !important; white-space: normal !important; max-width: 56vw; text-align: center; line-height: 1.5;
     background: rgba(8,5,4,.38) !important; bottom: 108px !important; }
   body.touch #tip kbd { padding: 0 .25em; }
   body.touch #goal { font-size: 13px; letter-spacing: .12em; opacity: .85; }
   body.touch #mvtext.line, body.touch #mvtext { font-size: 15px !important; letter-spacing: .12em; bottom: calc(12.5vh + 3vh); }
   body.touch #mvtext .who { font-size: 10px; margin-bottom: .4em; }
+  /* the spoken lines and the narration in English on a phone (2026-11-17 user: "说话的字幕改成英文吧，这样简略一些") */
+  body.touch #mvtext .en { display: block; margin-top: 0; font-size: 15px; letter-spacing: .02em; padding: 0 6vw; opacity: .95; }
   body.touch #boss .name { font-size: 12px; letter-spacing: .2em; margin-bottom: 4px; } body.touch #boss .name span { display: none; }
   body.touch kbd .ic { width: 1.05em; height: 1.05em; vertical-align: -0.15em; display: inline-block; }
   /* portrait (2026-11-17: played upright too, it goes round on X): the HUD narrower, the tips above the buttons */

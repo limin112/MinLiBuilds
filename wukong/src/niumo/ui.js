@@ -38,7 +38,7 @@ export class NiumoUI extends UI {
     if (text === this.narr) return;
     this.narr = text;
     if (text) {
-      this.mvText.textContent = text; this.mvText.dataset.text = text; this.mvText.dataset.speaker = '';
+      this.mvText.textContent = ''; this.mvText.append(this.zh_(text)); this.mvText.dataset.text = text; this.mvText.dataset.speaker = '';
       this.addEn_(en);
       this.mvText.classList.remove('line'); this.mvText.classList.add('on');
     } else this.mvText.classList.remove('on');
@@ -53,13 +53,16 @@ export class NiumoUI extends UI {
     if (!text) { el.classList.remove('on'); return; }
     el.textContent = '';
     const who = document.createElement('span'); who.className = 'who'; who.textContent = name;
-    el.append(who, document.createTextNode(text));
+    el.append(who, this.zh_(text));
     el.dataset.text = text; el.dataset.speaker = speaker;
     this.addEn_(en);
     el.classList.add('on', 'line');
   }
-  /** The English subtitle, small under the line. */
+  /** The Chinese line, in its own span (a phone shows the English instead when there is one). */
+  zh_(text) { const z = document.createElement('span'); z.className = 'zh'; z.textContent = text; return z; }
+  /** The English subtitle, small under the line (on a phone, instead of the line: 2026-11-17 user, shorter). */
   addEn_(en) {
+    this.mvText.classList.toggle('hasen', !!en);
     if (!en) return;
     const e = document.createElement('span'); e.className = 'en'; e.textContent = en;
     this.mvText.append(e);
