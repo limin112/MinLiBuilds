@@ -21,7 +21,9 @@
 //    牛魔王「红孩儿的账，铁扇的账……今日一并算。」              wide in profile: the speck and the mountain
 //    孙悟空「正好。俺老孙压了五百年，骨头正痒。」              low behind him, pushing in; he sinks into his guard
 //   finale (driven by the bull's own moves):
-//    ROAR    he throws his head back; fire goes up behind him; the fight music's first bar lands on it
+//    ROAR    he throws his head back; fire goes up behind him; the fight music's first bar lands on it - and the
+//            cinematic ends there: the first blow is the fight's (the bullet time and the 筋斗, the same as when skipped).
+//            The beats below are no longer played (kept for reference):
 //    RAISE   from the ground behind the monkey: the iron staff goes up against the sky
 //    STRIKE  slow motion, side on: the staff comes down like a falling tower; the monkey is already in the air,
 //            a sideways aerial out from under it; stone and lava go up where he stood
@@ -150,10 +152,9 @@ export class OpeningMV {
     this.beats = [
       ...PARLEY.map((id, i) => ({ line: id, shot: i === 0 ? 'eyes' : id, pre: i === 0 ? 0.3 : 0.28, post: id === 'm3' ? 0.7 : 0.4 })),
       { name: 'roar', shot: 'roar', fixed: 2.5 },
-      { name: 'raise', shot: 'raise', fixed: 2.4, open: true },
-      { name: 'strike', shot: 'strike', fixed: 4.0, open: true },
-      { name: 'skid', shot: 'skid', fixed: 1.7 },
-      { name: 'settle', shot: 'settle', fixed: 2.2 },
+      // (the cinematic ends on the roar: the first blow and the dodge are the fight's own - the bullet time with the
+      // 筋斗 onto his hand, main.js openingBulletTime - the same whether the cinematic was watched or skipped; 2026-11-17
+      // user: the two dodges differed, use the one the phone showed. raise / strike / skid / settle stay, unused.)
     ];
     this.bi = -1;
     // what the giant aims his staff at: the monkey's place, not the monkey (nothing here can hurt him)

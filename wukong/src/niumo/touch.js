@@ -3,16 +3,18 @@
 //
 // Left: a joystick, always shown in the lower left; a thumb anywhere on the left half takes it there (floating) ->
 // NiumoInput.touchMove (analog, camera-relative like WASD); pushed to the rim he runs.
-// Right: two buttons, sending the very keyboard events the keys send, so every rule of the keyboard holds:
-//   攻 (big, a sword)  tap = J light; held past HOLD s = K held (the charged smash, released on lift)
-//   闪 (a shield)      tap = Space (roll / step); held past HOLD s = L held (guard; a parry still needs it just before the blow)
+// Right: three skills, the same three as the keyboard (2026-11-17 user: "悟空应该3个技能，一个轻击，一个重击，一个是翻滚。
+// 这样手机和web都统一了"), each sending the very key event the key sends, so every rule holds:
+//   sword (big)  J light · staff smash  K heavy (hold to charge, lift to strike) · dodging figure  Space (tap = roll,
+//   hold = run)
 //   停 Escape (pause) · 跳过 Enter (cinematics) · 再来一次 R (ending).
 // Shown when the device has a coarse pointer (or ?touch); hidden on the splash and the ending card by the page's state.
 // Landscape or portrait (main.js renderFramed widens the view on a tall screen).
 
-// the two buttons' icons (2026-11-17 user: "技能改成一个剑一个盾的图标"); also used in the coach's tips (ui.js)
+// the two buttons' icons (2026-11-17 user: "技能改成一个剑一个盾的图标", then: not a shield - a dodge, "闪身的图标"); also used in the coach's tips (ui.js)
 export const ICON_SWORD = `<svg class="ic" viewBox="0 0 24 24" aria-label="剑"><path d="M20.6 3.4 19.9 7.1 10.6 16.4 7.6 13.4 16.9 4.1Z" fill="currentColor"/><path d="M5.4 12.6 11.4 18.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M8.6 15.4 4.7 19.3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="3.9" cy="20.1" r="1.5" fill="currentColor"/></svg>`;
-export const ICON_SHIELD = `<svg class="ic" viewBox="0 0 24 24" aria-label="盾"><path d="M12 2.4 20 5.4V11.2C20 16.3 16.6 20.1 12 21.7 7.4 20.1 4 16.3 4 11.2V5.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 5.6 17 7.4V11.4C17 14.6 15 17.2 12 18.4 9 17.2 7 14.6 7 11.4V7.4Z" fill="currentColor" opacity=".55"/></svg>`;
+export const ICON_HEAVY = `<svg class="ic" viewBox="0 0 24 24" aria-label="重击"><path d="M4.6 2.8 15.4 14.6" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M2.6 21.2H21.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M16.4 19.4 16.6 16.8M19.6 18.6 21.2 16.6M13.2 18.6 11.4 16.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>`;
+export const ICON_DODGE = `<svg class="ic" viewBox="0 0 24 24" aria-label="闪"><circle cx="16.2" cy="4.4" r="2.3" fill="currentColor"/><path d="M15.2 7.6 11.4 13.2M14.4 9.2 18.6 11.4M13.4 9 9.4 8.2M11.4 13.2 15.4 16.2 14.2 21.2M11.4 13.2 8.6 17.4 4.8 18.4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.8 8.6H6.2M1 12.2H6.4M2.6 15.8H5.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".7"/></svg>`;
 
 export const isTouch = () => new URLSearchParams(location.search).has('touch')
   || (matchMedia?.('(pointer: coarse)').matches && navigator.maxTouchPoints > 0);
@@ -25,8 +27,9 @@ export function createTouchControls(input, { getState = () => 'fight' } = {}) {
   root.innerHTML = `
     <div class="stick"><div class="knob"></div></div>
     <div class="btns">
-      <button data-tap="KeyJ" data-hold="KeyK" class="b-atk" aria-label="攻">${ICON_SWORD}</button>
-      <button data-tap="Space" data-hold="KeyL" class="b-dodge" aria-label="闪">${ICON_SHIELD}</button>
+      <button data-code="KeyJ" class="b-atk" aria-label="轻击">${ICON_SWORD}</button>
+      <button data-code="KeyK" class="b-heavy" aria-label="重击">${ICON_HEAVY}</button>
+      <button data-code="Space" class="b-dodge" aria-label="翻滚">${ICON_DODGE}</button>
     </div>
     <button data-code="Escape" class="b-pause">停</button>
     <button data-code="Enter" class="b-skip">跳过 ›</button>
@@ -149,8 +152,9 @@ export const TOUCH_CSS = `
     border-radius: 23px; padding: 0 26px; font-size: 17px; letter-spacing: .3em; }
   #touch .btns { position: absolute; right: max(22px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); width: 200px; height: 170px; }
   #touch .btns button { position: absolute; }
-  #touch .b-atk { right: 0; bottom: 0; width: 96px; height: 96px; font-size: 32px; border-width: 2px; }
-  #touch .b-dodge { right: 112px; bottom: 54px; width: 68px; height: 68px; font-size: 22px; }
+  #touch .b-atk { right: 0; bottom: 0; width: 96px; height: 96px; border-width: 2px; }
+  #touch .b-heavy { right: 92px; bottom: 76px; width: 66px; height: 66px; }
+  #touch .b-dodge { right: 112px; bottom: -2px; width: 66px; height: 66px; }
   #touch .btns .ic { width: 54%; height: 54%; display: block; margin: auto; }
   #touch .btns button.hold { box-shadow: 0 0 0 3px rgba(230,190,110,.55), 0 2px 10px rgba(0,0,0,.45); }
   #touch .b-pause { position: absolute; right: max(16px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); width: 40px; height: 40px; font-size: 15px; }
@@ -162,31 +166,32 @@ export const TOUCH_CSS = `
   #touch .knob { position: absolute; left: 50%; top: 50%; width: 58px; height: 58px; border-radius: 50%; background: rgba(220,194,142,.5); transform: translate(-50%, -50%); }
   /* a phone: nothing in English, nothing big in the middle (2026-11-17 user: the tips and subtitles covered the screen) */
   body.touch #hint, body.touch #keyline, body.touch #mvtext.hasen .zh, body.touch #chapter .en, body.touch #title .en, body.touch #subtitle i { display: none !important; }
-  body.touch #tip { font-size: 15px !important; letter-spacing: .12em !important; padding: 4px 12px !important; white-space: normal !important; max-width: 56vw; text-align: center; line-height: 1.5;
+  body.touch #tip i { display: block; font-size: 13px; letter-spacing: .02em; margin-top: 1px; opacity: .85; } body.touch #goal i { font-size: 12px; }
+  body.touch #tip { font-size: 19px !important; letter-spacing: .12em !important; padding: 4px 12px !important; white-space: normal !important; max-width: 56vw; text-align: center; line-height: 1.5;
     background: rgba(8,5,4,.38) !important; bottom: 108px !important; }
   body.touch #tip kbd { padding: 0 .25em; }
-  body.touch #goal { font-size: 13px; letter-spacing: .12em; opacity: .85; }
-  body.touch #mvtext.line, body.touch #mvtext { font-size: 15px !important; letter-spacing: .12em; bottom: calc(12.5vh + 3vh); }
-  body.touch #mvtext .who { font-size: 10px; margin-bottom: .4em; }
+  body.touch #goal { font-size: 15px; letter-spacing: .12em; opacity: .9; }
+  body.touch #mvtext.line, body.touch #mvtext { font-size: 18px !important; letter-spacing: .12em; bottom: calc(12.5vh + 3vh); }
+  body.touch #mvtext .who { font-size: 12px; margin-bottom: .4em; }
   /* the spoken lines and the narration in English on a phone (2026-11-17 user: "说话的字幕改成英文吧，这样简略一些") */
-  body.touch #mvtext .en { display: block; margin-top: 0; font-size: 15px; letter-spacing: .02em; padding: 0 6vw; opacity: .95; }
-  body.touch #boss .name { font-size: 12px; letter-spacing: .2em; margin-bottom: 4px; } body.touch #boss .name span { display: none; }
+  body.touch #mvtext .en { display: block; margin-top: 0; font-size: 18px; letter-spacing: .02em; padding: 0 6vw; opacity: .95; }
+  body.touch #boss .name { font-size: 14px; letter-spacing: .2em; margin-bottom: 4px; } body.touch #boss .name span { display: none; }
   body.touch kbd .ic { width: 1.05em; height: 1.05em; vertical-align: -0.15em; display: inline-block; }
   /* portrait (2026-11-17: played upright too, it goes round on X): the HUD narrower, the tips above the buttons */
   @media (orientation: portrait) {
     body.touch .bar { left: 16px; } body.touch #hp { top: max(16px, env(safe-area-inset-top)); width: 52vw; } body.touch #st { top: calc(max(16px, env(safe-area-inset-top)) + 14px); width: 38vw; }
-    body.touch #goal { left: 16px; top: calc(max(16px, env(safe-area-inset-top)) + 34px); font-size: 13px; letter-spacing: .1em; max-width: 70vw; } body.touch #goal i { font-size: 11px; }
-    body.touch #boss { top: calc(max(16px, env(safe-area-inset-top)) + 96px); bottom: auto; width: 88vw; } body.touch #boss .name { font-size: 13px; margin-bottom: 4px; }
-    body.touch #tip { font-size: 15px !important; bottom: 220px !important; white-space: normal !important; width: 86vw; max-width: none; left: 50% !important; text-align: center; padding: 6px 10px; letter-spacing: .12em; }
-    body.touch #tip i { font-size: 12px; }
-    body.touch #subtitle { font-size: 16px; letter-spacing: .1em; padding: 0 16px; bottom: 18%; }
+    body.touch #goal { left: 16px; top: calc(max(16px, env(safe-area-inset-top)) + 34px); font-size: 15px; letter-spacing: .1em; max-width: 70vw; } body.touch #goal i { font-size: 12px; }
+    body.touch #boss { top: calc(max(16px, env(safe-area-inset-top)) + 138px); bottom: auto; width: 88vw; } body.touch #boss .name { font-size: 13px; margin-bottom: 4px; }
+    body.touch #tip { font-size: 18px !important; bottom: 230px !important; white-space: normal !important; width: 86vw; max-width: none; left: 50% !important; text-align: center; padding: 6px 10px; letter-spacing: .12em; }
+    body.touch #tip i { font-size: 13px; }
+    body.touch #subtitle { font-size: 18px; letter-spacing: .1em; padding: 0 16px; bottom: 18%; }
     #splash .spt { font-size: 18px; letter-spacing: .5em; text-indent: .5em; } #splash .spe { font-size: 10px; letter-spacing: .18em; text-indent: .18em; padding: 0 12px; }
     #splash .go { font-size: 20px; letter-spacing: .45em; text-indent: .45em; } #splash .keys { font-size: 12px; letter-spacing: .06em; bottom: 30px; }
   }
   /* a phone in landscape: the HUD a little smaller */
   @media (max-height: 500px) {
     body.touch #boss { bottom: 18px; width: 56vw; } body.touch #boss .name { font-size: 14px; margin-bottom: 4px; }
-    body.touch #goal { font-size: 13px; } body.touch #goal i { font-size: 11px; }
+    body.touch #goal { font-size: 15px; } body.touch #goal i { font-size: 12px; }
     body.touch .bar { left: 18px; } body.touch #hp { top: 16px; width: 220px; } body.touch #st { top: 30px; width: 160px; } body.touch #mp { top: 42px; width: 120px; }
   }
 `;

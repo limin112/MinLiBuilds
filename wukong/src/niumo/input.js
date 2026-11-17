@@ -4,14 +4,15 @@
 //   Space     tap = roll (fires on release), hold = run
 //   J         light: the three-hit staff combo (a fourth press: the spinning finisher); 牵牛鼻子 when his head is down
 //   K         heavy: hold to charge, release to smash
-//   L         guard: hold to block; pressed just before a blow lands = parry
 //   (no I: the banana-leaf fan was taken out of the game on 2026-11-17 - the user wants J K L only)
 //
 // Mouse is optional (LMB light / RMB guard / small camera nudge while pointer-locked, from the base class).
 // Gamepad (base class): RB light · RT heavy · LB guard · B tap roll / hold run · Start pause.
 import { Input } from '../input.js';
 
-const KEYS = { KeyJ: 'light', KeyK: 'heavy', KeyL: 'block' };
+// (three skills, the same on a phone - 2026-11-17 user: light, heavy, roll; no guard: L, the right mouse button and the
+// pad's LB do nothing)
+const KEYS = { KeyJ: 'light', KeyK: 'heavy' };
 const now = () => performance.now() / 1000;
 
 export class NiumoInput extends Input {
@@ -51,7 +52,7 @@ export class NiumoInput extends Input {
 
   press(action) {
     if (this.kbCode === 'Space' && action === 'roll') return;   // Space rolls on release (tap) instead
-    if (action === 'heal' || action === 'fan') return;            // no flasks, no fan (E/R and pad X do nothing)
+    if (action === 'heal' || action === 'fan' || action === 'block') return;            // no flasks, no fan (E/R and pad X do nothing)
     super.press(action);
   }
 

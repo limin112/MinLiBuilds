@@ -515,8 +515,9 @@ export class DemoBot {
     this.perceive(dt);
     const free = M.canAct() || M.inCancelWindow();
 
-    // 1. the dodge, when its moment comes
+    // 1. the dodge, when its moment comes (no guard in the game any more: what was a parry is a roll)
     const p = this.plan;
+    if (p && p.kind === 'parry') p.kind = 'roll';
     if (p && !p.done && p.kind === 'parry' && this.time >= p.at - 0.3 && this.time < p.at && M.canAct()) {
       // turn the rod toward the side the staff comes from (a guard only stops what it faces)
       _a.set(M.pos.x, M.pos.y + 0.8, M.pos.z);
@@ -602,12 +603,8 @@ export class DemoBot {
       }
     }
     if (at && mv && (at.name === 'sweep2' || at.name === 'combo2')) {
-      const hs = at.def.hits;
-      if (t > hs[0][0] - 0.4 && t < hs[hs.length - 1][1] + 0.05) {
-        if (!this.duelGuard) { this.duelGuard = true; this.stats.parries++; this.note('guard ' + at.name); }
-        this.aim(dx / d, dz / d, 0.12); this.hold('block');
-        return;
-      }
+      // (no guard any more: a step back out of each sweep as it comes)
+      for (const h of at.def.hits) if (t > h[0] - 0.3 && t < h[0] + 0.05 && dodge(-dx / d, -dz / d, 'step back from ' + at.name, h)) return;
     }
     if (this.duelGuard) { this.duelGuard = false; this.release('block'); }
     if (at && mv && (at.name === 'slam2' || at.name === 'quake') && !at.fired.has('impact') && t > at.def.impactAt - 0.34 && dodge(-dz / d, dx / d, 'step out of slam2', at)) return;

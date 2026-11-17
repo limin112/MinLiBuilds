@@ -1,7 +1,7 @@
 // 火焰山 · 牛魔 HUD: the shared UI (src/ui.js: boss bar with chip damage, cards, subtitles, hint, reticle) plus the
 // monkey's mana bar (hidden: the fan is gone), the chapter card (回目) and the MV narration line. niumo.html provides the DOM.
 import { UI } from '../ui.js';
-import { ICON_SWORD, ICON_SHIELD } from './touch.js';
+import { ICON_SWORD, ICON_HEAVY, ICON_DODGE } from './touch.js';
 
 const $ = s => document.querySelector(s);
 
@@ -103,11 +103,11 @@ export class NiumoUI extends UI {
 }
 
 // on a phone the keys are the on-screen buttons (touch.js): <kbd>J</kbd> -> <kbd>攻</kbd> ...
-// (two buttons, 2026-11-17 user: like 王者荣耀 - the sword: tap light / hold heavy; the shield: tap roll / hold guard)
-const TOUCH_NAMES = { J: ICON_SWORD, K: '按住' + ICON_SWORD, L: '按住' + ICON_SHIELD, '空格': ICON_SHIELD, Space: ICON_SHIELD, Enter: '跳过' };
-// (2026-11-17 user, on his phone: the tips "全盖住了 · 手机端不能这么干扰" - a phone shows the Chinese only, without
-// the English line under it and without the parenthesised extras: one short line)
+// (three buttons, 2026-11-17 user: light / heavy / roll, as on the keyboard)
+const TOUCH_NAMES = { J: ICON_SWORD, K: ICON_HEAVY, '空格': ICON_DODGE, Space: ICON_DODGE, Enter: '跳过' };
+// (2026-11-17 user, on his phone: the tips "全盖住了 · 手机端不能这么干扰" - a phone drops the parenthesised extras;
+// the English line stays, small: "受众是中文和英文的读者", and each tip only comes up a few times - main.js TIP_TIMES)
 function touchKeys(html) {
   return html.replace(/<kbd>([^<]+)<\/kbd>/g, (m, k) => TOUCH_NAMES[k] ? `<kbd>${TOUCH_NAMES[k]}</kbd>` : m)
-    .replace(/<i>[\s\S]*?<\/i>/g, '').replace(/（[^（）]*）/g, '').replace(/Enter 跳过/g, '');
+    .replace(/（[^（）]*）/g, '').replace(/Enter 跳过/g, '');
 }

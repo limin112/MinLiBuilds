@@ -1242,6 +1242,8 @@ export class BullKing {
     const armored = this.armored;
     this.events.push({ type: 'damage', amount: total, part, weak: !!(w && w.active), armored, prelude: this.phase === 1 ? this.preludeHits : undefined });
     if (armored) this.bfx.stoneHit(point, dir, heavy);
+    // (no guard, no parry any more - 2026-11-17 user: three skills, light / heavy / roll: a heavy blow breaks the fire)
+    if (armored && heavy && !fan) this.breakArmor(this.T.armorParry);
     if (this.duel) {
       // at the giants' scale: a blow you can see from across the caldera, and feel in him
       this.bfx.giantHit(point, dir, heavy);
@@ -1265,7 +1267,7 @@ export class BullKing {
     this.checkThresholds();
   }
 
-  /** 现真身: is the fire he wears up? (It is down for a while after the fan or a parry, and while his posture is broken.) */
+  /** 现真身: is the fire he wears up? (It is down for a while after a heavy blow, and while his posture is broken.) */
   get armored() { return !!(this.duel && this.armor && this.armorDownT <= 0 && !this.reeling && !this.dead); }
   /** Blow the fire off him for `sec` seconds. Returns true when it was up. */
   breakArmor(sec = this.T.armorDown) {

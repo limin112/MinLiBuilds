@@ -255,7 +255,7 @@ async function boot() {
   const G = {
     scene, camera, renderer, composer, bloom, bokeh, grade, arena, audio, fx, input, ui, cam, monkey, bull, actor, ghost, voice,
     chars: { bull: bullChar, monkey: monkeyChar }, staffs: { monkey: monkeyStaff, get bull() { return bullStaff; } },
-    state: 'loading', time: 0, hitstop: 0, slowmo: 1, slowmoT: 0, flash: 0, hurt: 0, aberr: 0, paused: false,
+    state: 'loading', tipSeen: {}, tipKey: '', tipMuted: false, time: 0, hitstop: 0, slowmo: 1, slowmoT: 0, flash: 0, hurt: 0, aberr: 0, paused: false,
     god: FLAG.god, deaths: 0, wakeSeen: false, mv: null, cut: null, cutKind: null, fps: 60, frameMs: 0, flags: FLAG,
     fallbacks, assetFallbacks, cues: { ...MV_CUES, ...(cues || {}) }, cuesFromAudio: !!cues, post: { heat: 0, dof: null, letterbox: false },
     grade: { exposure: 0.95, warm: 0.15, fog: 0.3 }, stateLog: [],
@@ -337,6 +337,8 @@ async function boot() {
     // that would drop him back into phase one, seated, with the arena reverted)
     const rising = bull.state === 'transition';
     if ((!fromCine || bull.state === 'dormant') && !rising && bull.state !== 'attack') bull.wake?.();
+    // after the cinematic (which ends on his roar) his first move is the opening blow, as when it is skipped
+    else if (fromCine && !rising && bull.phase === 1 && bull.state === 'idle' && bull.T?.openingRest > 0) bull.openingT = bull.T.openingDelay;
     G.setEyes(1);
     ui.showHUD(true); ui.showBoss(true); ui.letterbox(false); ui.setHint(''); input.locked = false; G.cineCam = null;
     const p2 = bull.phase === 2 || rising, want = p2 ? 'niumo_phase2' : 'niumo_phase1';
@@ -467,7 +469,7 @@ async function boot() {
       }
       if (e.type === 'stagger') { G.slowmo = e.reel ? 0.3 : 0.45; G.slowmoT = e.reel ? 0.7 : 0.5; G.flash = Math.max(G.flash, e.reel ? 0.16 : 0.1); cam.addTrauma?.(0.35); if (e.reel) { G.hitstop = Math.max(G.hitstop, 0.2); G.aberr = 1; input.rumble?.(1, 0.8, 300); } }
       if (e.type === 'flinch') { G.hitstop = Math.max(G.hitstop, 0.16); G.aberr = Math.max(G.aberr, 0.8); cam.addTrauma?.(0.2); }
-      if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 弹 反 破 甲<i>His true form: wreathed in fire — a parry breaks it</i>'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
+      if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 重 击 破 甲<i>His true form: wreathed in fire — a heavy blow breaks it</i>'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
         G.slowmo = 0.5; G.slowmoT = 0.8; cam.pullBack?.(1, 3); cam.addTrauma?.(0.6); G.heatKick = Math.max(G.heatKick || 0, 0.8); }
       if (e.type === 'down') { G.slowmo = 0.5; G.slowmoT = 0.6; }
       if (e.type === 'gold') { G.flash = Math.max(G.flash, 0.12); cam.addTrauma?.(0.25); }
@@ -635,8 +637,9 @@ async function boot() {
    */
   const K = k => `<kbd>${k}</kbd>`;
   // the English under every tip (matched by a phrase of the Chinese; first match wins)
+  const TIP_TIMES = 3;
   const TIP_EN = [
-    ['横扫', `Sweep — hold ${K('L')} to guard`], ['破绽', `Opening! ${K('J')}`], ['连扫两下', `Two sweeps — keep ${K('L')} held`],
+    ['横扫', `Sweep — ${K('Space')} roll away`], ['破绽', `Opening! ${K('J')}`], ['连扫两下', `Two sweeps — ${K('Space')} away from each`],
     ['震地火浪', `Fire wave — ${K('Space')} through it as it reaches you`], ['火雨要来了', 'Fire rain coming — watch the red rings'],
     ['火雨——跑出', `Fire rain — out of the red rings! He is roaring: hit him ${K('J')}`], ['冲撞', `Charge — ${K('Space')} to the side`], ['现在闪', `Now — ${K('Space')}!`],
     ['他刹不住', `He cannot stop — run him down! ${K('J')}`], ['跳劈锤地', `Leaping smash — ${K('Space')} away, then run out`],
@@ -644,27 +647,29 @@ async function boot() {
     ['砸棍', `Overhead smash — ${K('Space')} away`], ['打牛魔王', `Now — go hit the Bull Demon King! ${K('J')}`],
     ['巨掌', 'Giant palm — out of the shadow on the ground'], ['手掌落地了', `The hand is down — strike it! ${K('J')}`],
     ['架势崩了', `Posture broken — all out! ${K('J')} ${K('K')}`], ['他站不稳了', `He is staggered — all out! ${K('J')}`],
-    ['脚下是熔岩', 'Lava underfoot — run out'], ['火甲挡住了', `The fire armour holds — parry him (${K('L')} just before the blow) to break it`],
+    ['脚下是熔岩', 'Lava underfoot — run out'], ['火甲挡住了', `The fire armour holds — a heavy blow ${K('K')} breaks it`],
     ['金身——别打！他马上', `Golden body — do not strike! He turns into the white bull and charges: run (or be ready to ${K('Space')})`], ['金身', 'Golden body — do not strike: the blow rebounds and stuns you'],
   ];
   function coach() {
     if (G.state !== 'fight' || monkey.dead || bull.dead) { ui.setGoal(''); ui.setTip(''); ui.setKeys(''); return; }
     const duel = monkey.giant, at = bull.state === 'attack' ? bull.atk : null, mv = bull.a?.move, t = mv ? mv.t : 0;
-    ui.setKeys(duel ? `WASD 绕着他跑（始终锁定）　${K('J')} 出棍　${K('K')} 重击（按住蓄力）　${K('L')} 格挡　${K('空格')} 闪步<i>WASD circle him (always locked) · J strike · K heavy (hold to charge) · L guard · Space step</i>`
-      : `WASD 移动　${K('J')} 出棍　${K('K')} 重击　${K('L')} 格挡　${K('空格')} 翻滚<i>WASD move · J strike · K heavy · L guard · Space roll</i>`);
+    // (the key line too: only the first 40 s of the fight)
+    if (G.fightSince === undefined) G.fightSince = G.time;
+    if (G.time - G.fightSince > 40) ui.setKeys(''); else ui.setKeys(duel ? `WASD 绕着他跑（始终锁定）　${K('J')} 出棍　${K('K')} 重击（按住蓄力）　${K('空格')} 闪步<i>WASD circle him (always locked) · J strike · K heavy (hold to charge) · Space step</i>`
+      : `WASD 移动　${K('J')} 出棍　${K('K')} 重击　${K('空格')} 翻滚<i>WASD move · J strike · K heavy · Space roll</i>`);
     if (bull.phase === 1 && bull.state !== 'transition') {
       const n = bull.T.preludeHits || 6;
       ui.setGoal(`敲他！棍子打中他 ${n} 下，逼他站起来<b>${Math.min(bull.preludeHits || 0, n)} / ${n}</b><i>Strike him ${n} times with the staff to make him stand</i>`);
-    } else if (duel) ui.setGoal(!bull.enraged ? '法相天地　·　打倒牛魔王<i>Stand as Heaven and Earth · bring the Bull Demon King down</i>' : bull.armored ? `牛魔王现了真身 · 火甲护体（伤害大减）——${K('L')} 弹反破甲<i>His true form: fire armour (damage much reduced) — parry ${K('L')} to break it</i>` : '火甲灭了 · 趁现在猛攻<i>The fire is out · all out, now</i>');
+    } else if (duel) ui.setGoal(!bull.enraged ? '法相天地　·　打倒牛魔王<i>Stand as Heaven and Earth · bring the Bull Demon King down</i>' : bull.armored ? `牛魔王现了真身 · 火甲护体（伤害大减）——${K('K')} 重击破甲<i>His true form: fire armour (damage much reduced) — a heavy blow ${K('K')} breaks it</i>` : '火甲灭了 · 趁现在猛攻<i>The fire is out · all out, now</i>');
     else ui.setGoal('');
     let tip = '', kind = '';
     if (at && mv) {
       const def = at.def, hit = def.hits && def.hits[0];
       if (at.name === 'sweep2' || at.name === 'sweep') {
-        if (t < hit[1]) { tip = `横扫——按住 ${K('L')} 格挡`; kind = 'danger'; }
+        if (t < hit[1]) { tip = `横扫——${K('空格')} 翻开`; kind = 'danger'; }
         else { tip = `破绽！${K('J')} 连击`; kind = 'go'; }
       } else if (at.name === 'combo2') {
-        if (t < def.hits[1][1]) { tip = `连扫两下——按住 ${K('L')} 别松`; kind = 'danger'; }
+        if (t < def.hits[1][1]) { tip = `连扫两下——${K('空格')} 每一下都翻开`; kind = 'danger'; }
         else { tip = `破绽！${K('J')} 连击`; kind = 'go'; }
       } else if (duel && (at.name === 'stompL' || at.name === 'stompR')) {
         if (t < def.impactAt + 1.6) { tip = `震地火浪——火浪到跟前时 ${K('空格')} 穿过去`; kind = 'danger'; }
@@ -693,10 +698,23 @@ async function boot() {
     if (duel) {
       const inFire = (bull.groundFires || []).some(f => !f.out && f.r > 12 && Math.hypot(monkey.pos.x - f.x, monkey.pos.z - f.z) < f.r * 0.9);
       if (inFire) { tip = '脚下是熔岩——快跑出去'; kind = 'danger'; }
-      else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——他出招时 ${K('L')} 弹反就能破甲`; kind = 'danger'; }
+      else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——${K('K')} 重击破甲`; kind = 'danger'; }
     }
     if (bull.goldT > 0) { tip = bull.duel && bull.beast ? `金身——别打！他马上变白牛冲过来，快跑开（或准备 ${K('空格')} 闪）` : '金身——别打！打上去会被震开僵直'; kind = 'danger'; }
-    if (tip) { const en = TIP_EN.find(([key]) => tip.includes(key)); if (en) tip += `<i>${en[1]}</i>`; }
+    // each kind of tip is shown only its first TIP_TIMES appearances, then the player knows it (2026-11-17 user: "这种提示
+    // 可以稍微提示几下，后面就不提示了"); an appearance is counted when it comes up, not every frame it stays up
+    const en = tip ? TIP_EN.find(([key]) => tip.includes(key)) : null;
+    const tipKey = tip ? (en ? en[0] : tip.replace(/<[^>]*>/g, '')) : '';
+    if (tipKey !== G.tipKey) {
+      G.tipKey = tipKey;
+      G.tipMuted = !!tipKey && (G.tipSeen[tipKey] || 0) >= TIP_TIMES;
+      if (tipKey && !G.tipMuted) G.tipSeen[tipKey] = (G.tipSeen[tipKey] || 0) + 1;
+    }
+    if (G.tipMuted) tip = '';
+    // ... and none at all once the duel has taken a tenth of his health (2026-11-17 user: "牛魔王掉血10%后就不要显示了")
+    if (duel && G.duelHp0 === undefined) G.duelHp0 = bull.hp;
+    if (duel && bull.hp <= G.duelHp0 - 0.1 * (bull.maxHp || 1)) tip = '';
+    if (tip && en) tip += `<i>${en[1]}</i>`;
     ui.setTip(tip, kind);
   }
 
