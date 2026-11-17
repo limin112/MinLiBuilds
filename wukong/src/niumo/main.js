@@ -26,6 +26,7 @@ import { updateLooks } from '../look.js';
 import { separate, horizDist } from '../combat.js';
 import { createVolcanoArena } from './arena.js';
 import { BullKing, loadBullCharacter, loadWhiteBull } from './bull.js';
+import { isTouch, createTouchControls, TOUCH_CSS } from './touch.js';
 import { Monkey, loadMonkeyAssets, createMonkeyActor } from './monkey.js';
 import { NiumoInput } from './input.js';
 import { AutoCam } from './camera.js';
@@ -36,7 +37,7 @@ import { CollapseScene, EndingScene, EyeGlow, VoiceLines, safeSpot } from './cut
 const Q = new URLSearchParams(location.search);
 const FLAG = {
   skipmv: Q.has('skipmv'), skipintro: Q.has('skipintro'), god: Q.has('god'), debug: Q.has('debug'),
-  autostart: Q.has('autostart'), mv: Q.has('mv'), quality: Q.get('quality') || 'high',
+  autostart: Q.has('autostart'), mv: Q.has('mv'), touch: isTouch(), quality: Q.get('quality') || (isTouch() ? 'low' : 'high'),
   demo: Q.has('demo'), turbo: Math.max(1, Math.min(8, +(Q.get('turbo') || 1) || 1)),
 };
 const $ = s => document.querySelector(s);
@@ -48,7 +49,7 @@ const FIGHT_START = 28;        // m in front of the seat: where a retry (and ?sk
 
 const canvas = $('#game');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(1.5, devicePixelRatio));
+renderer.setPixelRatio(Math.min(FLAG.touch ? 1.25 : 1.5, devicePixelRatio));      // (phones: fewer pixels, the frame rate first)
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -211,6 +212,10 @@ async function boot() {
   caldera(fx, arena);
 
   const input = new NiumoInput(canvas);
+  if (FLAG.touch) {            // phones / tablets: on-screen stick and buttons (touch.js)
+    const st = document.createElement('style'); st.textContent = TOUCH_CSS; document.head.appendChild(st);
+    createTouchControls(input, { getState: () => { try { return G.state; } catch { return 'loading'; } } });      // (G is declared below)
+  }
   const ui = new NiumoUI();
   const voice = new VoiceLines(audio, ui);
   voice.loadManifest();
@@ -317,7 +322,7 @@ async function boot() {
     const rising = bull.state === 'transition';
     if ((!fromCine || bull.state === 'dormant') && !rising && bull.state !== 'attack') bull.wake?.();
     G.setEyes(1);
-    ui.showHUD(true); ui.showBoss(true); ui.letterbox(false); ui.setHint('');
+    ui.showHUD(true); ui.showBoss(true); ui.letterbox(false); ui.setHint(''); input.locked = false; G.cineCam = null;
     const p2 = bull.phase === 2 || rising, want = p2 ? 'niumo_phase2' : 'niumo_phase1';
     if (audio.musicState !== want) music(want, retry ? 1.5 : 0.3);
     arena.setPhase(p2 ? 2 : 1);
@@ -404,7 +409,7 @@ async function boot() {
       camSnap();
     }
     setState('fight-wait'); G.waitT = 1.2;
-    ui.showHUD(true); ui.showBoss(true); ui.setHint(''); ui.letterbox(false); ui.clearCard();
+    ui.showHUD(true); ui.showBoss(true); ui.setHint(''); ui.letterbox(false); ui.clearCard(); input.locked = false; G.cineCam = null;
   }
 
   function drainEvents() {
@@ -446,7 +451,7 @@ async function boot() {
       }
       if (e.type === 'stagger') { G.slowmo = e.reel ? 0.3 : 0.45; G.slowmoT = e.reel ? 0.7 : 0.5; G.flash = Math.max(G.flash, e.reel ? 0.16 : 0.1); cam.addTrauma?.(0.35); if (e.reel) { G.hitstop = Math.max(G.hitstop, 0.2); G.aberr = 1; input.rumble?.(1, 0.8, 300); } }
       if (e.type === 'flinch') { G.hitstop = Math.max(G.hitstop, 0.16); G.aberr = Math.max(G.aberr, 0.8); cam.addTrauma?.(0.2); }
-      if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 用 芭 蕉 扇 扇 灭 它<i>His true form: wreathed in fire — blow it out with the fan</i>'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
+      if (e.type === 'enrage') { ui.card_('牛魔王 · 现真身', 'name', 2.6, '烈 火 披 身 · 弹 反 破 甲<i>His true form: wreathed in fire — a parry breaks it</i>'); if (monkey.mp !== undefined) monkey.mp = maxOf(monkey, 'Mp', 100);
         G.slowmo = 0.5; G.slowmoT = 0.8; cam.pullBack?.(1, 3); cam.addTrauma?.(0.6); G.heatKick = Math.max(G.heatKick || 0, 0.8); }
       if (e.type === 'down') { G.slowmo = 0.5; G.slowmoT = 0.6; }
       if (e.type === 'gold') { G.flash = Math.max(G.flash, 0.12); cam.addTrauma?.(0.25); }
@@ -615,27 +620,26 @@ async function boot() {
   const K = k => `<kbd>${k}</kbd>`;
   // the English under every tip (matched by a phrase of the Chinese; first match wins)
   const TIP_EN = [
-    ['子弹时间', `Bullet time — ${K('Space')} roll out from under it!`], ['躲开了', 'Dodged!'],
     ['横扫', `Sweep — hold ${K('L')} to guard`], ['破绽', `Opening! ${K('J')}`], ['连扫两下', `Two sweeps — keep ${K('L')} held`],
     ['震地火浪', `Fire wave — ${K('Space')} through it as it reaches you`], ['火雨要来了', 'Fire rain coming — watch the red rings'],
     ['火雨——跑出', `Fire rain — out of the red rings! He is roaring: hit him ${K('J')}`], ['冲撞', `Charge — ${K('Space')} to the side`], ['现在闪', `Now — ${K('Space')}!`],
     ['他刹不住', `He cannot stop — run him down! ${K('J')}`], ['跳劈锤地', `Leaping smash — ${K('Space')} away, then run out`],
     ['地面烧起来了', 'The ground is burning — get out of the ring!'], ['往旁边翻开', `Overhead smash — roll aside ${K('Space')}`],
-    ['砸棍', `Overhead smash — ${K('Space')} away`], ['敲他的铁棍', `Now — strike his staff! ${K('J')}`],
+    ['砸棍', `Overhead smash — ${K('Space')} away`], ['打牛魔王', `Now — go hit the Bull Demon King! ${K('J')}`],
     ['巨掌', 'Giant palm — out of the shadow on the ground'], ['手掌落地了', `The hand is down — strike it! ${K('J')}`],
     ['架势崩了', `Posture broken — all out! ${K('J')} ${K('K')}`], ['他站不稳了', `He is staggered — all out! ${K('J')}`],
-    ['脚下是熔岩', `Lava underfoot — run out (or fan it out ${K('I')})`], ['火甲挡住了', `The fire armour holds — break it with the fan ${K('I')} (or a parry)`],
-    ['金身', 'Golden body — do not strike: the blow rebounds and stuns you'],
+    ['脚下是熔岩', 'Lava underfoot — run out'], ['火甲挡住了', `The fire armour holds — parry him (${K('L')} just before the blow) to break it`],
+    ['金身——别打！他马上', `Golden body — do not strike! He turns into the white bull and charges: run (or be ready to ${K('Space')})`], ['金身', 'Golden body — do not strike: the blow rebounds and stuns you'],
   ];
   function coach() {
     if (G.state !== 'fight' || monkey.dead || bull.dead) { ui.setGoal(''); ui.setTip(''); ui.setKeys(''); return; }
     const duel = monkey.giant, at = bull.state === 'attack' ? bull.atk : null, mv = bull.a?.move, t = mv ? mv.t : 0;
-    ui.setKeys(duel ? `WASD 绕着他跑（始终锁定）　${K('J')} 出棍　${K('K')} 重击（按住蓄力）　${K('L')} 格挡　${K('空格')} 闪步　${K('I')} 芭蕉扇<i>WASD circle him (always locked) · J strike · K heavy (hold to charge) · L guard · Space step · I fan</i>`
+    ui.setKeys(duel ? `WASD 绕着他跑（始终锁定）　${K('J')} 出棍　${K('K')} 重击（按住蓄力）　${K('L')} 格挡　${K('空格')} 闪步<i>WASD circle him (always locked) · J strike · K heavy (hold to charge) · L guard · Space step</i>`
       : `WASD 移动　${K('J')} 出棍　${K('K')} 重击　${K('L')} 格挡　${K('空格')} 翻滚<i>WASD move · J strike · K heavy · L guard · Space roll</i>`);
     if (bull.phase === 1 && bull.state !== 'transition') {
       const n = bull.T.preludeHits || 6;
       ui.setGoal(`敲他！棍子打中他 ${n} 下，逼他站起来<b>${Math.min(bull.preludeHits || 0, n)} / ${n}</b><i>Strike him ${n} times with the staff to make him stand</i>`);
-    } else if (duel) ui.setGoal(!bull.enraged ? '法相天地　·　打倒牛魔王<i>Stand as Heaven and Earth · bring the Bull Demon King down</i>' : bull.armored ? `牛魔王现了真身 · 火甲护体（伤害大减）——用芭蕉扇 ${K('I')} 扇灭<i>His true form: fire armour (damage much reduced) — blow it out with the fan ${K('I')}</i>` : '火甲灭了 · 趁现在猛攻<i>The fire is out · all out, now</i>');
+    } else if (duel) ui.setGoal(!bull.enraged ? '法相天地　·　打倒牛魔王<i>Stand as Heaven and Earth · bring the Bull Demon King down</i>' : bull.armored ? `牛魔王现了真身 · 火甲护体（伤害大减）——${K('L')} 弹反破甲<i>His true form: fire armour (damage much reduced) — parry ${K('L')} to break it</i>` : '火甲灭了 · 趁现在猛攻<i>The fire is out · all out, now</i>');
     else ui.setGoal('');
     let tip = '', kind = '';
     if (at && mv) {
@@ -662,10 +666,9 @@ async function boot() {
         if (!at.fired.has('impact')) { tip = `砸棍——${K('空格')} 闪开`; kind = 'danger'; }
         else { tip = `破绽！${K('J')} 连击`; kind = 'go'; }
       } else if (at.name === 'slam') {
-        if (at.bt && !at.bt.done && !at.bt.rolled) { tip = `子弹时间——${K('空格')} 从棍下翻出去！（不按他也会自己躲）`; kind = 'danger'; }
-        else if (at.bt && at.bt.rolled && !at.bt.hit && (!at.fired.has('impact') || t < def.impactAt + 0.6)) { tip = '躲开了！'; kind = 'go'; }
+        if (at.bt && !at.bt.done) { tip = ''; }                 // (the scripted bullet time: no prompt, nothing to press)
         else if (!at.fired.has('impact')) { tip = `砸棍——${K('空格')} 往旁边翻开`; kind = 'danger'; }
-        else if (at.resting || t < (def.restAt ?? 2.6) + 1) { tip = `趁现在，敲他的铁棍！${K('J')}`; kind = 'go'; }
+        else if (at.resting || t < (def.restAt ?? 2.6) + 1) { tip = `趁现在，冲上去打牛魔王！${K('J')}`; kind = 'go'; }
       } else if (at.name === 'palmL' || at.name === 'palmR') {
         if (t < def.impactAt) { tip = '巨掌——跑出地上的影子'; kind = 'danger'; }
         else if (t < def.restEnd) { tip = `手掌落地了，敲它！${K('J')}`; kind = 'go'; }
@@ -673,10 +676,10 @@ async function boot() {
     } else if (bull.state === 'stagger') { tip = bull.reeling ? `架势崩了——猛攻！${K('J')} ${K('K')}` : bull.duel ? '' : `他站不稳了——猛攻！${K('J')}`; kind = 'go'; }
     if (duel) {
       const inFire = (bull.groundFires || []).some(f => !f.out && f.r > 12 && Math.hypot(monkey.pos.x - f.x, monkey.pos.z - f.z) < f.r * 0.9);
-      if (inFire) { tip = `脚下是熔岩——快跑出去（或 ${K('I')} 芭蕉扇 扇灭）`; kind = 'danger'; }
-      else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——${K('I')} 芭蕉扇 破防（弹反也行）`; kind = 'danger'; }
+      if (inFire) { tip = '脚下是熔岩——快跑出去'; kind = 'danger'; }
+      else if (G.armorTip > 0 && bull.armored && kind !== 'danger') { tip = `火甲挡住了——他出招时 ${K('L')} 弹反就能破甲`; kind = 'danger'; }
     }
-    if (bull.goldT > 0 && kind !== 'danger') { tip = '金身——别打！打上去会被震开僵直'; kind = 'danger'; }
+    if (bull.goldT > 0) { tip = bull.duel && bull.beast ? `金身——别打！他马上变白牛冲过来，快跑开（或准备 ${K('空格')} 闪）` : '金身——别打！打上去会被震开僵直'; kind = 'danger'; }
     if (tip) { const en = TIP_EN.find(([key]) => tip.includes(key)); if (en) tip += `<i>${en[1]}</i>`; }
     ui.setTip(tip, kind);
   }
@@ -689,36 +692,74 @@ async function boot() {
    */
   function openingBulletTime() {
     const at = bull.state === 'attack' ? bull.atk : null, mv = bull.a?.move;
-    if (!at || !at.opening || at.name !== 'slam' || !mv || monkey.dead || G.state !== 'fight') { monkey.dodgeSafe = false; return; }
+    const live = at && at.opening && at.name === 'slam' && mv && !monkey.dead && G.state === 'fight';
+    const b = live ? at.bt : G.btLast;
+    if (!live) { monkey.dodgeSafe = false; if (b && !b.done) endBulletTime(b); return; }
     const def = at.def, t = mv.t;
     if (!at.bt) {
       if (t < def.holdAt - 0.12 || at.fired.has('impact')) return;
-      at.bt = { rolled: false, hit: false, done: false, hp: monkey.hp };
+      at.bt = G.btLast = { rolled: false, hit: false, done: false, hp: monkey.hp };
+      // 全部 CG 化 (2026-11-17 user: the dodge plays by itself, nobody presses anything): the controls let go, bars in
+      input.locked = true; input.clearHeld(); ui.letterbox(true);
       G.flash = Math.max(G.flash, 0.12); cam.addTrauma?.(0.15);
       audio.play('staff_swing', { pos: bull.staffTip, volume: 0.8, pitch: 0.3 });
     }
-    const b = at.bt;
-    if (b.done) return;
-    if (monkey.hp < b.hp) b.hit = true;
-    if (monkey.state === 'roll' && !b.hit) b.rolled = true;
+    const bt = at.bt;
+    // (after it, the fire that bursts along the line of the blow still finds nothing: the scripted dodge is clean)
+    if (bt.done) { monkey.dodgeSafe = !bt.hit && t < def.eruptAt + 1.5; return; }
+    if (monkey.hp < bt.hp) bt.hit = true;
     const landed = at.fired.has('impact') && t > def.impactAt + 0.15;
-    // a roll started in the bullet time carries him clear: safe until the staff is down (the window is long and slow,
-    // and the staff is thirty metres of iron; the point is the moment, not a frame-perfect press)
-    // no key pressed by the last moment: he rolls out by himself (2026-11-16 user: the automatic dodge of the
-    // cinematic was the good part) - sideways, away from where the staff comes down, still facing the bull
-    if (!b.rolled && !b.hit && t >= def.impactAt - 0.32 && !at.fired.has('impact')) {
-      const face = Math.atan2(bull.pos.x - monkey.pos.x, bull.pos.z - monkey.pos.z);
-      const right = Math.random() < 0.5;
+    // at the last moment he turns a 筋斗 (2026-11-17 user: "悟空可以跟头翻到他跟前"): out from under the falling staff
+    // and over to land beside the hand that holds it - on the side of the staff he stood on - ready to strike
+    if (!bt.rolled && !bt.hit && t >= def.impactAt - 0.32 && !at.fired.has('impact')) {
+      const land = jindouSpot();
+      const dx = land.x - monkey.pos.x, dz = land.z - monkey.pos.z, dist = Math.hypot(dx, dz);
       monkey.a.stopMove?.();
-      monkey.startMove(right ? 'rollR' : 'rollL');
-      monkey.state = 'roll'; monkey.yaw = face; monkey.moveYaw = face + (right ? -Math.PI / 2 : Math.PI / 2);
-      monkey.sfx?.(['monkey_roll', 'roll_ash', 'swing_light'], { pos: monkey.pos, volume: 0.45, pitch: 0.62 });
-      b.rolled = true; b.auto = true;
+      const jm = monkey.startMove('jindou');
+      jm.rootScale = Math.max(0.3, dist / 8);
+      monkey.state = 'roll'; monkey.yaw = Math.atan2(dx, dz); monkey.moveYaw = monkey.yaw;
+      monkey.sfx?.(['monkey_roll', 'swing_light'], { pos: monkey.pos, volume: 0.5, pitch: 0.7 });
+      bt.rolled = true; bt.auto = true; bt.land = land;
     }
-    monkey.dodgeSafe = b.rolled && !landed;
-    if (b.hit || (landed && monkey.state !== 'roll')) { b.done = true; monkey.dodgeSafe = false; G.slowmo = 1; G.slowmoT = 0; return; }
-    G.slowmo = b.rolled ? 0.3 : 0.16; G.slowmoT = 0.25;        // (refreshed every frame; it lapses by itself)
+    monkey.dodgeSafe = true;                                     // (scripted: nothing lands on him till the roll is done)
+    if (bt.rolled && bt.land) {
+      // the 筋斗 is filmed as a cinematic would, from a crane that turns with him through the air (blended in and out
+      // of the fight camera: G.cineCam)
+      if (!bt.shot) {
+        const V = monkey.pos.constructor, a = monkey.pos.clone(), d = new V().subVectors(bt.land, a); d.y = 0;
+        const len = d.length() || 1; d.multiplyScalar(1 / len);
+        // a crane shot (the side-on one ran into steles and his descending arm): high behind him and a little off to
+        // the side away from the staff, looking down the line of his flight at the hand he lands beside
+        const n = new V(d.z, 0, -d.x), sa = bull.staffButt, sb = bull.staffTip;
+        const sm = new V((sa.x + sb.x) / 2 - a.x, 0, (sa.z + sb.z) / 2 - a.z);
+        if (n.dot(sm) > 0) n.negate();
+        const best = a.clone().addScaledVector(d, -Math.max(7, len * 0.35)).addScaledVector(n, Math.max(4, len * 0.22));
+        best.y = (arena.groundY ? arena.groundY(best.x, best.z) : a.y) + Math.max(9, len * 0.45);
+        bt.shot = { pos: best, look: a.clone(), fov: 46, w: 0, on: true };
+        G.cineCam = bt.shot;
+      }
+      bt.shot.look.lerp(monkey.pos, 0.3); bt.shot.look.y = monkey.pos.y + 1.1;
+    }
+    if (bt.hit || (landed && monkey.state !== 'roll')) { endBulletTime(bt); return; }
+    G.slowmo = bt.rolled ? 0.3 : 0.16; G.slowmoT = 0.25;        // (refreshed every frame; it lapses by itself)
     G.aberr = Math.max(G.aberr, 0.35);
+  }
+  /** Where the 筋斗 lands: beside the bull's staff hand, a staff's girth to the monkey's side of the staff, facing him. */
+  function jindouSpot() {
+    // (the slam is one-handed: the right hand holds the staff and comes down with it; the left stays on his knee)
+    const V = monkey.pos.constructor, h = bull.bonePos('RightHand', new V());
+    // the staff's line (butt -> tip) and which side of it he is on
+    const a = bull.staffButt, b = bull.staffTip, ax = b.x - a.x, az = b.z - a.z, al = Math.hypot(ax, az) || 1;
+    const side = Math.sign((monkey.pos.x - a.x) * az - (monkey.pos.z - a.z) * ax) || 1;
+    const nx = az / al * side, nz = -ax / al * side;            // out from the staff, toward his side
+    const s = new V(h.x + nx * 3.2 + ax / al * 1.5, 0, h.z + nz * 3.2 + az / al * 1.5);
+    s.y = arena.groundY ? arena.groundY(s.x, s.z) : 0;
+    return s;
+  }
+  function endBulletTime(bt) {
+    if (bt.shot) bt.shot.on = false;                           // (the fight camera takes over again, blended)
+    bt.done = true; monkey.dodgeSafe = false; G.slowmo = 1; G.slowmoT = 0;
+    input.locked = false; input.clearHeld(); ui.letterbox(false);
   }
 
   function frame() {
@@ -793,6 +834,17 @@ async function boot() {
         camUpdate(dt, look);
         drainEvents();
         break;
+      }
+    }
+    if (G.cineCam) {                         // a scripted shot inside the fight, blended over the fight camera
+      const c = G.cineCam;
+      c.w = Math.max(0, Math.min(1, c.w + (c.on ? 1 / 0.25 : -1 / 0.6) * dt));
+      if (c.w <= 0 && !c.on) G.cineCam = null;
+      else {
+        const e = c.w * c.w * (3 - 2 * c.w), q0 = camera.quaternion.clone(), f0 = camera.fov;
+        camera.position.lerp(c.pos, e);
+        camera.lookAt(c.look); camera.quaternion.slerpQuaternions(q0, camera.quaternion.clone(), e);
+        camera.fov = f0 + (c.fov - f0) * e; camera.updateProjectionMatrix();
       }
     }
     if (G.debugCam) { camera.position.copy(G.debugCam.pos); camera.lookAt(G.debugCam.look); if (G.debugCam.fov) { camera.fov = G.debugCam.fov; camera.updateProjectionMatrix(); } }

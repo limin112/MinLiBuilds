@@ -188,12 +188,14 @@ export const MONKEY = {
   },
 
   // ------------------------------------------------------------------ evasion (Space tap)
+  // (2026-11-17 user: every roll / step goes half as far again as it did, is invulnerable from first frame to last,
+  // and leaves a trail of afterimages - monkey.js ghostTrail)
   // a combat roll ALONG THE GROUND (2026-11-16 user: the old one, a somersault turning about his standing hip height,
   // "is not a real roll"): he drops and dives forward onto his hands, balls up - chin down, knees to the chest, the rod
   // along his back - and rolls over his shoulder with the ball's centre a third of a metre off the floor, then comes up
   // out of a crouch. (pivot.y lowers the whole turning body; afterActor keeps every bone above the floor.)
   roll: {
-    iframes: [0.04, 0.4], cancel: 0.5, moveRoot: [[0.02, 0.5, 3.6, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
+    iframes: [0.0, 0.52], cancel: 0.5, moveRoot: [[0.02, 0.5, 5.4, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
     keys: [
       k(0, { ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: 0 }, pblade: [0.25, 0.75, -0.6] }),
       // the dive: low, the chest over the knee, both hands reaching for the floor ahead, the back leg pushing
@@ -218,7 +220,7 @@ export const MONKEY = {
   // the same ground roll backward (2026-11-16 user: front, back, left and right all roll along the ground): he sits
   // back into a ball - chin down, knees up - goes over his shoulders and comes up on his feet facing the same way
   rollB: {
-    iframes: [0.04, 0.4], cancel: 0.5, moveRoot: [[0.02, 0.5, -3.2, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
+    iframes: [0.0, 0.52], cancel: 0.5, moveRoot: [[0.02, 0.5, -4.8, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
     keys: [
       k(0, { ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: 0 }, pblade: [0.25, 0.75, -0.6] }),
       k(0.08, { ease: 'out', bodyFrame: true, pivot: { pitch: -28, y: -0.16, roll: 0 }, hips: [0, -0.42, -0.1], spine: [42, 0, 0], head: [40, 0, 0],
@@ -240,7 +242,7 @@ export const MONKEY = {
   // sideways along the ground, still facing the enemy: down onto the shoulder on that side, balled up, over the back
   // and up again (rollR to his right, rollL to his left; monkey.js moves him that way with moveYaw)
   ...Object.fromEntries([['rollR', 1], ['rollL', -1]].map(([name, s]) => [name, {
-    iframes: [0.04, 0.4], cancel: 0.5, moveRoot: [[0.02, 0.5, 3.4, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true, side: s,
+    iframes: [0.0, 0.52], cancel: 0.5, moveRoot: [[0.02, 0.5, 5.1, 'inOut']], stamina: 16, blendIn: 0.03, blendOut: 0.12, pivotBlade: true, side: s,
     keys: [
       k(0, { ...G, bodyFrame: true, pivot: { pitch: 0, y: 0, roll: 0 }, pblade: [0.25, 0.75, -0.6] }),
       k(0.08, { ease: 'out', bodyFrame: true, pivot: { pitch: 8, y: -0.14, roll: s * 34 }, hips: [s * 0.08, -0.36, 0.04], spine: [46, 0, 0], head: [36, 0, 0],
@@ -264,7 +266,7 @@ export const MONKEY = {
     const lead = { at: [x * 0.3, -0.58, 0.05 + z * 0.3], pole: [x * 0.3, 0, 1] }, trail = { at: [-x * 0.62, -0.7, -z * 0.6 - 0.02], pole: [-x * 0.2, 0, 1] };
     const leftLeads = x < 0 || (x === 0 && z > 0);
     return [name, {
-      iframes: [0.02, 0.4], cancel: 0.44, moveRoot: [[0.0, 0.36, 2.7, 'out']], stamina: 14, blendIn: 0.04, blendOut: 0.14, step: [x, z],
+      iframes: [0.0, 0.46], cancel: 0.44, moveRoot: [[0.0, 0.36, 4.05, 'out']], stamina: 14, blendIn: 0.04, blendOut: 0.14, step: [x, z],
       keys: [
         k(0, G),
         k(0.1, { ease: 'out', hips: [x * 0.1, -0.3, z * 0.08], spine: [14 + z * 12, 0, -x * 18], head: [2 - z * 8, 0, x * 8],
@@ -277,9 +279,33 @@ export const MONKEY = {
       ],
     }];
   })),
+  // 筋斗 (2026-11-17 user: "悟空可以跟头翻到他跟前"): a high forward somersault in the air that carries him a long
+  // way - the opening's scripted dodge flips him from under the falling staff to land beside the hand that holds it.
+  // The distance is set by the caller (mv.rootScale: 8 m x scale); air: true keeps the tumble off the floor-snap.
+  jindou: {
+    iframes: [0.0, 0.95], cancel: 0.92, moveRoot: [[0.06, 0.78, 8, 'inOut']], lift: [0.06, 0.8, 3.2], stamina: 0, air: true,
+    blendIn: 0.04, blendOut: 0.14, pivotBlade: true,
+    keys: [
+      k(0, { ...G, pivot: { pitch: 0 }, pblade: [-0.14, 0.45, 0.88] }),
+      // the spring: down into the knees, arms thrown up
+      k(0.07, { ease: 'out', pivot: { pitch: 12 }, hips: [0, -0.26, 0.04], spine: [24, 0, 0], head: [8, 0, 0],
+        armR: { at: [0.25, 0.25, 0.3], pole: [0.6, -0.4, -0.4] }, armL: { at: [-0.25, 0.25, 0.3], pole: [-0.6, -0.4, -0.4] }, lhand: 0, pblade: [0.1, 0.95, -0.3] }),
+      // tucked, turning over forward high in the air, the rod along his back
+      k(0.24, { ease: 'linear', pivot: { pitch: 120 }, spine: [60, 0, 0], head: [40, 0, 0], ...TUCK,
+        armR: { at: [0.16, -0.3, 0.38], pole: [0.6, -0.5, -0.4] }, armL: { at: [-0.16, -0.32, 0.4], pole: [-0.6, -0.5, -0.4] }, pblade: [0.2, 0.55, -0.81] }),
+      k(0.44, { ease: 'linear', pivot: { pitch: 250 } }),
+      k(0.62, { ease: 'out', pivot: { pitch: 340 }, spine: [30, 0, 0], head: [14, 0, 0],
+        legL: { at: [-0.1, -0.62, 0.2], pole: [0, 0, 1] }, legR: { at: [0.1, -0.66, 0.02], pole: [0, 0, 1] } }),
+      // lands low, one knee bent, the rod brought round to the front
+      k(0.8, { ease: 'out', pivot: { pitch: 360 }, hips: [0, -0.3, 0.04], spine: [26, 0, 0], head: [6, 0, 0],
+        armR: { at: [0.24, -0.4, 0.42], pole: [0.6, -0.5, -0.3] }, armL: { at: [-0.22, -0.46, 0.36], pole: [-0.6, -0.5, -0.3] },
+        legL: { at: [-0.12, -0.7, 0.22], pole: [0, 0, 1] }, legR: { at: [0.12, -0.68, -0.06], pole: [0, 0, 1] }, pblade: [-0.1, 0.5, 0.86] }),
+      k(1.0, { ease: 'inOut', ...G, pivot: { pitch: 360 }, ...LEGS_FREE, pblade: [-0.14, 0.45, 0.88] }),
+    ],
+  },
   // no direction held: a back handspring away from the enemy
   backflip: {
-    iframes: [0.04, 0.36], cancel: 0.5, moveRoot: [[0.0, 0.46, -3.0, 'out']], lift: [0.04, 0.42, 0.55], stamina: 16,
+    iframes: [0.0, 0.48], cancel: 0.5, moveRoot: [[0.0, 0.46, -4.5, 'out']], lift: [0.04, 0.42, 0.55], stamina: 16,
     blendIn: 0.03, blendOut: 0.12, pivotBlade: true,
     keys: [
       k(0, { ...G, pivot: { pitch: 0 }, pblade: [-0.14, 0.45, 0.88] }),

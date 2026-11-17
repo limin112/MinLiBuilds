@@ -1,5 +1,5 @@
 // 火焰山 · 牛魔 HUD: the shared UI (src/ui.js: boss bar with chip damage, cards, subtitles, hint, reticle) plus the
-// monkey's mana bar (芭蕉扇), the chapter card (回目) and the MV narration line. niumo.html provides the DOM.
+// monkey's mana bar (hidden: the fan is gone), the chapter card (回目) and the MV narration line. niumo.html provides the DOM.
 import { UI } from '../ui.js';
 
 const $ = s => document.querySelector(s);
@@ -74,6 +74,7 @@ export class NiumoUI extends UI {
   /** The keys, along the bottom edge. */
   setKeys(html) { this.html_('#keyline', html); }
   html_(sel, html) {
+    if (html && document.body.classList.contains('touch')) html = touchKeys(html);
     const el = $(sel);
     if (!el) return null;
     const cur = el.dataset.html || '';
@@ -95,4 +96,12 @@ export class NiumoUI extends UI {
 
   letterbox(on) { document.getElementById('letterbox').classList.toggle('on', !!on); }
   clearCard() { this.card.classList.remove('on'); this.cardTimer = 0; }
+}
+
+// on a phone the keys are the on-screen buttons (touch.js): <kbd>J</kbd> -> <kbd>攻</kbd> ...
+// (two buttons, 2026-11-17 user: like 王者荣耀 - 攻: tap light / hold heavy; 闪: tap roll / hold guard)
+const TOUCH_NAMES = { J: '攻', K: '按住攻', L: '按住闪', '空格': '闪', Space: '闪', Enter: '跳过' };
+function touchKeys(html) {
+  return html.replace(/<kbd>([^<]+)<\/kbd>/g, (m, k) => TOUCH_NAMES[k] ? `<kbd>${TOUCH_NAMES[k]}</kbd>` : m)
+    .replace(/Enter 跳过/g, '');
 }

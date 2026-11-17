@@ -77,13 +77,15 @@ export const BULL = {
     eruptAt: 2.15, restAt: 2.6, aim: true, track: [0, 1.2],
     keys: [
       k(0, SEAT),
-      k(1.2, { ease: 'windup', armR: { at: [0.18, 0.86, -0.08], pole: [0.75, 0.1, -0.6] }, armL: { twoHand: true },
-        blade: [0.0, 0.5, -0.86], spine: [-14, 0, 0], head: [-6, 0, 0], gripL: 1 }),
+      // one hand (2026-11-17 user: "第一次敲地，应该是单手举棍子"): the right lifts the staff high, the left stays braced on
+      // his knee
+      k(1.2, { ease: 'windup', armR: { at: [0.18, 0.86, -0.08], pole: [0.75, 0.1, -0.6] },
+        blade: [0.0, 0.5, -0.86], spine: [-14, 0, 0], head: [-6, 0, 0] }),
       k(1.48, { ease: 'in', armR: { at: [0.1, 0.35, 0.85], pole: [0.75, -0.3, -0.5] }, blade: [0.0, 0.72, 0.69], spine: [8, 0, 0], head: [4, 0, 0] }),
       k(1.7, { ease: 'snap', armR: { at: [0.08, -0.62, 0.74], pole: [0.7, -0.6, -0.2] }, blade: [0.0, -0.08, 1.0], spine: [34, 0, 0], head: [18, 0, 0] }),
       k(1.95, { ease: 'out', spine: [37, 0, 0], head: [20, 0, 0] }),
       k(2.8, { ease: 'linear', spine: [35, 0, 0] }),
-      k(3.8, { ease: 'inOut', ...SEAT, armL: SEAT.armL, gripL: SEAT.gripL }),
+      k(3.8, { ease: 'inOut', ...SEAT }),
     ],
   },
 
@@ -345,17 +347,17 @@ export const BULL = {
   // 冲撞: the bull he is. He bows until the horns point at the monkey, paws the ground, and runs him down in a
   // straight line (bull.js moves him from runAt to runEnd), then skids to a stop with his back half turned.
   charge: {
-    tellAt: 0.2, runAt: 1.55, runEnd: 3.6,      // (the run is the white bull's: bull.js syncBeast)
+    tellAt: 0.2, runAt: 1.55, runEnd: 7.7,      // (the run is the white bull's: bull.js syncBeast)
     keys: [
       k(0, STAND),
       k(1.0, { ease: 'windup', hips: [0, -0.2, -0.1], hipsTurn: [26, 0, 0], spine: [36, 0, 0], head: [22, 0, 0],
         armL: { at: [-0.55, -0.55, -0.3], pole: [-0.7, -0.2, -0.6], w: 1 }, armR: { at: [0.6, -0.5, -0.35], pole: [0.7, -0.3, -0.6], w: 1 }, blade: [0.25, 0.25, -0.93] }),
       k(1.55, { ease: 'linear', hips: [0, -0.24, -0.12], spine: [40, 0, 0], head: [26, 0, 0] }),
-      k(3.6, { ease: 'linear', hips: [0, -0.22, 0.02], spine: [42, 0, 0], head: [24, 0, 0] }),
-      k(4.0, { ease: 'out', hips: [0, -0.3, -0.12], hipsTurn: [10, 0, 0], spine: [20, -14, 0], head: [10, 0, 0],
+      k(7.7, { ease: 'linear', hips: [0, -0.22, 0.02], spine: [42, 0, 0], head: [24, 0, 0] }),
+      k(8.1, { ease: 'out', hips: [0, -0.3, -0.12], hipsTurn: [10, 0, 0], spine: [20, -14, 0], head: [10, 0, 0],
         armL: { at: [-0.6, -0.4, 0.4], pole: [-0.7, -0.3, -0.5], w: 1 }, armR: { at: [0.5, -0.6, 0.3], pole: [0.7, -0.3, -0.5], w: 1 }, blade: [0.2, 0.7, 0.68] }),
-      k(4.75, { ease: 'linear', hips: [0, -0.26, -0.1], spine: [22, -12, 0] }),
-      k(5.65, { ease: 'inOut', ...STAND, hips: [0, 0, 0], hipsTurn: [0, 0, 0] }),
+      k(8.85, { ease: 'linear', hips: [0, -0.26, -0.1], spine: [22, -12, 0] }),
+      k(9.75, { ease: 'inOut', ...STAND, hips: [0, 0, 0], hipsTurn: [0, 0, 0] }),
     ],
   },
 

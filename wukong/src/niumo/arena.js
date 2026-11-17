@@ -11,7 +11,7 @@
 import * as THREE from 'three';
 import { makeNoiseTexture } from '../arena/textures.js';
 import {
-  SEAT, SPAWN, BOUNDS, DUEL_BOUNDS, DUEL_SCALE, CAM_BOUNDS, ALTAR, MASK, LAVA_Y, RIVERS, buildMasks, buildGround, sampleField, propColliders,
+  floorD, FLOOR, SEAT, SPAWN, BOUNDS, DUEL_BOUNDS, DUEL_SCALE, CAM_BOUNDS, ALTAR, MASK, LAVA_Y, RIVERS, buildMasks, buildGround, sampleField, propColliders,
 } from './arena/layout.js';
 import {
   makeCrackTexture, makeBasaltTexture, makeAshTexture, makeRuneTexture, makeFriezeTexture, fieldTexture,
@@ -490,6 +490,21 @@ export async function createVolcanoArena({ scene, renderer, quality = 'high', te
     duelBounds: { minX: DUEL_BOUNDS.minX * DUEL_SCALE, maxX: DUEL_BOUNDS.maxX * DUEL_SCALE, minZ: DUEL_BOUNDS.minZ * DUEL_SCALE, maxZ: DUEL_BOUNDS.maxZ * DUEL_SCALE },       // the giants' duel: the whole (widened) pit
     setDuelScale,
     get duelScale() { return ks; },
+    /** 1 at the foot of the caldera's walls, more beyond (the floor as drawn now, duel scale included). */
+    pitD: (x, z) => floorD(x / ks, z / ks),
+    /**
+     * The duel: keep a point (Vector3, moved in place) on the floor of the widened pit - at most `lim` of the way to the
+     * cliff's foot, pulled straight in towards the pit's middle. Returns true when it moved. (The prologue's floor has
+     * its own bounds: nothing happens at scale 1.)
+     */
+    pitClamp(p, lim = 0.95) {
+      if (ks === 1 || floorD(p.x / ks, p.z / ks) <= lim) return false;
+      const cx = FLOOR.cx * ks, cz = FLOOR.cz * ks;
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 14; i++) { const m = (lo + hi) / 2; if (floorD((cx + (p.x - cx) * m) / ks, (cz + (p.z - cz) * m) / ks) <= lim) lo = m; else hi = m; }
+      p.x = cx + (p.x - cx) * lo; p.z = cz + (p.z - cz) * lo;
+      return true;
+    },
     playerSpawn: { ...SPAWN },
     bullSeat: { ...SEAT, y: ALTAR.top },
     groundY,

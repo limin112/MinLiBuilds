@@ -206,7 +206,10 @@ export class OpeningMV {
       // the chapter card on black (the camera already rests on the first frame)
       { name: 'card', t0: -1, t1: c.ash, e: 'linear', ap: 0.006, from: { ...stepCam, fov: 40 }, to: { ...stepCam, fov: 40 } },
       // the scorched ground, ash settling; a boot comes down right in front of the lens and walks on toward the blur
-      { name: 'step', t0: c.ash, t1: c.caldera, e: 'linear', ap: 0.02, blur: 0.02, shake: 0.03, focus: f => lerp(1.0, 2.6, f),
+      // (the focus rides on his legs as he walks away - 2026-11-17 user: the focus belongs on the monkey in the foreground,
+      // the fixed 1.0 -> 2.6 m pull fell behind him and left everything soft; the mountain is the blur)
+      { name: 'step', t0: c.ash, t1: c.caldera, e: 'linear', ap: 0.012, blur: 0.02, shake: 0.03,
+        focus: () => { const p = mPos(); return Math.max(0.6, this.camera.position.distanceTo(new THREE.Vector3(p.x, p.y + 0.45, p.z))); },
         from: { ...stepCam, fov: 40 },
         to: { pos: stepCam.pos.clone().add(V(-0.04, 0.02, -0.18)), look: stepCam.look.clone().add(V(0, 0.22, 0)), fov: 38 } },
       // the reveal (key art A): over his shoulder; the focus leaves him for the mountain

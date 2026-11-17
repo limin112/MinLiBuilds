@@ -72,6 +72,8 @@ export class AudioSystem {
   async _doUnlock() {
     let ctx = this._opts.context || null;
     if (!ctx) {
+      // iPhone: Web Audio is silenced by the ring/silent switch unless the page says it plays media (Safari 16.4+)
+      try { if (globalThis.navigator?.audioSession) navigator.audioSession.type = 'playback'; } catch { /* ignore */ }
       const AC = globalThis.AudioContext || globalThis.webkitAudioContext;
       if (!AC) { console.warn('[audio] Web Audio API not available; audio disabled'); return false; }
       try { ctx = new AC({ latencyHint: 'interactive' }); } catch (err) {

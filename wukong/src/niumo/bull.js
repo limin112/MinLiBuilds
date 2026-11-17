@@ -24,17 +24,19 @@ const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t
 const _v = new THREE.Vector3(), _w = new THREE.Vector3(), _q = new THREE.Quaternion(), _m = new THREE.Matrix4();
 const _p = new THREE.Vector3(), _e = new THREE.Vector3(), _ha = new THREE.Vector3(), _hb = new THREE.Vector3(), _hc = new THREE.Vector3();
 const UP = new THREE.Vector3(0, 1, 0);
+const SWEEPS = new Set(['sweep', 'sweep2', 'combo2']);
 
 // Sound names come from the audio module; anything it does not know yet falls back to an older sound (never warns).
 const SFX_KNOWN = await import('../audio.js').then(m => new Set(m.SFX_NAMES || [])).catch(() => null);
 
 export const BULL_TUNING = {
-  height: 40, maxHp: 1800, poiseMax: 320, poiseRegen: 30,
+  height: 40, maxHp: 3600, poiseMax: 320, poiseRegen: 30,
   weakHp: 170, kneeHp2: 200, regrow: 24,
   // the seated phase is a prologue: this many blows of the staff (or health down to preludeHp) and he stands up
   preludeHits: 6, preludeHp: 0.9, openingRest: 6.5, openingDelay: 0.7,
   bodyMul: 0.3, weakMul: 1.0, brokenMul: 1.15, headMul: 1.5, heavyWeakMul: 1.6, exposedMul: 1.5,
   staffLength: 30, staffGrip: 0.15, staffRadius: 0.78,
+  sweepStaff: 1.6,               // 横扫: the staff grows this much for the sweep (length and girth)
   reflectDmg: 150, grabDmg: 42, fireDmg: 30, firePatchDmg: 7, eruptDmg: 26, waveDmg: 30, meteorDmg: 28,
   turn2: 22, walk2: 3.0,
   // the duel (phase two against the monkey at his own scale): every blow of the rod counts this much, his poise is
@@ -45,9 +47,9 @@ export const BULL_TUNING = {
   // and from then on fights faster, with the charge
   flinchCd: 3.2, reelMul: 1.4, enrageAt: 0.5, duelMeteorDmg: 15, duelWaveDmg: 17, duelCrushDmg: 22, chargeDmg: 26, chargeSpeed: 60, chargeCd: 18,
   // 金身: every goldStep of his health lost he turns to gold for goldSec: blows do nothing, and the striker reels (僵直)
-  goldStep: 0.2, goldSec: 3,
+  goldStep: 0.1, goldSec: 3, goldChargeLead: 0.35,      // (组合技: the gold ends, the white bull runs this soon after)
   // 现原形: the charge is run as a great white bull this long (nose to tail, m) whose stride is played this fast
-  beastLen: 2.1, beastStride: 0.62, beastSpeed: 1.45,
+  beastLen: 4.7, beastStride: 0.7, beastSpeed: 1.45,
   // ... and how hard he presses: seconds between blows (calm / enraged), and how often a sweep runs straight on into the slam
   duelRest: [1.0, 1.9], rageRest: [0.45, 1.1], chainP: 0.25, rageChainP: 0.45,
   // 现真身 (under enrageAt): he wears the fire - blows count armorMul (his defence up by half) until the banana-leaf fan
@@ -384,9 +386,101 @@ export function makeBullStaff({ length = BULL_TUNING.staffLength, gripFrac = BUL
  */
 export async function loadBullCharacter({ base = 'assets/models/', height = BULL_TUNING.height } = {}) {
   const url = base + 'niumo_bull.glb';
-  const char = await loadCharacter(url, { height });
+  // (cleanArms off: the generic cleaner sends a hand vertex beyond the middle finger's line - his thumbs - wholly to the
+  // hips, and seated those thumbs stretched down to his lap as strips; keepHandsOnArms does this model's cleaning)
+  const char = await loadCharacter(url, { height, cleanArms: false });
+  if (char.mesh) char.mesh.geometry = char.mesh.geometry.clone();        // (our own copy: the edits below stay ours)
   char.url = url;
+  if (char.mesh) char.droppedChains = dropWristChains(char.mesh);
+  if (char.mesh) char.handFixed = keepHandsOnArms(char.mesh);
   return char;
+}
+
+/**
+ * His arms' weights (2026-11-17 user, the "布条" at his hands): in the file his hands hang beside his thighs and robe, so
+ * the auto-rig mixed arm and body there. Seated, with the hands up on the staff, mixed vertices stretched into strips.
+ * By the forearm or hand, a vertex goes wholly with what it mostly belongs to (the arm, or the thigh / robe beside it);
+ * away from the arm, it lets the arm go. Vertices wholly on the arm are not touched. Returns the vertices changed.
+ */
+function keepHandsOnArms(mesh) {
+  const geo = mesh.geometry, si = geo.attributes.skinIndex, sw = geo.attributes.skinWeight, pos = geo.attributes.position;
+  if (!si || !sw) return 0;
+  const bones = mesh.skeleton.bones, names = bones.map(b => b.name.replace(/^mixamorig:?/, ''));
+  const arm = names.map(n => /^(Left|Right)(Arm|ForeArm|Hand)/.test(n)), low = names.map(n => /^(Left|Right)(ForeArm|Hand)/.test(n));
+  const bind = i => new THREE.Vector3().setFromMatrixPosition(new THREE.Matrix4().copy(mesh.skeleton.boneInverses[i]).invert());
+  const segs = [];
+  for (const sd of ['Left', 'Right']) {
+    const fa = names.indexOf(sd + 'ForeArm'), h = names.indexOf(sd + 'Hand'), tip = names.indexOf(sd + 'HandMiddle3') >= 0 ? names.indexOf(sd + 'HandMiddle3') : names.indexOf(sd + 'HandMiddle2');
+    if (fa >= 0 && h >= 0) segs.push([bind(fa), bind(h)]);
+    if (h >= 0) { const a = bind(h), b = tip >= 0 ? bind(tip) : a.clone().add(a.clone().sub(bind(fa)).multiplyScalar(0.6)); segs.push([a, b]); }
+  }
+  if (!segs.length) return 0;
+  const sp = names.indexOf('Spine1'), chest = sp >= 0 ? bind(sp).y : Infinity;
+  const hb = new THREE.Box3().setFromBufferAttribute(pos), H = hb.max.y - hb.min.y || 1, R = 0.07 * H;
+  const p = new THREE.Vector3(), ab = new THREE.Vector3(), ap = new THREE.Vector3();
+  const dist = (q, a, b) => { ab.subVectors(b, a); ap.subVectors(q, a); const t = clamp(ap.dot(ab) / Math.max(ab.lengthSq(), 1e-12), 0, 1); return ap.sub(ab.multiplyScalar(t)).length(); };
+  let n = 0;
+  for (let v = 0; v < pos.count; v++) {
+    let wa = 0, wo = 0, wl = 0;
+    for (let k = 0; k < 4; k++) {
+      const w = sw.getComponent(v, k), b = si.getComponent(v, k); if (w <= 0) continue;
+      if (arm[b]) wa += w; else wo += w;
+      if (low[b]) wl += w;
+    }
+    if (wo <= 0 || wl <= 0) continue;
+    p.fromBufferAttribute(pos, v).applyMatrix4(mesh.bindMatrix);
+    let d = Infinity; for (const [a, b] of segs) d = Math.min(d, dist(p, a, b));
+    let keep;
+    if (d <= R) keep = wa >= wo ? arm : arm.map(x => !x);       // by the hand: wholly the arm, or wholly the body beside it
+    else if (p.y < chest) keep = low.map(x => !x);              // the robe / belly away from the arm: lets the forearm and hand go
+    else continue;
+    let rest = 0;
+    for (let k = 0; k < 4; k++) { const b = si.getComponent(v, k); if (!keep[b]) sw.setComponent(v, k, 0); else rest += sw.getComponent(v, k); }
+    if (rest <= 1e-6) continue;
+    for (let k = 0; k < 4; k++) sw.setComponent(v, k, sw.getComponent(v, k) / rest);
+    n++;
+  }
+  sw.needsUpdate = true;
+  return n;
+}
+
+/**
+ * The chains hanging from his wrist cuffs (2026-11-17 user: "手部有一些布条 应该去掉"): each link is its own little
+ * island of the mesh, out at the wrists, half-way up; skinned to the hand they stretched into dark strips as he moved.
+ * Their triangles are collapsed. (loadCharacter has already cloned the geometry.) Returns the islands dropped.
+ */
+function dropWristChains(mesh) {
+  const geo = mesh.geometry, pos = geo.attributes.position, index = geo.index;
+  if (!index) return 0;
+  const n = pos.count, ix = index.array;
+  const par = new Int32Array(n); for (let i = 0; i < n; i++) par[i] = i;
+  const find = i => { while (par[i] !== i) { par[i] = par[par[i]]; i = par[i]; } return i; };
+  const join = (a, b) => { a = find(a); b = find(b); if (a !== b) par[a] = b; };
+  const seen = new Map();                 // (uv seams split vertices: weld by position)
+  for (let i = 0; i < n; i++) {
+    const k = `${Math.round(pos.getX(i) * 1e4)},${Math.round(pos.getY(i) * 1e4)},${Math.round(pos.getZ(i) * 1e4)}`;
+    if (seen.has(k)) join(i, seen.get(k)); else seen.set(k, i);
+  }
+  for (let t = 0; t < ix.length; t += 3) { join(ix[t], ix[t + 1]); join(ix[t], ix[t + 2]); }
+  mesh.updateMatrixWorld(true);
+  const m = new THREE.Matrix4().copy(mesh.matrixWorld), v = new THREE.Vector3(), all = new THREE.Box3(), isl = new Map();
+  for (let i = 0; i < n; i++) {
+    v.fromBufferAttribute(pos, i).applyMatrix4(m); all.expandByPoint(v);
+    const r = find(i); let c = isl.get(r);
+    if (!c) isl.set(r, c = { n: 0, s: new THREE.Vector3() });
+    c.n++; c.s.add(v);
+  }
+  const ctr = all.getCenter(new THREE.Vector3()), size = all.getSize(new THREE.Vector3()), half = Math.max(size.x, size.z) / 2;
+  const drop = new Set();
+  for (const [r, c] of isl) {
+    c.s.multiplyScalar(1 / c.n);
+    const out = Math.hypot(c.s.x - ctr.x, c.s.z - ctr.z) / half, up = (c.s.y - all.min.y) / size.y;
+    if (c.n < 120 && out > 0.55 && up > 0.35 && up < 0.57) drop.add(r);
+  }
+  if (!drop.size) return 0;
+  for (let t = 0; t < ix.length; t += 3) if (drop.has(find(ix[t]))) ix[t + 1] = ix[t + 2] = ix[t];
+  index.needsUpdate = true;
+  return drop.size;
 }
 
 /**
@@ -399,12 +493,22 @@ export async function loadWhiteBull({ base = 'assets/models/' } = {}) {
     const gltf = await loadGLTF(base + 'niumo_whitebull.glb');
     const model = SkeletonUtils.clone(gltf.scene);
     model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; if (o.material) { o.material = o.material.clone(); o.material.envMapIntensity = 1.2; } } });
-    model.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3());
-    model.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
-    const root = new THREE.Group(); root.add(model); root.visible = false;
     const bones = {};
     model.traverse(o => { if (o.isBone) bones[o.name.replace(/^tripo:?:?/, '')] = o; });
+    // the file stands him a little askew (head and tail ~20° off +Z): turn him so the line tail -> head runs along +Z,
+    // or he charges crabwise
+    model.updateMatrixWorld(true);
+    const hd = bones.Head_1 || bones.Head_0, tl = bones.Spine_0;
+    if (hd && tl) {
+      const d = hd.getWorldPosition(new THREE.Vector3()).sub(tl.getWorldPosition(new THREE.Vector3()));
+      model.rotation.y = -Math.atan2(d.x, d.z);
+      model.updateMatrixWorld(true);
+    }
+    const box = new THREE.Box3().setFromObject(model), size = box.getSize(new THREE.Vector3());
+    const pivot = new THREE.Group(); pivot.add(model);
+    model.position.set(0, 0, 0);
+    pivot.position.set(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+    const root = new THREE.Group(); root.add(pivot); root.visible = false;
     const rest = new Map();
     for (const bn of Object.values(bones)) rest.set(bn, bn.quaternion.clone());
     const out = { root, model, bones, rest, len: size.z || 1, height: size.y || 1 };
@@ -1030,7 +1134,8 @@ export class BullKing {
     const at = this.atk;
     if (this.state === 'attack' && at) {
       const n = at.name;
-      if (n === 'slam' && at.resting) { t.part = 'staff'; t.pos.copy(this.locks[6].pos); t.radius = 8; }      // the staff lies still: frame where the monkey hits it
+      // (the staff lying still after the slam is not framed: 2026-11-17 user: the lock is on the bull himself, not his staff)
+      if (n === 'slam' && at.resting) { /* body */ }
       else if (n === 'sweep' || n === 'slam') { t.part = 'staff'; t.pos.copy(this.staffButt).lerp(this.staffTip, 0.55); t.big = true; t.radius = 26; }
       else if (n === 'palmL' || n === 'palmR' || n === 'grab' || n === 'grabSlam') { t.part = n === 'palmR' ? 'handR' : 'handL'; this.bonePos(n === 'palmR' ? 'RightHand' : 'LeftHand', t.pos); t.radius = 10; }
       else if (n === 'breath') { t.part = 'head'; if (at.fireTarget) t.pos.copy(at.fireTarget); t.big = true; t.radius = 30; }
@@ -1188,8 +1293,10 @@ export class BullKing {
     const b = this.bnd;
     if (!b) return false;
     const x = clamp(this.pos.x, b.minX + margin, b.maxX - margin), z = clamp(this.pos.z, b.minZ + margin, b.maxZ - margin);
-    const hit = x !== this.pos.x || z !== this.pos.z;
+    let hit = x !== this.pos.x || z !== this.pos.z;
     this.pos.x = x; this.pos.z = z;
+    // the duel's pit is round: its corners are cliff (margin m short of the cliff's foot, the pit is ~145 m in radius)
+    if (this.duel && this.arena?.pitClamp?.(this.pos, 1 - margin / 145)) hit = true;
     return hit;
   }
 
@@ -1316,7 +1423,7 @@ export class BullKing {
     }
     if (this.goldT > 0) {
       this.goldT -= dt;
-      if (this.goldT <= 0) { this.goldT = 0; this.events.push({ type: 'goldEnd' }); }
+      if (this.goldT <= 0) { this.goldT = 0; this.events.push({ type: 'goldEnd' }); this.goldCharge(); }
       if (Math.random() < dt * 30) {
         const q = this.bonePos(GOLD_BONES[(Math.random() * GOLD_BONES.length) | 0], _v), r = this.duel ? 3 : 1;
         this.bfx.add.emit(_w.set(q.x + rand(-r, r), q.y + rand(-r, r), q.z + rand(-r, r)), _p.set(rand(-1, 1), rand(2, 6) * (this.duel ? 2 : 1), rand(-1, 1)), C.gold, { size: rand(0.6, 1.4) * (this.duel ? 3 : 1), life: rand(0.4, 0.9), drag: 0.6, grav: -1, alpha: 0.8, grow: 0.6 });
@@ -1324,6 +1431,23 @@ export class BullKing {
     }
     this.goldK += ((this.goldT > 0 ? 1 : 0) - this.goldK) * Math.min(1, dt * (this.goldT > 0 ? 8 : 4));
     this.look.uniforms.bkC.value.x = this.goldK;
+  }
+
+  /**
+   * 组合技 (2026-11-17 user): the gold falls from him and at once he is the white bull, already lined up - the 3 s of
+   * gold are the monkey's warning to get away (or to be ready to step aside).
+   */
+  goldCharge() {
+    const p = this.player;
+    if (this.dead || !this.duel || !this.beast || !p || p.dead || p.ghost || !(this.state === 'idle' || this.state === 'attack')) return false;
+    this.yaw = Math.atan2(p.pos.x - this.pos.x, p.pos.z - this.pos.z);
+    this.forceAttack('charge', p);
+    const mv = this.a.move, at = this.atk;
+    if (mv && at) { mv.t = Math.max(mv.t, at.def.runAt - this.T.goldChargeLead); at.fired.add('tell'); at.combo = true; }
+    this.cds.horn = this.T.chargeCd;
+    this.say('bull_roar', { pitch: 0.6, volume: 1 }, 'stagger'); this.eyeFlare = 1;
+    this.events.push({ type: 'goldCharge' });
+    return true;
   }
 
   /** 金身: blows ring off the gold - he takes nothing, and the one who struck him reels back (僵直). */
@@ -2217,7 +2341,7 @@ export class BullKing {
     this.a.setBaseTimeScale(1.5);
     const step = this.T.chargeSpeed * (this.beast ? this.T.beastSpeed : 1) * dt * mv.speed, f = this.fwd(_v);
     this.pos.x += f.x * step; this.pos.z += f.z * step; at.dist += step;
-    if (this.keepIn(16)) at.stopped = true;
+    if (this.keepIn(this.beast ? Math.max(16, 0.2 * this.T.beastLen * this.T.height) : 16)) at.stopped = true;   // (his horns stop short of the wall)
     if ((at.paw = (at.paw || 0) + dt) > 0.22) { at.paw = 0; this.footfall(at.pawSide = at.pawSide === 'Left' ? 'Right' : 'Left', 0.9); }
     if (player && !player.dead) {
       const dx = player.pos.x - this.pos.x, dz = player.pos.z - this.pos.z, along = dx * f.x + dz * f.z, side = Math.abs(dx * f.z - dz * f.x);
@@ -2232,7 +2356,7 @@ export class BullKing {
         else this.hitPlayer(player, { dmg: this.T.chargeDmg, kind: 'heavy', blockable: false }, this.bonePos('Head', new THREE.Vector3()), 'charge');
         this.cam?.addTrauma(0.8);
       }
-      if (along < -22 && at.dist > 30) at.stopped = true;       // past him: dig the hooves in
+      // (2026-11-17 user: "冲击到底部，冲程变大3倍": he no longer pulls up once past the monkey; he runs on to the wall)
     }
   }
 
@@ -2330,8 +2454,20 @@ export class BullKing {
       _q.copy(this.plantedQuat).slerp(this.staff.quaternion, k); this.staff.quaternion.copy(_q);
       this.staff.updateMatrixWorld(true);
     }
+    // 横扫: the staff swells in his hands for the sweep (2026-11-17 user: "棍子要变大，就震撼一些"), and shrinks back after
+    {
+      const at = this.state === 'attack' ? this.atk : null, mv = this.a?.move;
+      const sweep = at && mv && this.staffMode === 'hand' && SWEEPS.has(at.name) && at.def.hits && mv.t < at.def.hits[at.def.hits.length - 1][1] + 0.35;
+      const want = sweep ? this.T.sweepStaff : 1, cur = this.staff.scale.x;
+      const k = cur + (want - cur) * (1 - Math.exp(-dt * (sweep ? 5 : 3)));
+      if (Math.abs(k - cur) > 1e-4 || (this.staffMode !== 'hand' && cur !== 1)) {
+        const kk = this.staffMode === 'hand' ? k : 1;
+        if (sweep && cur < 1.02 && kk >= 1.02) this.say('staff_swing', { pitch: 0.35, volume: 0.9 }, 'boss_swing');
+        this.staff.scale.setScalar(kk); this.staff.updateMatrixWorld(true);
+      }
+    }
     if (this.staffMode !== 'flying' && this.staffMode !== 'stuck') {
-      const L = this.staff.userData.length, gf = this.staff.userData.gripFrac;
+      const L = this.staff.userData.length * this.staff.scale.y, gf = this.staff.userData.gripFrac;
       const y = _v.set(0, 1, 0).applyQuaternion(this.staff.quaternion);
       this.prevButt.copy(this.staffButt); this.prevTip.copy(this.staffTip);
       this.staffButt.copy(this.staff.position).addScaledVector(y, -L * gf);
@@ -2363,8 +2499,10 @@ export class BullKing {
   syncBeast(dt) {
     const b = this.beast;
     if (!b) return;
+    this.tickAfterimages(dt);
     const at = this.atk, mv = this.a.move;
-    const want = !this.dead && this.state === 'attack' && at && at.name === 'charge' && mv && mv.t >= at.def.runAt && mv.t < at.def.runEnd + 0.5;
+    // (a boolean: a null here - no move - once read as a change and turned him back again, the afterimages twice more)
+    const want = !!(!this.dead && this.state === 'attack' && at && at.name === 'charge' && mv && mv.t >= at.def.runAt && mv.t < at.def.runEnd + 0.5);
     if (want !== this.beastOn) this.setBeast(want);
     if (!this.beastOn) return;
     const L = this.T.beastLen * this.T.height, k = L / b.len;
@@ -2409,12 +2547,68 @@ export class BullKing {
     for (const s of this.eyeSprites || []) s.visible = !on;
     if (this.mouthGlow) this.mouthGlow.visible = !on;
     if (on) { this.beastPhase = 0; this.beastBeat = -1; }
-    if (quiet) return;
+    if (quiet) { this.clearAfterimages(); return; }
+    if (!on) this.spawnAfterimages();
     const c = this.bonePos('Spine2', new THREE.Vector3());
     this.bfx.smoke(c, 18, { size: [8, 18], spread: 9, rise: 6, life: [0.8, 1.6], alpha: 0.5, color: C.ash });
     this.fx.shockwave(c, on ? 30 : 22, 0.45, new THREE.Color(1.0, 0.85, 0.5));
     if (on) this.say('bull_roar', { pos: c, pitch: 0.6, volume: 1 }, 'stagger');
     this.events.push({ type: on ? 'beast' : 'beastEnd' });
+  }
+
+  /**
+   * 拖影 (2026-11-17 user: "白牛变成牛魔王时，要有个拖影动画"): as the white bull turns back into him, a train of glowing
+   * copies of the bull - frozen in his last stride, strung out behind along the line he ran - rushes in, shrinking, onto
+   * the Bull King where he stands, and fades.
+   */
+  spawnAfterimages() {
+    const b = this.beast;
+    if (!b) return;
+    this.clearAfterimages();
+    b.root.updateMatrixWorld(true);
+    const f = this.fwd(new THREE.Vector3()), L = this.T.beastLen * this.T.height, N = 6;
+    const to = new THREE.Vector3(this.pos.x, this.pos.y, this.pos.z), s0 = b.root.scale.x;
+    // his own size against the bull's: the copies end at about the King's height
+    const s1 = s0 * this.T.height / Math.max(1, b.height * s0) * 0.9;
+    this.ghosts = [];
+    for (let i = 0; i < N; i++) {
+      const g = SkeletonUtils.clone(b.root);
+      g.traverse(o => {
+        if (!o.isMesh) return;
+        o.material = new THREE.MeshBasicMaterial({ color: i === 0 ? 0xfff4dc : 0xffd9a0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, fog: true });
+        o.castShadow = false; o.receiveShadow = false; o.frustumCulled = false;
+      });
+      g.visible = true;
+      const from = b.root.position.clone().addScaledVector(f, -i * 0.11 * L);
+      g.position.copy(from);
+      this.scene.add(g);
+      this.ghosts.push({ g, from, to: to.clone(), s0, s1, t: -i * 0.05, life: 0.55, a: 0.42 * (1 - i / (N + 1)) });
+    }
+  }
+
+  tickAfterimages(dt) {
+    if (!this.ghosts?.length) return;
+    for (const q of this.ghosts) {
+      q.t += dt;
+      const u = clamp(q.t / q.life, 0, 1), e = 1 - (1 - u) ** 3;
+      q.g.position.lerpVectors(q.from, q.to, e);
+      q.g.scale.setScalar(q.s0 + (q.s1 - q.s0) * e);
+      const a = q.t < 0 ? 0 : q.a * (1 - u) * Math.min(1, q.t / 0.06);
+      q.g.traverse(o => { if (o.isMesh) o.material.opacity = a; });
+      if (u >= 1) q.done = true;
+    }
+    for (const q of this.ghosts) if (q.done) this.dropGhost(q);
+    this.ghosts = this.ghosts.filter(q => !q.done);
+  }
+
+  dropGhost(q) {
+    q.g.removeFromParent();
+    q.g.traverse(o => { if (o.isMesh) o.material.dispose(); });
+  }
+
+  clearAfterimages() {
+    for (const q of this.ghosts || []) this.dropGhost(q);
+    this.ghosts = [];
   }
 
   /** The surface a hoof (or a knee) at (x, z) rests on: pressed a little into rock, ankle-deep in the lava lake. */
@@ -2621,7 +2815,8 @@ export class BullKing {
     seg(11, 'LeftArm', 'LeftForeArm', L * 0.09); seg(12, 'RightArm', 'RightForeArm', L * 0.09);
     seg(13, 'LeftForeArm', 'LeftHand', L * 0.075); seg(14, 'RightForeArm', 'RightHand', L * 0.075);
     // the staff lying on the ground after a slam (the opening blow): something to hit
-    const sz = Z[15], lying = this.phase === 1 && this.staffMode === 'hand' && this.atk?.name === 'slam' && this.atk.fired.has('impact');
+    // (the staff lying after the slam is no longer something to hit: 2026-11-17 user: "现在还是让我打棍子" - the bull is the target)
+    const sz = Z[15], lying = false;
     if (lying) { sz.a.copy(this.staffPoint(0.3, _v)); sz.b.copy(this.staffTip); sz.r = (this.staff.userData.radius || 0.8) * 1.15; }
     else { sz.a.set(0, -1e4, 0); sz.b.set(0, -1e4, 0); sz.r = 0; }
     // lock targets
@@ -2632,7 +2827,7 @@ export class BullKing {
     // (the staff: its near part, where the monkey stands when he has dodged the blow)
     if (lying) { const pl = this.player && !this.player.ghost ? this.player.pos : sz.b; const r = segSeg(sz.a, sz.b, pl, pl); lk[6].pos.copy(r.c1); lk[6].pos.y += sz.r * 0.5; }
     else lk[6].pos.copy(lk[5].pos);
-    lk[6].weak = lying; lk[6].open = lying; lk[6].broken = false;
+    lk[6].weak = false; lk[6].open = false; lk[6].broken = false;     // (never a lock target: the lock goes on the bull)
   }
 
   /** Brightness of a crack: dim at rest, brighter with damage and while exposed, a hot core once broken. */

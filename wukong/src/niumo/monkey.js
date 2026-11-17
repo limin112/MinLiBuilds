@@ -23,6 +23,7 @@ import * as THREE from 'three';
 import { ease, PoseTrack } from '../pose.js';
 import { clampToArena, yawLerp, segSeg } from '../combat.js';
 import { loadCharacter, loadBlade, loadGLTF } from '../assets.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { Actor } from '../actor.js';
 import { applyLook, LOOK_PRESETS } from '../look.js';
 import { MONKEY, MONKEY_HOLD, MONKEY_STANCE, MONKEY_BLOCK, MONKEY_CARRY, COMBO, ATTACKS } from './moves_monkey.js';
@@ -190,7 +191,22 @@ function staffTextures() {
     g.fillStyle = '#9a9a9a'; g.fillRect(0, 0, w, h);
     engrave(g, w, h, 'rgba(20,20,20,1)', 'rgba(160,160,160,0)', 2.4);
   }, { srgb: false, repeat: [2, 1] });
-  STAFF_TEX = { ironCol, ironBump, bandCol, bandBump };
+  // the real staff's rod (with the Tripo hoops): red-black, like the stub under the hoop - the same dimples, darker red
+  const redIronCol = canvasTex(128, 512, (g, w, h) => {
+    g.fillStyle = '#3b1714'; g.fillRect(0, 0, w, h);
+    for (const [x, y, r, k] of dimples) {
+      const gr = g.createRadialGradient(x, y, 0, x, y, r);
+      gr.addColorStop(0, `rgba(18,6,5,${0.55 * k})`); gr.addColorStop(0.7, `rgba(30,10,8,${0.3 * k})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, r, r * 1.6, 0, 0, Math.PI * 2); g.fill();
+    }
+    for (let i = 0; i < 14; i++) {      // lighter red where it is polished by the hands
+      const x = R() * w, y = R() * h, r = 8 + R() * 22;
+      const gr = g.createRadialGradient(x, y, 0, x, y, r);
+      gr.addColorStop(0, 'rgba(110,34,26,0.35)'); gr.addColorStop(1, 'rgba(90,30,22,0)');
+      g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+  }, { repeat: [1, 3] });
+  STAFF_TEX = { ironCol, ironBump, bandCol, bandBump, redIronCol };
   return STAFF_TEX;
 }
 
@@ -200,7 +216,7 @@ function staffTextures() {
  * loadBlade(): a holder Group whose +Y runs from the grip (origin) to the head end; the rod's butt is at
  * -length * gripFrac. (The Tripo niumo_staff.glb read as two parallel bars - a ladder - so this is the staff now.)
  */
-export function createStaff({ length = 1.9, gripFrac = 0.3, radius = 0.029 } = {}) {
+export function createStaff({ length = 1.9, gripFrac = 0.3, radius = 0.029, cap = null } = {}) {
   const T = staffTextures();
   const iron = new THREE.MeshStandardMaterial({ color: 0xffffff, map: T.ironCol, bumpMap: T.ironBump, bumpScale: 1.2, roughness: 0.42, metalness: 0.7,
     envMapIntensity: 1.3 });
@@ -208,6 +224,7 @@ export function createStaff({ length = 1.9, gripFrac = 0.3, radius = 0.029 } = {
     envMapIntensity: 1.6, emissive: new THREE.Color(0.85, 0.38, 0.1), emissiveIntensity: 0 });
   const band = 0.15, rb = radius * 1.22, seg = 28;
   const inner = new THREE.Group();
+  if (cap) return finishStaff(capStaff(inner, cap, { length, radius, seg }), { length, gripFrac, gold: null });
   // the iron, very slightly swollen in the middle so it reads as forged, not as a pipe
   const pts = [];
   const shaftLen = length - band * 2 + 0.01;
@@ -228,18 +245,66 @@ export function createStaff({ length = 1.9, gripFrac = 0.3, radius = 0.029 } = {
     const cap = new THREE.Mesh(new THREE.SphereGeometry(rb, seg, 8, 0, Math.PI * 2, 0, Math.PI / 2), gold);
     cap.scale.y = 0.32; cap.position.y = y0; if (!end) cap.rotation.x = Math.PI; inner.add(cap);
   }
+  gold.userData.staffGold = true;
+  return finishStaff(inner, { length, gripFrac });
+}
+
+function finishStaff(inner, { length, gripFrac }) {
   inner.position.y = -length * gripFrac;
   inner.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   const holder = new THREE.Group();
   holder.add(inner);
   holder.name = 'jingubang';
   // the fighters' rim and key light, so the dark rod reads against the dark ground (the look clones the materials)
-  gold.userData.staffGold = true;
   applyLook(holder, 'niumoStaff');
   const goldMats = new Set();
   holder.traverse(o => { if (o.isMesh && o.material.userData.staffGold) goldMats.add(o.material); });
   holder.userData = { length, gripFrac, bladeLength: length * (1 - gripFrac), procedural: true, goldMats: [...goldMats] };
   return holder;
+}
+
+/**
+ * The real 如意金箍棒 (2026-11-17 user: "要真正的如意金箍棒"): the Tripo end piece (assets/models/niumo_jgb_cap.glb,
+ * concept hunxi concept/niumo_w_jgb_cap.png - a gold hoop in high relief, a coiling dragon among clouds, a domed cap
+ * with a cloud medallion, over a short stub of red-black iron) at both ends, the stub scaled to the rod's radius; between
+ * the two stubs the rod itself, the same red-black hammered iron. Builds into `inner` (rod +Y from butt 0 to head).
+ */
+function capStaff(inner, capScene, { length, radius, seg }) {
+  // measure the piece: its axis is the file's +Y (dome up); the stub is the bottom quarter
+  capScene.updateMatrixWorld(true);
+  const pts = [];
+  capScene.traverse(o => {
+    if (!o.isMesh) return;
+    const p = o.geometry.attributes.position, v = new THREE.Vector3();
+    for (let i = 0; i < p.count; i += 2) pts.push(v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld).clone());
+  });
+  const box = new THREE.Box3().setFromPoints(pts), c = box.getCenter(new THREE.Vector3()), h = box.max.y - box.min.y;
+  let stubR = 0;
+  for (const q of pts) if (q.y < box.min.y + h * 0.2) stubR = Math.max(stubR, Math.hypot(q.x - c.x, q.z - c.z));
+  const k = radius / (stubR || 1), Hc = h * k;
+  const T = staffTextures();
+  const iron = new THREE.MeshStandardMaterial({ color: 0xffffff, map: T.redIronCol, bumpMap: T.ironBump, bumpScale: 1.1, roughness: 0.4, metalness: 0.55,
+    envMapIntensity: 1.3 });
+  const shaftLen = length - Hc * 2 + 0.004;
+  const shaftGeo = new THREE.CylinderGeometry(radius * 0.995, radius * 0.995, shaftLen, seg, 1, true).translate(0, Hc - 0.002 + shaftLen / 2, 0);
+  inner.add(new THREE.Mesh(shaftGeo, iron));
+  for (const end of [0, 1]) {
+    const piece = capScene.clone(true);
+    piece.traverse(o => {
+      if (!o.isMesh) return;
+      o.material = o.material.clone();
+      // (it glows with the heat of a blow like the old bands did: the glow follows the gold of the texture)
+      o.material.emissive = new THREE.Color(0.85, 0.38, 0.1); o.material.emissiveIntensity = 0; o.material.emissiveMap = o.material.map;
+      o.material.envMapIntensity = 1.6; o.material.userData.staffGold = true;
+    });
+    const g = new THREE.Group(); g.add(piece);
+    piece.position.set(-c.x, -c.y, -c.z);          // centred on its own middle
+    g.scale.setScalar(k);
+    if (end) g.position.y = length - Hc / 2;     // head: dome up
+    else { g.rotation.x = Math.PI; g.position.y = Hc / 2; }   // butt: dome down
+    inner.add(g);
+  }
+  return inner;
 }
 
 /** The banana-leaf fan (芭蕉扇): a big dry leaf, dark and scorched, on a bronze handle. +Y from the grip to the tip. */
@@ -316,9 +381,10 @@ if (!LOOK_PRESETS.niumoMonkey) {
 /** The monkey's look: the black-and-gold preset (the crimson cape is in the model's own texture). Idempotent. */
 export function dressMonkey(char) {
   const model = char && (char.model || char.root);
-  // The first monkey (concept/niumo_w_monkey7_front.png; the user went back to him on 2026-11-17): polishMask turns
-  // the painted mask into clean gold and sets eyes in its holes. (keepFaceSkin is for an unmasked head: monkey9.)
-  if (model && !model.userData.look) { applyLook(model, 'niumoMonkey'); polishMask(model); }
+  // monkey10 (concept/niumo_w_monkey10_front.png, 2026-11-17): the first monkey's body under a smooth, plain, full-face
+  // gold mask with empty eye slits. polishMask makes the mask mirror gold up to the circlet - no eyes set in it (the
+  // old painted eyes stood out of the face); keepFaceSkin keeps the reddish fur out of the look's gold-by-colour test.
+  if (model && !model.userData.look) { applyLook(model, 'niumoMonkey'); polishMask(model, { eyes: false, top: true }); keepFaceSkin(model); capeHem(model); }
 }
 
 /**
@@ -354,6 +420,45 @@ function keepFaceSkin(model) {
       };
       const key = mk ? 'look-v1-mask-skin' : 'look-v1-skin';
       m.customProgramCacheKey = () => key;
+      m.needsUpdate = true;
+    }
+  });
+}
+
+/**
+ * The cape's hem (2026-11-17 user: "披风要帅气一些，现在破烂"): the model's crimson cape ends in long torn tatters. Below a
+ * clean, gently curved line (lowest at his back's middle, rising to the sides) the cape's cloth is cut away, and a
+ * narrow band of gold edges it. Bind space of this model: +X forward, +Y up, feet at 0, height ~1; the cape is the red
+ * cloth behind him (x < -0.085 at the hem's height), the test by colour keeps his boots and trousers whole.
+ */
+const CAPE = { hem: 0.2, rise: 2.4, back: -0.085, trim: 0.007 };
+function capeHem(model) {
+  model.traverse(mesh => {
+    if (!mesh.isSkinnedMesh) return;
+    for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      if (!m || m.userData.capeHem) continue;
+      m.userData.capeHem = true;
+      const prev = m.onBeforeCompile, prevKey = m.customProgramCacheKey?.() || 'look';
+      m.onBeforeCompile = (shader, r) => {
+        prev?.(shader, r);
+        shader.vertexShader = 'varying vec3 vCapeP;\n' + shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+#ifdef USE_SKINNING
+  vCapeP = ( bindMatrix * vec4( position, 1.0 ) ).xyz;
+#else
+  vCapeP = position;
+#endif`);
+        shader.fragmentShader = 'varying vec3 vCapeP;\n' + shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+  {
+    vec3 cr = diffuseColor.rgb;
+    float red = step( cr.g * 1.5 + 0.015, cr.r ) * step( cr.b * 1.3 + 0.01, cr.r );
+    float hem = ${CAPE.hem.toFixed(3)} + ${CAPE.rise.toFixed(3)} * vCapeP.z * vCapeP.z;
+    float cloth = red * step( vCapeP.x, ${CAPE.back.toFixed(3)} ) * step( vCapeP.y, hem + 0.12 );
+    if ( cloth > 0.5 && vCapeP.y < hem ) discard;
+    float trim = cloth * ( 1.0 - smoothstep( ${CAPE.trim.toFixed(3)}, ${(CAPE.trim * 1.6).toFixed(3)}, vCapeP.y - hem ) );
+    diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.78, 0.56, 0.22 ), trim );
+  }`);
+      };
+      m.customProgramCacheKey = () => prevKey + '-cape';
       m.needsUpdate = true;
     }
   });
@@ -419,7 +524,9 @@ function addMaskEyes(mesh, headBone, hi, ti) {
  * there as real polished gold: full metal, smooth, one even colour that takes its light and shade from the sky it
  * mirrors instead of from the paint. Hair, ears, eye sockets and neck keep the model's own surface.
  */
-export function polishMask(model) {
+// the top of the mask (the circlet) above the head bone, in head sizes: the fur above it keeps its own colour
+const MASK_TOP = 0.42, MASK_SIDE = 0.33;
+export function polishMask(model, { eyes = true, top = false } = {}) {
   const meshes = [];
   model.traverse(o => { if (o.isSkinnedMesh) meshes.push(o); });
   for (const mesh of meshes) {
@@ -433,17 +540,21 @@ export function polishMask(model) {
       const hp = bind(hi), size = ti >= 0 ? bind(ti).distanceTo(hp) : ni >= 0 ? bind(ni).distanceTo(hp) * 2 : 0.2;
       const headish = new Set([hi, ti].filter(i => i >= 0));
       const F = bindForward(mesh);
+      const Sd = new THREE.Vector3().crossVectors(F, new THREE.Vector3(0, 1, 0)).normalize();
       const p = new THREE.Vector3(), ss = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
       for (let v = 0; v < pos.count; v++) {
         let w = 0;
         for (let k = 0; k < 4; k++) if (headish.has(si.getComponent(v, k))) w += sw.getComponent(v, k);
         if (w < 0.5) continue;
         p.fromBufferAttribute(pos, v).applyMatrix4(mesh.bindMatrix).sub(hp);
-        mask[v] = ss(0.02, 0.22, p.dot(F) / size) * ss(-0.25, 0.0, p.y / size) * ss(0.5, 0.8, w);
+        // (side: the face is ~0.3 head-sizes to either side of the middle; past that is an ear - 2026-11-17 user: the ear
+        // turned gold - which the forward test let in on one side)
+        mask[v] = ss(0.02, 0.22, p.dot(F) / size) * ss(-0.25, 0.0, p.y / size) * (top ? 1 - ss(MASK_TOP - 0.08, MASK_TOP, p.y / size) : 1) * ss(0.5, 0.8, w)
+          * (1 - ss(MASK_SIDE - 0.05, MASK_SIDE + 0.03, Math.abs(p.dot(Sd)) / size));
       }
     }
     g.setAttribute('lkMask', new THREE.BufferAttribute(mask, 1));
-    if (hi >= 0 && !bones[hi].getObjectByName('mask-eyes')) addMaskEyes(mesh, bones[hi], hi, ti >= 0 ? ti : -1);
+    if (eyes && hi >= 0 && !bones[hi].getObjectByName('mask-eyes')) addMaskEyes(mesh, bones[hi], hi, ti >= 0 ? ti : -1);
     for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       if (!m || m.userData.maskPolished) continue;
       m.userData.maskPolished = true;
@@ -565,13 +676,18 @@ function prepStaff(staff) {
 // ------------------------------------------------------------------ loading
 
 /**
- * Load the monkey (assets/models/niumo_monkey.glb, 1.5 m) and his staff: the procedural createStaff() rod (one solid
- * iron bar, gold bands at both ends; a Tripo staff came out as two parallel bars).
+ * Load the monkey (assets/models/niumo_monkey.glb, 1.5 m) and his staff: createStaff() with the Tripo hoop ends
+ * (assets/models/niumo_jgb_cap.glb) on a red-black rod (a whole Tripo staff came out as two parallel bars: a long thin
+ * rod is too thin for image-to-3D, the chunky end piece is not).
  */
 export async function loadMonkeyAssets({ base = 'assets/models/', height = 1.5 } = {}) {
-  const char = await loadCharacter(base + 'niumo_monkey.glb', { height });
+  const [char, cap] = await Promise.all([
+    loadCharacter(base + 'niumo_monkey.glb', { height }),
+    // the 金箍棒's hoops (a missing file falls back to the procedural bands)
+    loadGLTF(base + 'niumo_jgb_cap.glb').then(g => g.scene).catch(() => null),
+  ]);
   fixCapeWeights(char.mesh); dressMonkey(char);
-  return { char, staff: createStaff() };
+  return { char, staff: createStaff({ cap }) };
 }
 
 export function createMonkeyActor(char, staff, scene) {
@@ -580,7 +696,7 @@ export function createMonkeyActor(char, staff, scene) {
 
 // ------------------------------------------------------------------ the controller
 
-const ROLLS = new Set(['roll', 'rollB', 'rollL', 'rollR', 'backflip']);
+const ROLLS = new Set(['roll', 'rollB', 'rollL', 'rollR', 'backflip', 'jindou']);
 const MOVE_STATES = new Set(['attack', 'roll', 'hurt', 'knockdown', 'blockHit', 'parry', 'fan', 'critical', 'land', 'vault', 'fall']);
 const k0 = o => ({ t: 0, ...o });
 
@@ -1406,6 +1522,7 @@ export class Monkey {
     if (this.giant && this.arena.bounds) {       // only the walls of the caldera hold a giant
       const b = this.arena.duelBounds || this.arena.bounds, r = T.radius * 0.6;
       this.pos.x = clamp(this.pos.x, b.minX + r, b.maxX - r); this.pos.z = clamp(this.pos.z, b.minZ + r, b.maxZ - r);
+      this.arena.pitClamp?.(this.pos, 0.9);        // (the pit is round: the rectangle's corners are cliff)
     } else if (this.arena.bounds) clampToArena(this.pos, this.arena, T.radius);
     if (!this.collideBoss || !boss || boss.dead) return;
     if (boss.colliders) {
@@ -1459,10 +1576,59 @@ export class Monkey {
     return v;
   }
 
+  /**
+   * 拖影 (2026-11-17 user: "翻滚时无敌有拖影"): through a roll or a step, every few hundredths of a second a glowing
+   * copy of him is left behind in that pose and fades. A small pool of copies (cloned once; each spawn copies the
+   * live pose onto one), drawn additive, no shadows.
+   */
+  ghostTrail(dt, mv) {
+    const on = mv && !this.dead && mv.def.iframes && (ROLLS.has(mv.name) || /^dodge/.test(mv.name)) && mv.t <= mv.def.iframes[1];
+    const root = this.a?.char?.root;
+    if (!root || !root.parent) return;
+    if (!this._trail) {
+      if (!on) return;
+      const pool = [];
+      for (let i = 0; i < 6; i++) {
+        // (clone() deep-copies userData through JSON, and the look keeps a circular reference there: set it aside)
+        const saved = []; root.traverse(o => { saved.push([o, o.userData]); o.userData = {}; });
+        let g;
+        try { g = SkeletonUtils.clone(root); } finally { for (const [o, u] of saved) o.userData = u; }
+        const pairs = [], live = [], copy = [];
+        root.traverse(o => live.push(o)); g.traverse(o => copy.push(o));
+        for (let k = 0; k < Math.min(live.length, copy.length); k++) pairs.push([live[k], copy[k]]);
+        const mats = [];
+        g.traverse(o => {
+          if (o.isLight || o.isSprite || o.isPoints) { o.visible = false; return; }
+          if (!o.isMesh) return;
+          o.material = new THREE.MeshBasicMaterial({ color: 0xffc977, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+          o.castShadow = o.receiveShadow = false; o.frustumCulled = false; mats.push(o.material);
+        });
+        g.visible = false; root.parent.add(g);
+        pool.push({ g, pairs, mats, t: 1, life: 0.3 });
+      }
+      this._trail = { pool, next: 0, cd: 0 };
+    }
+    const T = this._trail;
+    if (on && (T.cd -= dt) <= 0) {
+      T.cd = 0.045;
+      const q = T.pool[T.next]; T.next = (T.next + 1) % T.pool.length;
+      for (const [a, b] of q.pairs) { b.position.copy(a.position); b.quaternion.copy(a.quaternion); b.scale.copy(a.scale); b.visible = a.visible; }
+      q.g.visible = true; q.t = 0;
+    }
+    if (!on) T.cd = 0;
+    for (const q of T.pool) {
+      if (!q.g.visible) continue;
+      q.t += dt;
+      const a = Math.max(0, 1 - q.t / q.life) * 0.32;
+      for (const m of q.mats) m.opacity = a;
+      if (a <= 0) q.g.visible = false;
+    }
+  }
+
   afterActor(dt, boss, mv) {
     // a tumble turns him about his hips, and with the tuck that put his head and back under the floor for a few
     // frames (a giant vanished into the lake): carry the whole body up so that nothing of his trunk goes below it
-    if (mv && ROLLS.has(mv.name) && this.a.char.pivot) {
+    if (mv && ROLLS.has(mv.name) && !mv.def.air && this.a.char.pivot) {
       // ... and in the middle of a ground roll the ball sits ON the floor: whichever is lowest (trunk, head, a foot or
       // a hand) is brought down to it as well as up, so he never floats a hand's breadth above the rock
       const pv = this.a.char.pivot, S = this.S, P = (n, v) => this.a.bonePos(n, v).y;
@@ -1472,6 +1638,7 @@ export class Monkey {
       if (d < 0) { const t = mv.t; d *= Math.max(0, Math.min(1, (t - 0.01) / 0.05)) * Math.max(0, Math.min(1, (0.56 - t) / 0.1)); }
       if (Math.abs(d) > 1e-4) { pv.position.y += d / S; pv.updateMatrixWorld(true); this.a.grip.y += d; }   // (the fist moved with him)
     }
+    this.ghostTrail(dt, mv);
     this.updateStaff(mv);
     this.leftHand();
     this.updateFan();

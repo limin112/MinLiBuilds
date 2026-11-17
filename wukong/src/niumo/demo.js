@@ -401,7 +401,7 @@ export class DemoBot {
       const low = Math.min(z.a.y, z.b.y) - z.r < 2.1;            // the rod can reach it
       if (!low) continue;
       let pri = 0;
-      if (part.startsWith('hand')) { if (!w.resting) continue; pri += 6; }
+      if (part.startsWith('hand')) { if (!w.resting && !(b.atk?.name === 'slam' && b.atk.resting)) continue; pri += 6; }     // (a palm on the ground, or both hands on the staff after the slam)
       if (!w.broken) pri += 3 + (1 - w.hp / w.max) * 6;          // finish what is cracked (two broken bring him down)
       if (w.exposedT > 0) pri += 1.5;
       const d = hyp(z.b.x - P.x, z.b.z - P.z);
@@ -410,17 +410,7 @@ export class DemoBot {
       if ((this.blocked?.[part] || 0) > this.time) pri -= 8;      // could not get there a moment ago
       cands.push({ part, zone: z, pri, w });
     }
-    // the prologue: his staff lying where the opening blow left it (every blow on it counts toward getting him up)
-    const sz = zone('staff');
-    if (b.phase === 1 && sz && sz.r > 0) {
-      // (the staff is thirty metres long: work on the stretch of it nearest to him, not on its far end)
-      const ax = sz.b.x - sz.a.x, az = sz.b.z - sz.a.z, L = hyp(ax, az) || 1;
-      const u = clamp(((P.x - sz.a.x) * ax + (P.z - sz.a.z) * az) / (L * L), 0.12, 0.92), h = 1.5 / L;
-      const at = k => sz.a.clone().lerp(sz.b, clamp(u + k * h, 0, 1));
-      const near = { part: 'staff', a: at(-1), b: at(1), r: sz.r };
-      const d = hyp(near.b.x - P.x, near.b.z - P.z);
-      cands.push({ part: 'staff', zone: near, pri: 9 - d * 0.1 + (this.target && this.target.part === 'staff' ? 1.5 : 0) - ((this.blocked?.staff || 0) > this.time ? 8 : 0), w: null });
-    }
+    // (his staff lying after the opening blow is no longer a target: 2026-11-17 user wants the bull himself hit)
     cands.sort((p, q) => q.pri - p.pri);
     return cands[0] || null;
   }
@@ -633,6 +623,8 @@ export class DemoBot {
     if (b.armored && free && M.mp >= M.T.fanCost && d < 60 && this.time - (this.lastFan || -9) > 1.5) {
       this.lastFan = this.time; this.aim(dx / d, dz / d, 0.12); this.press('fan'); this.stats.fans++; this.note('fan: blow his fire out'); return;
     }
+    // 金身: a blow on the gold only throws him back - and the white bull comes the moment it fades: get away, square on
+    if (b.goldT > 0) { if (d < 70) this.aim(-dx / d, -dz / d, 1); else this.aim(dx / d, dz / d, 0); this.note('gold: keep off'); return; }
     if (d > 25) { this.aim(dx / d, dz / d, 1); return; }
     this.aim(dx / d, dz / d, 0.12);
     if (free && M.st > 16 && this.time - this.lastPress > 0.34) {
@@ -727,6 +719,7 @@ export class DemoBot {
   }
 
   attack(z, T, ft) {
+    if (this.bull.goldT > 0) return;          // (金身: the blow would only rebound)
     const M = this.monkey;
     const mv = M.a.move, name = mv ? mv.name : null;
     if (this.time - this.lastPress < 0.08) return;

@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:,">
 <title>火焰山 · 牛魔</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -137,12 +138,12 @@
   #splash .goe { margin-top: 10px; font: italic 16px Georgia, 'Times New Roman', serif; letter-spacing: .08em; color: #b3a88f; display: none; }
   #splash i { font-family: Georgia, 'Times New Roman', serif; letter-spacing: .03em; color: #8c8473; }
   #splash.ready .go, #splash.ready .goe { display: block; } #splash.ready #load { display: none; }
-  #splash .keys { position: absolute; left: 0; right: 0; bottom: 84px; padding: 0 4vw; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 22px;
-    font-size: 14px; letter-spacing: .1em; color: #8a8273; font-family: -apple-system, var(--serif); }
-  #splash .keys span { display: inline-flex; align-items: center; gap: 7px; }
-  #splash kbd { display: inline-block; min-width: 18px; padding: 2px 5px; border: 1px solid rgba(185,154,95,.42); border-radius: 3px; text-align: center;
-    font: 11px/1.2 -apple-system, sans-serif; color: #d6cbb3; background: rgba(0,0,0,.35); }
-  #splash .tip { position: absolute; left: 0; right: 0; bottom: 22px; text-align: center; font-size: 14px; line-height: 1.7; letter-spacing: .12em; color: #6f685c; padding: 0 16px; }
+  #splash .keys { position: absolute; left: 0; right: 0; bottom: 40px; padding: 0 4vw; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 26px;
+    font-size: 13px; letter-spacing: .14em; color: #6f685c; font-family: -apple-system, var(--serif); }
+  #splash .keys span { display: inline-flex; align-items: center; gap: 6px; }
+  #splash kbd { display: inline-block; min-width: 16px; padding: 1px 5px; border: 1px solid rgba(185,154,95,.28); border-radius: 3px; text-align: center;
+    font: 11px/1.2 -apple-system, sans-serif; color: #a89c84; background: transparent; }
+  #splash .touchkeys { display: none; } body.touch #splash .keys { display: none; } body.touch #splash .touchkeys { display: flex; }
   @keyframes breathe { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
 
   /* opening MV: narration, the chapter card (回目), black between cuts */
@@ -185,7 +186,7 @@
 <div id="hud" class="layer">
   <div id="hp" class="bar"><div class="chip"></div><div class="fill"></div></div>
   <div id="st" class="bar"><div class="fill"></div></div>
-  <div id="mp" class="bar"><div class="fill"></div><span class="lbl">芭蕉扇 Fan</span></div>
+  <div id="mp" class="bar" style="display:none"><div class="fill"></div><span class="lbl">芭蕉扇 Fan</span></div>
   <div id="boss"><div class="name">牛魔王 <span style="font-size:.7em;letter-spacing:.12em;opacity:.8">Bull Demon King</span></div><div class="dmg"></div><div class="track"><div class="chip"></div><div class="fill"></div><div class="mark"></div></div><div id="posture"><i></i></div></div>
   <div id="reticle"></div>
 </div>
@@ -211,11 +212,9 @@
   <small>Esc 继续 · R 重新开始</small>
 </div></div>
 <div id="splash"><div class="sp"><div class="spt">火 焰 山 · 牛 魔</div><div class="spe">FLAME MOUNTAIN · THE BULL DEMON KING</div><div id="load">载入中… <i>Loading…</i></div><div class="go">点 击 开 始</div><div class="goe">Click to start</div></div>
-  <div class="keys">
-    <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>移动 <i>Move</i></span><span><kbd>空格 Space</kbd>翻滚 · 按住奔跑 <i>Roll · hold to run</i></span><span><kbd>J</kbd>轻击 <i>Light</i></span>
-    <span><kbd>K</kbd>重击（按住蓄力）<i>Heavy (hold to charge)</i></span><span><kbd>L</kbd>格挡 · 弹反 <i>Guard · parry</i></span><span><kbd>I</kbd>芭蕉扇 <i>Fan</i></span><span><kbd>Enter</kbd><kbd>Esc</kbd>跳过过场 <i>Skip</i></span>
-  </div>
-  <div class="tip">镜头与锁定全自动。先敲他六下逼他站起来；他披上火甲后，用芭蕉扇扇灭。<br><i>Camera and lock-on are automatic. Strike him six times to make him stand; when he wears the fire, blow it out with the fan.</i></div>
+  <!-- (2026-11-17 user: the screen was noisy - one quiet line of keys, nothing else; the fan is gone) -->
+  <div class="keys"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>移动</span><span><kbd>J</kbd>轻击</span><span><kbd>K</kbd>重击</span><span><kbd>L</kbd>格挡</span><span><kbd>空格</kbd>翻滚</span></div>
+  <div class="keys touchkeys">左手摇杆移动　·　右手 攻 / 闪（按住：重击 / 格挡）</div>
 </div>
 <!-- the title card: shown inside the opening cinematic, on the big hit of the score -->
 <div id="title" class="hide nomenu">

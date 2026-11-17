@@ -405,10 +405,26 @@ export class AutoCam {
     // well back and above his head, off his right shoulder: he stands in the lower left of the picture, the bull
     // whole beyond him
     const back = clamp(H * 1.5 + d * 0.25, H * 1.6, H * 2.3) + this.pull * 8;
-    const ox = -fwd.x * back + rgt.x * H * 0.85, oz = -fwd.z * back + rgt.z * H * 0.85;
+    let ox = -fwd.x * back + rgt.x * H * 0.85, oz = -fwd.z * back + rgt.z * H * 0.85;
+    // backed up to the edge of the pit the lens would stand inside the caldera's wall (2026-11-17 user: 后退到边缘，视角会
+    // 遮挡): it comes in closer instead - never past the floor's edge plus a little - and rises as it does
+    let squeeze = 0;
+    const pitD = this.arena?.pitD;
+    if (pitD) {
+      // the furthest point along the offset still low on the cliff (the walls rise from pitD 1 outwards; this high, the
+      // lens clears their foot, and the lift below takes it over what rock there is)
+      let s = 1;
+      if (pitD(S.x + ox, S.z + oz) > 1.15) {
+        s = 0.25;
+        for (let i = 19; i >= 5; i--) { const f = i / 20; if (pitD(S.x + ox * f, S.z + oz * f) <= 1.15) { s = f; break; } }
+      }
+      squeeze = 1 - s;
+    }
+    this.duelSqueeze = first ? squeeze : (this.duelSqueeze || 0) + (squeeze - (this.duelSqueeze || 0)) * damp(squeeze > (this.duelSqueeze || 0) ? 10 : 2.5, dt);
+    ox *= 1 - this.duelSqueeze; oz *= 1 - this.duelSqueeze;
     // at this height the lens is above the caldera's rim: it may stand out over the walls (the floor is only 80 m
     // across, two giants fill it), it only has to clear the rock under it
-    const pos = this.pos.set(S.x + ox, S.y + H * 0.95 + this.pull * 3, S.z + oz);
+    const pos = this.pos.set(S.x + ox, S.y + H * 0.95 + this.pull * 3 + this.duelSqueeze * H * 0.8, S.z + oz);
     let top = -1e9;
     for (let i = 0; i <= 4; i++) top = Math.max(top, this.ground(S.x + ox * (0.4 + i * 0.15), S.z + oz * (0.4 + i * 0.15)));
     const lostWant = Math.max(0, top + 7 - pos.y);
@@ -416,6 +432,8 @@ export class AutoCam {
     const lost = this.duelLift;
     pos.y += lost;
     const look = (this.duelLook || (this.duelLook = new THREE.Vector3())).copy(S).addScaledVector(fwd, clamp(d * 0.55, H * 0.5, 60)); look.y = S.y + H * 0.7;
+    // squeezed against the wall the lens rides up over him: it looks down past him at the bull, not over his head
+    if (this.duelSqueeze > 0.01) { const q = this.duelSqueeze; look.addScaledVector(fwd, -clamp(d * 0.55, H * 0.5, 60) * q * 0.55); look.y -= H * 0.75 * q; }
     // against a wall the lens cannot stand back: whatever happens he stays in the picture (aim between him and that point)
     {
       const cx = S.x - pos.x, cz = S.z - pos.z, lx = look.x - pos.x, lz = look.z - pos.z;
