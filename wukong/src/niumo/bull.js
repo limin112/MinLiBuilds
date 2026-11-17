@@ -384,8 +384,9 @@ export function makeBullStaff({ length = BULL_TUNING.staffLength, gripFrac = BUL
 /**
  * Load the bull: assets/models/niumo_bull.glb (standing A-pose, Mixamo rig). Returns loadCharacter()'s result plus { url }.
  */
-export async function loadBullCharacter({ base = 'assets/models/', height = BULL_TUNING.height } = {}) {
-  const url = base + 'niumo_bull.glb';
+// (mobile: the '_m' files - the same models with smaller textures, 2026-11-17: a phone's GPU memory, and the download)
+export async function loadBullCharacter({ base = 'assets/models/', height = BULL_TUNING.height, mobile = false } = {}) {
+  const url = base + (mobile ? 'niumo_bull_m.glb' : 'niumo_bull.glb');
   // (cleanArms off: the generic cleaner sends a hand vertex beyond the middle finger's line - his thumbs - wholly to the
   // hips, and seated those thumbs stretched down to his lap as strips; keepHandsOnArms does this model's cleaning)
   const char = await loadCharacter(url, { height, cleanArms: false });
@@ -488,9 +489,9 @@ function dropWristChains(mesh) {
  * clip, unused: the gallop is procedural, see BullKing.gallop). Faces +Z in the file. Returns { root, model, bones,
  * rest, len, height } (len: nose-to-tail at scale 1) or null.
  */
-export async function loadWhiteBull({ base = 'assets/models/' } = {}) {
+export async function loadWhiteBull({ base = 'assets/models/', mobile = false } = {}) {
   try {
-    const gltf = await loadGLTF(base + 'niumo_whitebull.glb');
+    const gltf = await loadGLTF(base + (mobile ? 'niumo_whitebull_m.glb' : 'niumo_whitebull.glb'));
     const model = SkeletonUtils.clone(gltf.scene);
     model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; if (o.material) { o.material = o.material.clone(); o.material.envMapIntensity = 1.2; } } });
     const bones = {};

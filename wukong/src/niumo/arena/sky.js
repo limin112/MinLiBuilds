@@ -98,9 +98,9 @@ export function createSky({ noise, env = false } = {}) {
         float disc = smoothstep(0.99955, 0.99985, mu);
         vec3 sunGlow = sunC * (0.16 * pow(mu01, 5.0) + 0.5 * pow(mu01, 60.0) + 3.5 * pow(mu01, 700.0));
         // the land burns: a red breath along the whole horizon, stronger behind the giant
-        float behind = exp(-pow(az / 0.9, 2.0));
+        float behind = exp(-(az / 0.9) * (az / 0.9));
         vec3 fire = uGlowCol * uGlow * exp(-up * 7.0) * (0.25 + 0.75 * behind);
-        fire += uHotCol * uErupt * exp(-up * 3.2) * (0.3 + 0.7 * exp(-pow((az - VOLCANOES_MAIN_AZ) / 0.7, 2.0))) * 0.8;
+        fire += uHotCol * uErupt * exp(-up * 3.2) * (0.3 + 0.7 * exp(-((az - VOLCANOES_MAIN_AZ) / 0.7) * ((az - VOLCANOES_MAIN_AZ) / 0.7))) * 0.8;
         col *= 1.0 - 0.45 * uErupt * smoothstep(0.08, 0.6, up);      // the ash darkens the height: the fire below reads
         col += fire;
 
@@ -201,7 +201,7 @@ export function createSky({ noise, env = false } = {}) {
         if (uErupt > 0.01) {
           float da = atan(sin(az - VOLCANOES_MAIN_AZ), cos(az - VOLCANOES_MAIN_AZ));
           float pz = el - VOLCANOES_MAIN_EL;
-          float f = exp(-pow(da / (0.022 + max(pz, 0.0) * 0.3), 2.0)) * smoothstep(0.2, 0.0, pz) * smoothstep(-0.02, 0.0, pz);
+          float f = exp(-(da / (0.022 + max(pz, 0.0) * 0.3)) * (da / (0.022 + max(pz, 0.0) * 0.3))) * smoothstep(0.2, 0.0, pz) * smoothstep(-0.02, 0.0, pz);
           float fl = 0.7 + 0.3 * sin(t * 13.0) * sin(t * 7.3 + 1.0);
           col += uHotCol * f * uErupt * fl * 3.2;
         }

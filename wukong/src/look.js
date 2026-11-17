@@ -186,6 +186,9 @@ export function applyLook(root, presetName) {
         f = inject(f, 'clipping_planes_fragment', CLIP);
         f = inject(f, 'metalnessmap_fragment', SURFACE);
         f = inject(f, 'emissivemap_fragment', LIGHT);
+        // (a phone's GPU can make a NaN or an infinity out of a highlight that a desktop's does not, and bloom spreads it
+        // into white blotches - 2026-11-17, an iPhone: the monkey white and patchy. Whatever comes out is finite.)
+        f = inject(f, 'dithering_fragment', '  gl_FragColor.rgb = clamp( gl_FragColor.rgb, 0.0, 64.0 ); if ( any( notEqual( gl_FragColor.rgb, gl_FragColor.rgb ) ) ) gl_FragColor.rgb = vec3( 0.0 );');
         shader.fragmentShader = f;
       };
       c.customProgramCacheKey = () => 'look-v1';

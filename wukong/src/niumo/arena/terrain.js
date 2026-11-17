@@ -189,7 +189,7 @@ const TERRAIN_MAP = /* glsl */`
   // ---- the mountain splits behind him (phase two; a faint hint before) ----
   if (vFissure > 0.001 && P.z < -54.0) {
     vec4 cf = texture2D(tCrack, vec2(P.x / 13.0, P.y / 9.0) + vec2(0.13, 0.41));
-    float zone = exp(-pow((P.x - 1.4) / 10.0, 2.0)) * smoothstep(-55.5, -59.0, P.z) * (1.0 - smoothstep(14.0, 24.0, P.y));
+    float zone = exp(-((P.x - 1.4) / 10.0) * ((P.x - 1.4) / 10.0)) * smoothstep(-55.5, -59.0, P.z) * (1.0 - smoothstep(14.0, 24.0, P.y));
     float fw = 0.04 + 0.12 * zone * vFissure;
     float fis = (1.0 - smoothstep(fw * 0.3, fw, cf.r)) * zone;
     tEmit += mix(uLavaCol, uLavaHot, 0.6) * fis * vFissure * 4.0;

@@ -680,13 +680,19 @@ function prepStaff(staff) {
  * (assets/models/niumo_jgb_cap.glb) on a red-black rod (a whole Tripo staff came out as two parallel bars: a long thin
  * rod is too thin for image-to-3D, the chunky end piece is not).
  */
-export async function loadMonkeyAssets({ base = 'assets/models/', height = 1.5 } = {}) {
+export async function loadMonkeyAssets({ base = 'assets/models/', height = 1.5, mobile = false } = {}) {
+  const m = mobile ? '_m' : '';           // (phones: the same models with smaller textures)
+  const url = base + `niumo_monkey${m}.glb`;
   const [char, cap] = await Promise.all([
-    loadCharacter(base + 'niumo_monkey.glb', { height }),
+    loadCharacter(url, { height }),
     // the 金箍棒's hoops (a missing file falls back to the procedural bands)
-    loadGLTF(base + 'niumo_jgb_cap.glb').then(g => g.scene).catch(() => null),
+    loadGLTF(base + `niumo_jgb_cap${m}.glb`).then(g => g.scene).catch(() => null),
   ]);
+  char.url = url;
   fixCapeWeights(char.mesh); dressMonkey(char);
+  // (a phone: no normal map - the only character that has one, and the first suspect for the white blotches an iPhone
+  // showed on him, 2026-11-17; the detail is lost at a phone's size anyway)
+  if (mobile) char.model.traverse(o => { if (o.isMesh && o.material && o.material.normalMap) { o.material.normalMap = null; o.material.needsUpdate = true; } });
   return { char, staff: createStaff({ cap }) };
 }
 
@@ -711,7 +717,7 @@ export class Monkey {
     this.scene = fx && fx.scene ? fx.scene : null;
     const model = actor.char && actor.char.model;
     if (actor.char && actor.char.mesh) {
-      if (actor.char.mesh.userData.cleanedVertices) this.healed = healMonkeyWeights(actor.char);     // async, see above
+      if (actor.char.mesh.userData.cleanedVertices) this.healed = healMonkeyWeights(actor.char, actor.char.url || undefined);     // async, see above
       else fixCapeWeights(actor.char.mesh);
     }
     if (model) dressMonkey(actor.char);

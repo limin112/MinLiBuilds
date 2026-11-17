@@ -140,6 +140,22 @@ function resize() {
 }
 addEventListener('resize', resize);
 
+/**
+ * Portrait (2026-11-17 user: "要支持竖屏，因为会在 X 上传播"): every camera and shot is framed for a wide screen and
+ * sets a vertical field of view; on a tall screen that would leave a sliver of the scene. At draw time the vertical
+ * field is opened up so the width still holds about what a square screen would (then put back for the game's own use).
+ */
+function renderFramed(dt) {
+  const a = camera.aspect, f = camera.fov;
+  if (a < 0.98) {
+    const k = 0.98 / a;
+    camera.fov = Math.min(100, 2 * Math.atan(Math.tan(f * Math.PI / 360) * k) * 180 / Math.PI);
+    camera.updateProjectionMatrix();
+  }
+  composer.render(dt);
+  if (camera.fov !== f) { camera.fov = f; camera.updateProjectionMatrix(); }
+}
+
 // ------------------------------------------------------------------ loading
 
 const loadEl = $('#load');
@@ -203,7 +219,7 @@ async function boot() {
   const [arena, audioRes] = await Promise.all([createVolcanoArena({ scene, renderer, quality: FLAG.quality }), loadAudio()]);
   if (!scene.environment) { scene.environment = volcanoEnv(); scene.environmentIntensity = 0.9; }
   setLoad('载入角色…');
-  const [bullChar, mAssets, beast] = await Promise.all([loadBullCharacter({ height: SCALE.bull }), loadMonkeyAssets({ height: SCALE.monkey }), loadWhiteBull()]);
+  const [bullChar, mAssets, beast] = await Promise.all([loadBullCharacter({ height: SCALE.bull, mobile: FLAG.touch }), loadMonkeyAssets({ height: SCALE.monkey, mobile: FLAG.touch }), loadWhiteBull({ mobile: FLAG.touch })]);
   const monkeyChar = mAssets.char, monkeyStaff = mAssets.staff;
   const { audio, cues } = audioRes;
   scene.add(bullChar.root, monkeyChar.root);
@@ -780,7 +796,7 @@ async function boot() {
   function tick(dt, rawDt, draw) {
     input.update(dt);
     if (input.take('menu', 0.3) && pausable()) togglePause();
-    if (G.paused) { composer.render(dt); return; }
+    if (G.paused) { renderFramed(dt); return; }
     G.time += dt;
 
     if (G.slowmoT > 0) { G.slowmoT -= dt; if (G.slowmoT <= 0) G.slowmo = 1; }
@@ -904,7 +920,7 @@ async function boot() {
     bokeh.enabled = !!dof;
     if (dof) { bokeh.uniforms.focus.value = dof.focus; bokeh.uniforms.aperture.value = dof.aperture; bokeh.uniforms.maxblur.value = dof.maxblur; }
     $('#mvfade').style.opacity = cin && cin.black ? cin.black.toFixed(3) : '0';
-    if (draw) composer.render(dt);
+    if (draw) renderFramed(dt);
   }
   frame();
   window.__ready = true;

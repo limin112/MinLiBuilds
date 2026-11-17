@@ -1,6 +1,7 @@
 // 火焰山 · 牛魔 HUD: the shared UI (src/ui.js: boss bar with chip damage, cards, subtitles, hint, reticle) plus the
 // monkey's mana bar (hidden: the fan is gone), the chapter card (回目) and the MV narration line. niumo.html provides the DOM.
 import { UI } from '../ui.js';
+import { ICON_SWORD, ICON_SHIELD } from './touch.js';
 
 const $ = s => document.querySelector(s);
 
@@ -99,9 +100,11 @@ export class NiumoUI extends UI {
 }
 
 // on a phone the keys are the on-screen buttons (touch.js): <kbd>J</kbd> -> <kbd>攻</kbd> ...
-// (two buttons, 2026-11-17 user: like 王者荣耀 - 攻: tap light / hold heavy; 闪: tap roll / hold guard)
-const TOUCH_NAMES = { J: '攻', K: '按住攻', L: '按住闪', '空格': '闪', Space: '闪', Enter: '跳过' };
+// (two buttons, 2026-11-17 user: like 王者荣耀 - the sword: tap light / hold heavy; the shield: tap roll / hold guard)
+const TOUCH_NAMES = { J: ICON_SWORD, K: '按住' + ICON_SWORD, L: '按住' + ICON_SHIELD, '空格': ICON_SHIELD, Space: ICON_SHIELD, Enter: '跳过' };
+// (2026-11-17 user, on his phone: the tips "全盖住了 · 手机端不能这么干扰" - a phone shows the Chinese only, without
+// the English line under it and without the parenthesised extras: one short line)
 function touchKeys(html) {
   return html.replace(/<kbd>([^<]+)<\/kbd>/g, (m, k) => TOUCH_NAMES[k] ? `<kbd>${TOUCH_NAMES[k]}</kbd>` : m)
-    .replace(/Enter 跳过/g, '');
+    .replace(/<i>[\s\S]*?<\/i>/g, '').replace(/（[^（）]*）/g, '').replace(/Enter 跳过/g, '');
 }
